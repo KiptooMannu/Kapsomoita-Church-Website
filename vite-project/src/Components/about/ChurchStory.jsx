@@ -9,7 +9,7 @@ const ChurchStory = () => {
     {
       year: "1995",
       event: "Church Founding",
-      description: "Started as a small prayer group under a tree in Kapsopmoita village"
+      description: "Started as a small prayer group under a tree in Kapsomoita village"
     },
     {
       year: "2002",
@@ -73,8 +73,8 @@ const ChurchStory = () => {
               className="mb-6 leading-relaxed"
               style={{ color: 'hsl(25, 15%, 45%)' }}
             >
-              Kapsopmoita Africa Gospel Church was born in 1995 out of a deep desire to serve God 
-              and bring His love to the people of Kapsopmoita and the surrounding regions. 
+              Kapsomoita Africa Gospel Church was born in 1995 out of a deep desire to serve God 
+              and bring His love to the people of Kapsomoita and the surrounding regions. 
               What started as a small gathering of 12 believers under a mango tree has grown into 
               a vibrant community of over 500 faithful members.
             </p>

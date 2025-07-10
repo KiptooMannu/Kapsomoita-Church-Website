@@ -52,7 +52,7 @@
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2, duration: 0.6 }}
             >
-              Learn about our history, mission, and the heart behind Kapsopmoita Africa Gospel Church
+              Learn about our history, mission, and the heart behind Kapsomoita Africa Gospel Church
             </motion.p>
           </div>
         </section>

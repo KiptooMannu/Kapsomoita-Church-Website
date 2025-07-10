@@ -8,7 +8,7 @@ const Logo = () => {
         <Church className="w-6 h-6 text-primary-foreground" />
       </div>
       <div className="hidden sm:block">
-        <h1 className="text-xl font-bold text-primary">Kapsopmoita</h1>
+        <h1 className="text-xl font-bold text-primary">Kapsomoita</h1>
         <p className="text-sm text-muted-foreground -mt-1">Africa Gospel Church</p>
       </div>
     </Link>

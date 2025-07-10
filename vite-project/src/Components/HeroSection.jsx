@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "./ui/button";
 import { ArrowRight, MapPin, Clock, Heart } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link as ScrollLink } from 'react-scroll'; // Changed from react-router-dom
 import InfoCard from "./hero/InfoCard";
 
 const HeroSection = () => {
@@ -29,6 +29,7 @@ const HeroSection = () => {
 
   return (
     <section 
+      id="home" // Added ID for navigation
       className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
       style={{
         background: 'linear-gradient(180deg, hsl(45, 25%, 97%), hsl(45, 20%, 98%))'
@@ -98,11 +99,16 @@ const HeroSection = () => {
                 color: 'hsl(45, 20%, 98%)',
                 boxShadow: '0 4px 20px hsla(25, 85%, 45%, 0.15)'
               }}
-              asChild
             >
-              <Link to="/about">
+              <ScrollLink
+                to="about"
+                smooth={true}
+                duration={500}
+                offset={-80}
+                className="flex items-center cursor-pointer"
+              >
                 Learn About Us <ArrowRight className="ml-2 w-5 h-5" />
-              </Link>
+              </ScrollLink>
             </Button>
           </motion.div>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -115,12 +121,17 @@ const HeroSection = () => {
                 fontWeight: 600,
                 boxShadow: '0 8px 25px hsla(45, 95%, 55%, 0.3)'
               }}
-              asChild
             >
-              <Link to="/giving">
+              <ScrollLink
+                to="contact"
+                smooth={true}
+                duration={500}
+                offset={-80}
+                className="flex items-center cursor-pointer"
+              >
                 <Heart className="mr-2 w-5 h-5" />
                 Give & Support
-              </Link>
+              </ScrollLink>
             </Button>
           </motion.div>
         </motion.div>
