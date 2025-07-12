@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { Menu, X, ChevronDown } from "lucide-react";
-import { Link as ScrollLink } from 'react-scroll';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import Logo from "./common/Logo";
 
 const Navbar = () => {
@@ -11,13 +10,13 @@ const Navbar = () => {
   const [mobileMinistriesOpen, setMobileMinistriesOpen] = useState(false);
   const [hoverTimeout, setHoverTimeout] = useState(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const navigationItems = [
-    { name: "Home", href: "home", offset: -100 },
+    { name: "Home", id: "home" },
     { 
       name: "Ministries", 
-      href: "ministries", 
-      offset: -80,
+      id: "ministries",
       dropdown: [
         { name: "Youth Ministry", path: "/ministries/youth" },
         { name: "Women's Ministry", path: "/ministries/women" },
@@ -25,14 +24,26 @@ const Navbar = () => {
         { name: "Kids Ministry", path: "/ministries/kids" }
       ]
     },
-    { name: "About Us", href: "about", offset: -80 },
-    { name: "Sermons", href: "sermons", offset: -80 },
-    { name: "Events", href: "events", offset: -80 },
-    { name: "Gallery", href: "gallery", offset: -80 },
-    { name: "Contact", href: "contact", offset: -80 },
+    { name: "About Us", id: "about" },
+    { name: "Sermons", id: "sermons" },
+    { name: "Events", id: "events" },
+    { name: "Gallery", id: "gallery" },
+    { name: "Contact", id: "contact" },
   ];
 
   const isMinistryPage = location.pathname.startsWith('/ministries');
+
+  const handleNavigation = (id) => {
+    if (isMinistryPage) {
+      navigate(`/#${id}`);
+    } else {
+      navigate(`/#${id}`, { replace: true });
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
 
   return (
     <nav 
@@ -47,13 +58,15 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Logo />
+          <RouterLink to="/">
+            <Logo />
+          </RouterLink>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8 relative">
             {navigationItems.map((item) => (
               <div 
-                key={item.href}
+                key={item.id}
                 className="relative py-2"
               >
                 <div
@@ -118,26 +131,12 @@ const Navbar = () => {
                       )}
                     </>
                   ) : (
-                    isMinistryPage ? (
-                      <RouterLink
-                        to={`/#${item.href}`}
-                        className="cursor-pointer font-medium text-gray-800 hover:text-orange-600 transition-colors text-sm uppercase tracking-wider"
-                      >
-                        {item.name}
-                      </RouterLink>
-                    ) : (
-                      <ScrollLink
-                        activeClass="active-nav-item"
-                        to={item.href}
-                        spy={true}
-                        smooth={true}
-                        offset={item.offset}
-                        duration={500}
-                        className="cursor-pointer font-medium text-gray-800 hover:text-orange-600 transition-colors text-sm uppercase tracking-wider"
-                      >
-                        {item.name}
-                      </ScrollLink>
-                    )
+                    <button
+                      onClick={() => handleNavigation(item.id)}
+                      className="font-medium text-gray-800 hover:text-orange-600 transition-colors text-sm uppercase tracking-wider"
+                    >
+                      {item.name}
+                    </button>
                   )}
                 </div>
               </div>
@@ -149,28 +148,14 @@ const Navbar = () => {
             <Button 
               variant="gold" 
               size="sm"
-              asChild
+              onClick={() => handleNavigation('contact')}
               style={{
                 background: 'linear-gradient(135deg, hsl(45, 95%, 55%), hsl(35, 90%, 65%)',
                 color: 'hsl(25, 35%, 25%)',
                 fontWeight: 600
               }}
             >
-              {isMinistryPage ? (
-                <RouterLink to="/#contact" className="cursor-pointer">
-                  Give
-                </RouterLink>
-              ) : (
-                <ScrollLink
-                  to="contact"
-                  smooth={true}
-                  duration={500}
-                  offset={-80}
-                  className="cursor-pointer"
-                >
-                  Give
-                </ScrollLink>
-              )}
+              Give
             </Button>
           </div>
 
@@ -203,7 +188,7 @@ const Navbar = () => {
           >
             <div className="flex flex-col space-y-2 px-4 py-4">
               {navigationItems.map((item) => (
-                <div key={item.href}>
+                <div key={item.id}>
                   {item.dropdown ? (
                     <div className="flex flex-col">
                       <button 
@@ -233,28 +218,15 @@ const Navbar = () => {
                       )}
                     </div>
                   ) : (
-                    isMinistryPage ? (
-                      <RouterLink
-                        to={`/#${item.href}`}
-                        className="block py-2 cursor-pointer font-medium text-gray-800 hover:text-orange-600 transition-colors text-sm uppercase tracking-wider"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        {item.name}
-                      </RouterLink>
-                    ) : (
-                      <ScrollLink
-                        activeClass="active-nav-item"
-                        to={item.href}
-                        spy={true}
-                        smooth={true}
-                        offset={item.offset}
-                        duration={500}
-                        className="block py-2 cursor-pointer font-medium text-gray-800 hover:text-orange-600 transition-colors text-sm uppercase tracking-wider"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        {item.name}
-                      </ScrollLink>
-                    )
+                    <button
+                      onClick={() => {
+                        handleNavigation(item.id);
+                        setIsOpen(false);
+                      }}
+                      className="block py-2 w-full text-left font-medium text-gray-800 hover:text-orange-600 transition-colors text-sm uppercase tracking-wider"
+                    >
+                      {item.name}
+                    </button>
                   )}
                 </div>
               ))}
@@ -268,29 +240,17 @@ const Navbar = () => {
               <Button
                 variant="gold"
                 className="w-full"
-                asChild
+                onClick={() => {
+                  handleNavigation('contact');
+                  setIsOpen(false);
+                }}
                 style={{
                   background: 'linear-gradient(135deg, hsl(45, 95%, 55%), hsl(35, 90%, 65%)',
                   color: 'hsl(25, 35%, 25%)',
                   fontWeight: 600
                 }}
               >
-                {isMinistryPage ? (
-                  <RouterLink to="/#contact" className="cursor-pointer" onClick={() => setIsOpen(false)}>
-                    Give
-                  </RouterLink>
-                ) : (
-                  <ScrollLink
-                    to="contact"
-                    smooth={true}
-                    duration={500}
-                    offset={-80}
-                    className="cursor-pointer"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Give
-                  </ScrollLink>
-                )}
+                Give
               </Button>
             </div>
           </div>

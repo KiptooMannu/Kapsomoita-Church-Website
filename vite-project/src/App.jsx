@@ -1,5 +1,5 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './Components/Navbar';
 import HeroSection from './Components/HeroSection';
 import About from './Pages/About';
@@ -7,13 +7,22 @@ import Youth from './Pages/ministries/Youth';
 import Women from './Pages/ministries/Women';
 import Men from './Pages/ministries/Men';
 import Kids from './Pages/ministries/Kids';
-// import Ministries from './Pages/Ministries';
-// import Sermons from './Pages/Sermons';
-// import Events from './Pages/Events';
-// import Gallery from './Pages/Gallery';
-// import Contact from './Pages/Contact';
 
 function App() {
+  const location = useLocation();
+
+  // Handle scroll to section when hash changes
+  useEffect(() => {
+    if (location.hash) {
+      const element = document.getElementById(location.hash.substring(1));
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+    }
+  }, [location]);
+
   return (
     <div className="relative">
       <Navbar/>
