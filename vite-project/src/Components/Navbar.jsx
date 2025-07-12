@@ -34,14 +34,20 @@ const Navbar = () => {
   const isMinistryPage = location.pathname.startsWith('/ministries');
 
   const handleNavigation = (id) => {
-    if (isMinistryPage) {
+    if (id === 'gallery') {
+      // Navigate to the gallery page
+      navigate('/gallery');
+      setIsOpen(false); // Close mobile menu if open
+    } else if (isMinistryPage) {
       navigate(`/#${id}`);
+      setIsOpen(false);
     } else {
       navigate(`/#${id}`, { replace: true });
       const element = document.getElementById(id);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
       }
+      setIsOpen(false);
     }
   };
 
@@ -58,9 +64,9 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <RouterLink to="/">
+          <div onClick={() => navigate('/')} className="cursor-pointer">
             <Logo />
-          </RouterLink>
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8 relative">
@@ -219,10 +225,7 @@ const Navbar = () => {
                     </div>
                   ) : (
                     <button
-                      onClick={() => {
-                        handleNavigation(item.id);
-                        setIsOpen(false);
-                      }}
+                      onClick={() => handleNavigation(item.id)}
                       className="block py-2 w-full text-left font-medium text-gray-800 hover:text-orange-600 transition-colors text-sm uppercase tracking-wider"
                     >
                       {item.name}
@@ -240,10 +243,7 @@ const Navbar = () => {
               <Button
                 variant="gold"
                 className="w-full"
-                onClick={() => {
-                  handleNavigation('contact');
-                  setIsOpen(false);
-                }}
+                onClick={() => handleNavigation('contact')}
                 style={{
                   background: 'linear-gradient(135deg, hsl(45, 95%, 55%), hsl(35, 90%, 65%)',
                   color: 'hsl(25, 35%, 25%)',
