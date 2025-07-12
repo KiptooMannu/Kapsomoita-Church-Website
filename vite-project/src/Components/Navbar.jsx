@@ -9,6 +9,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinistriesHovered, setIsMinistriesHovered] = useState(false);
   const [mobileMinistriesOpen, setMobileMinistriesOpen] = useState(false);
+  const [hoverTimeout, setHoverTimeout] = useState(null);
   const location = useLocation();
 
   const navigationItems = [
@@ -31,7 +32,6 @@ const Navbar = () => {
     { name: "Contact", href: "contact", offset: -80 },
   ];
 
-  // Check if we're on a ministry page
   const isMinistryPage = location.pathname.startsWith('/ministries');
 
   return (
@@ -54,54 +54,92 @@ const Navbar = () => {
             {navigationItems.map((item) => (
               <div 
                 key={item.href}
-                className="relative"
-                onMouseEnter={() => item.dropdown && setIsMinistriesHovered(true)}
-                onMouseLeave={() => item.dropdown && setIsMinistriesHovered(false)}
+                className="relative py-2"
               >
-                {item.dropdown ? (
-                  <>
-                    <div className="flex items-center cursor-pointer font-medium text-gray-800 hover:text-orange-600 transition-colors text-sm uppercase tracking-wider">
-                      {item.name}
-                      <ChevronDown className="ml-1 w-4 h-4" />
-                    </div>
-                    
-                    {isMinistriesHovered && (
-                      <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-100">
-                        {item.dropdown.map((subItem) => (
-                          <RouterLink
-                            key={subItem.path}
-                            to={subItem.path}
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
-                            onClick={() => setIsMinistriesHovered(false)}
-                          >
-                            {subItem.name}
-                          </RouterLink>
-                        ))}
+                <div
+                  className="relative"
+                  onMouseEnter={() => {
+                    if (hoverTimeout) {
+                      clearTimeout(hoverTimeout);
+                      setHoverTimeout(null);
+                    }
+                    if (item.dropdown) setIsMinistriesHovered(true);
+                  }}
+                  onMouseLeave={() => {
+                    if (item.dropdown) {
+                      const timeout = setTimeout(() => {
+                        setIsMinistriesHovered(false);
+                      }, 300);
+                      setHoverTimeout(timeout);
+                    }
+                  }}
+                >
+                  {item.dropdown ? (
+                    <>
+                      <div className="flex items-center cursor-pointer font-medium text-gray-800 hover:text-orange-600 transition-colors text-sm uppercase tracking-wider">
+                        {item.name}
+                        <ChevronDown className="ml-1 w-4 h-4" />
                       </div>
-                    )}
-                  </>
-                ) : (
-                  isMinistryPage ? (
-                    <RouterLink
-                      to={`/#${item.href}`}
-                      className="cursor-pointer font-medium text-gray-800 hover:text-orange-600 transition-colors text-sm uppercase tracking-wider"
-                    >
-                      {item.name}
-                    </RouterLink>
+                      
+                      {isMinistriesHovered && (
+                        <div 
+                          className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-100"
+                          onMouseEnter={() => {
+                            if (hoverTimeout) {
+                              clearTimeout(hoverTimeout);
+                              setHoverTimeout(null);
+                            }
+                            setIsMinistriesHovered(true);
+                          }}
+                          onMouseLeave={() => {
+                            const timeout = setTimeout(() => {
+                              setIsMinistriesHovered(false);
+                            }, 300);
+                            setHoverTimeout(timeout);
+                          }}
+                        >
+                          {item.dropdown.map((subItem) => (
+                            <RouterLink
+                              key={subItem.path}
+                              to={subItem.path}
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                              onClick={() => {
+                                setIsMinistriesHovered(false);
+                                if (hoverTimeout) {
+                                  clearTimeout(hoverTimeout);
+                                  setHoverTimeout(null);
+                                }
+                              }}
+                            >
+                              {subItem.name}
+                            </RouterLink>
+                          ))}
+                        </div>
+                      )}
+                    </>
                   ) : (
-                    <ScrollLink
-                      activeClass="active-nav-item"
-                      to={item.href}
-                      spy={true}
-                      smooth={true}
-                      offset={item.offset}
-                      duration={500}
-                      className="cursor-pointer font-medium text-gray-800 hover:text-orange-600 transition-colors text-sm uppercase tracking-wider"
-                    >
-                      {item.name}
-                    </ScrollLink>
-                  )
-                )}
+                    isMinistryPage ? (
+                      <RouterLink
+                        to={`/#${item.href}`}
+                        className="cursor-pointer font-medium text-gray-800 hover:text-orange-600 transition-colors text-sm uppercase tracking-wider"
+                      >
+                        {item.name}
+                      </RouterLink>
+                    ) : (
+                      <ScrollLink
+                        activeClass="active-nav-item"
+                        to={item.href}
+                        spy={true}
+                        smooth={true}
+                        offset={item.offset}
+                        duration={500}
+                        className="cursor-pointer font-medium text-gray-800 hover:text-orange-600 transition-colors text-sm uppercase tracking-wider"
+                      >
+                        {item.name}
+                      </ScrollLink>
+                    )
+                  )}
+                </div>
               </div>
             ))}
           </div>
