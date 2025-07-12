@@ -8,7 +8,8 @@ import Women from './Pages/ministries/Women';
 import Men from './Pages/ministries/Men';
 import Kids from './Pages/ministries/Kids';
 import Sermons from './Pages/Sermons';
-import Gallery from './Pages/Gallery'; // Import the Gallery component
+import Gallery from './Pages/Gallery';
+import Contact from './Pages/Contacts'; // Import the Contact component
 
 function App() {
   const location = useLocation();
@@ -51,9 +52,12 @@ function App() {
               <Sermons/>
             </section>
 
-            {/* Gallery section on home page */}
             <section id="gallery" className="scroll-mt-20">
               <Gallery asHomeSection={true} />
+            </section>
+
+            <section id="contact" className="scroll-mt-20">
+              <Contact asHomeSection={true} />
             </section>
 
             {/* Uncomment these as you implement them */}
@@ -63,10 +67,6 @@ function App() {
             
             <section id="events" className="scroll-mt-20">
               <Events/>
-            </section>
-            
-            <section id="contact" className="scroll-mt-20">
-              <Contact/>
             </section> */}
           </>
         } />
@@ -80,6 +80,7 @@ function App() {
         {/* Standalone Pages */}
         <Route path="/sermons" element={<Sermons />} />
         <Route path="/gallery" element={<Gallery />} />
+        <Route path="/contact" element={<Contact />} />
         
         {/* Fallback to home for any unmatched routes */}
         <Route path="*" element={
