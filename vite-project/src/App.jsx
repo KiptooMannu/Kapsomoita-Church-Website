@@ -10,6 +10,12 @@ import Kids from './Pages/ministries/Kids';
 import Sermons from './Pages/Sermons';
 import Gallery from './Pages/Gallery';
 import Contact from './Pages/Contacts'; // Import the Contact component
+import Evangelizing from "./Pages/strategies/Evangelizing";
+import Establishing from "./Pages/strategies/Establishing";
+import Edifying from "./Pages/strategies/Edifying";
+import Equipping from "./Pages/strategies/Equipping";
+import Compassion from "./Pages/strategies/Compassion";
+
 
 function App() {
   const location = useLocation();
@@ -76,6 +82,11 @@ function App() {
         <Route path="/ministries/women" element={<Women />} />
         <Route path="/ministries/men" element={<Men />} />
         <Route path="/ministries/kids" element={<Kids />} />
+        <Route path="/strategies/evangelizing" element={<Evangelizing />} />
+          <Route path="/strategies/establishing" element={<Establishing />} />
+          <Route path="/strategies/edifying" element={<Edifying />} />
+          <Route path="/strategies/equipping" element={<Equipping />} />
+          <Route path="/strategies/compassion" element={<Compassion />} />
 
         {/* Standalone Pages */}
         <Route path="/sermons" element={<Sermons />} />

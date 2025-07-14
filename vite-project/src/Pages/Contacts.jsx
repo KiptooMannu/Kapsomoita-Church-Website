@@ -20,7 +20,7 @@ const Contact = () => {
     {
       icon: <MapPin className="w-5 h-5" />,
       title: "Visit Us",
-      value: "123 Faith Avenue, Nairobi",
+      value: "123 Chebole, Bomet",
       href: "https://maps.google.com?q=123+Faith+Avenue,+Nairobi",
       description: "Get directions to our location"
     },
