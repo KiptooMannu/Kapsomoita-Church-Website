@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './Components/Navbar';
 import Footer from './Components/Footer';
 import ScrollToTop from './Components/ScrollToTop';
+import Give from './Pages/Give';
 
 import HeroSection from './Components/HeroSection';
 import About from './Pages/About';
@@ -74,6 +75,7 @@ function App() {
           <Route path="/sermons" element={<Sermons />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/contact" element={<Contact />} />
+            <Route path="/give" element={<Give />} /> 
 
           {/* Fallback route */}
           <Route
