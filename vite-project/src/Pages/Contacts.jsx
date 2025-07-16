@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Clock } from 'lucide-react';
 
+
 const Contact = () => {
   const contactInfo = [
     {
@@ -138,7 +139,9 @@ const Contact = () => {
           </div>
         </motion.div>
       </div>
+      
     </section>
+    
   );
 };
 

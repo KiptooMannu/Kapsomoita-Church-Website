@@ -6,6 +6,7 @@
   import ChurchStory from "../Components/about/ChurchStory";
   import ChurchValues from "../Components/about/ChurchValues";
   import { Church, Cross, HeartHandshake, BookOpen, Users } from "lucide-react";
+  
 
   const About = () => {
     const stats = [
@@ -202,7 +203,9 @@
             </motion.div>
           </div>
         </section>
+        {/* <PersistentInfo /> */}
       </div>
+      
     );
   };
 

@@ -456,7 +456,9 @@ const Gallery = () => {
           </Button>
         </motion.div>
       </div>
+      
     </section>
+    
   );
 };
 
