@@ -45,70 +45,83 @@ const Navbar = () => {
   ];
 
   const handleNavigation = (id) => {
-    if (['/ministries', '/strategies'].some(p => location.pathname.startsWith(p))) {
+    if (["/ministries", "/strategies"].some(p => location.pathname.startsWith(p))) {
       navigate(`/#${id}`);
       setIsOpen(false);
     } else {
       navigate(`/#${id}`, { replace: true });
       const element = document.getElementById(id);
-      if (element) element.scrollIntoView({ behavior: 'smooth' });
+      if (element) element.scrollIntoView({ behavior: "smooth" });
       setIsOpen(false);
     }
   };
 
   const handleDropdownHover = (type, entering) => {
     if (hoverTimeout) clearTimeout(hoverTimeout);
+
     if (entering) {
-      type === 'ministries' && setIsMinistriesHovered(true);
-      type === 'strategies' && setIsStrategiesHovered(true);
+      if (type === 'ministries') {
+        setIsMinistriesHovered(true);
+        setIsStrategiesHovered(false);
+      }
+      if (type === 'strategies') {
+        setIsStrategiesHovered(true);
+        setIsMinistriesHovered(false);
+      }
     } else {
       setHoverTimeout(setTimeout(() => {
-        type === 'ministries' && setIsMinistriesHovered(false);
-        type === 'strategies' && setIsStrategiesHovered(false);
-      }, 300));
+        if (type === 'ministries' && !isStrategiesHovered) setIsMinistriesHovered(false);
+        if (type === 'strategies' && !isMinistriesHovered) setIsStrategiesHovered(false);
+      }, 200));
     }
   };
 
   const renderDropdown = (item, isHovered, type) => (
-    <>
-      <div className="flex items-center cursor-pointer text-gray-800 hover:text-orange-600 text-sm font-medium uppercase">
-        {item.name} <ChevronDown className="ml-1 w-4 h-4" />
+    <div className="relative" onMouseEnter={() => handleDropdownHover(type, true)}>
+      <div 
+        className="flex items-center cursor-pointer text-black hover:text-gray-700 text-sm font-medium uppercase transition-colors duration-200"
+      >
+        {item.name} 
+        <ChevronDown className={`ml-1 w-4 h-4 transition-transform ${isHovered ? 'rotate-180' : ''}`} />
       </div>
       {isHovered && (
         <div 
-          className="absolute left-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-100"
-          onMouseEnter={() => handleDropdownHover(type, true)}
+          className="absolute left-0 mt-2 w-56 bg-[#fefaf6] rounded-md shadow-lg py-1 z-50 border border-gray-200"
           onMouseLeave={() => handleDropdownHover(type, false)}
         >
           {item.dropdown.map((subItem) => (
             <RouterLink
               key={subItem.path}
               to={subItem.path}
-              className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"
+              className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 transition-colors duration-200"
+              onClick={() => {
+                setIsMinistriesHovered(false);
+                setIsStrategiesHovered(false);
+              }}
             >
               {subItem.name}
             </RouterLink>
           ))}
         </div>
       )}
-    </>
+    </div>
   );
 
   const renderMobileDropdown = (item, isOpen, setOpen) => (
     <div className="flex flex-col">
       <button 
-        className="flex justify-between items-center w-full py-2 text-gray-800 hover:text-orange-600 text-sm font-medium uppercase"
+        className="flex justify-between items-center w-full py-2 px-3 rounded-md text-black hover:bg-gray-200 text-sm font-medium uppercase transition-colors duration-200"
         onClick={() => setOpen(!isOpen)}
       >
-        {item.name} <ChevronDown className={`w-4 h-4 ${isOpen ? 'rotate-180' : ''}`} />
+        {item.name} <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
       {isOpen && (
-        <div className="ml-4 mt-1 space-y-2">
+        <div className="ml-4 mt-1 space-y-1">
           {item.dropdown.map((subItem) => (
             <RouterLink
               key={subItem.path}
               to={subItem.path}
-              className="block py-2 text-sm text-gray-700 hover:text-orange-600"
+              className="block py-2 px-3 rounded-md text-sm text-black hover:bg-gray-200 transition-colors duration-200"
               onClick={() => {
                 setIsOpen(false);
                 setOpen(false);
@@ -123,25 +136,22 @@ const Navbar = () => {
   );
 
   return (
-    <nav className="sticky top-0 z-50 bg-[hsla(45,20%,98%,0.95)] backdrop-blur border-b border-[hsla(35,20%,88%,1)] shadow-md">
+    <nav className="sticky top-0 z-50 bg-white shadow border-b border-gray-200 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div onClick={() => navigate('/')} className="cursor-pointer">
+          <div onClick={() => navigate('/')} className="cursor-pointer flex items-center">
             <Logo />
           </div>
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-6">
             {navigationItems.map((item) => (
-              <div key={item.id} className="relative py-2"
-                onMouseEnter={() => item.id === 'ministries' || item.id === 'strategies' ? handleDropdownHover(item.id, true) : null}
-                onMouseLeave={() => item.id === 'ministries' || item.id === 'strategies' ? handleDropdownHover(item.id, false) : null}
-              >
+              <div key={item.id} className="py-2">
                 {item.dropdown ? (
                   item.id === 'ministries' ? renderDropdown(item, isMinistriesHovered, 'ministries') :
                   renderDropdown(item, isStrategiesHovered, 'strategies')
                 ) : (
                   <button
                     onClick={() => handleNavigation(item.id)}
-                    className="text-sm font-medium uppercase text-gray-800 hover:text-orange-600"
+                    className="text-sm font-medium uppercase text-black hover:text-gray-700 transition-colors duration-200"
                   >
                     {item.name}
                   </button>
@@ -153,30 +163,39 @@ const Navbar = () => {
             <Button 
               size="sm"
               onClick={() => navigate('/give')}
-              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded"
+              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded transition-colors duration-200 shadow hover:shadow-md cursor-pointer"
             >
               <HandCoins className="w-4 h-4" /> Give
             </Button>
           </div>
           <div className="md:hidden">
-            <Button variant="ghost" size="sm" onClick={() => setIsOpen(!isOpen)}>
-              {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-2 rounded-md hover:bg-gray-100 text-black cursor-pointer"
+            >
+              {isOpen ? (
+                <X className="w-5 h-5" />
+              ) : (
+                <Menu className="w-5 h-5" />
+              )}
             </Button>
           </div>
         </div>
 
         {isOpen && (
-          <div className="md:hidden animate-slide-down border-t border-[hsla(35,20%,88%,1)] bg-[hsla(45,20%,98%,0.95)] backdrop-blur">
-            <div className="flex flex-col px-4 py-4 space-y-2">
+          <div className="md:hidden bg-white border-t border-gray-200 rounded-b-lg shadow-xl">
+            <div className="flex flex-col px-2 py-3 space-y-1">
               {navigationItems.map((item) => (
-                <div key={item.id}>
+                <div key={item.id} className="px-1">
                   {item.dropdown ? (
                     item.id === 'ministries' ? renderMobileDropdown(item, mobileMinistriesOpen, setMobileMinistriesOpen) :
                     renderMobileDropdown(item, mobileStrategiesOpen, setMobileStrategiesOpen)
                   ) : (
                     <button
                       onClick={() => handleNavigation(item.id)}
-                      className="block w-full py-2 text-left text-sm font-medium uppercase text-gray-800 hover:text-orange-600"
+                      className="w-full text-left py-2 px-3 rounded-md text-sm font-medium uppercase text-black hover:bg-gray-200 transition-colors duration-200"
                     >
                       {item.name}
                     </button>
@@ -184,9 +203,9 @@ const Navbar = () => {
                 </div>
               ))}
             </div>
-            <div className="px-4 pt-2 mt-3 border-t border-[hsla(35,20%,88%,1)]">
+            <div className="px-3 py-3 border-t border-gray-100">
               <Button
-                className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold"
+                className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-md transition-colors duration-200 shadow cursor-pointer"
                 onClick={() => {
                   setIsOpen(false);
                   navigate('/give');
