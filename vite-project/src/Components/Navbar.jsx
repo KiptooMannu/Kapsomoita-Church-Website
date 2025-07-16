@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { Menu, X, ChevronDown, HandCoins } from "lucide-react";
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
-import Logo from "./common/Logo";
+import logoImage from '../assets/AGC-logo.png'; // Adjust the path to your logo image
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -72,14 +72,14 @@ const Navbar = () => {
       setHoverTimeout(setTimeout(() => {
         if (type === 'ministries' && !isStrategiesHovered) setIsMinistriesHovered(false);
         if (type === 'strategies' && !isMinistriesHovered) setIsStrategiesHovered(false);
-      }, 200));
+      }, 100));
     }
   };
 
   const renderDropdown = (item, isHovered, type) => (
     <div className="relative" onMouseEnter={() => handleDropdownHover(type, true)}>
       <div 
-        className="flex items-center cursor-pointer text-black hover:text-gray-700 text-sm font-medium uppercase transition-colors duration-200"
+        className="flex items-center cursor-pointer text-white hover:text-gray-700 text-sm font-medium uppercase transition-colors duration-200"
       >
         {item.name} 
         <ChevronDown className={`ml-1 w-4 h-4 transition-transform ${isHovered ? 'rotate-180' : ''}`} />
@@ -94,10 +94,7 @@ const Navbar = () => {
               key={subItem.path}
               to={subItem.path}
               className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 transition-colors duration-200"
-              onClick={() => {
-                setIsMinistriesHovered(false);
-                setIsStrategiesHovered(false);
-              }}
+              onClick={(e) => e.stopPropagation()}
             >
               {subItem.name}
             </RouterLink>
@@ -136,12 +133,25 @@ const Navbar = () => {
   );
 
   return (
-    <nav className="sticky top-0 z-50 bg-white shadow border-b border-gray-200 font-sans">
+    <nav className="sticky top-0 z-50 bg-purple-800 shadow border-b border-gray-200 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div onClick={() => navigate('/')} className="cursor-pointer flex items-center">
-            <Logo />
+            {/* Updated logo section */}
+            <div className="flex items-center">
+              <img 
+                src={logoImage} 
+                alt="Africa Gospel Church Logo" 
+                className="h-10 md:h-12 object-contain" 
+              />
+              {/* Hide the text on mobile */}
+              {/* <div className="hidden md:block ml-2 text-white">
+                <div className="font-bold text-sm">Africa Gospel Church</div>
+                <div className="text-xs">KENYA</div>
+              </div> */}
+            </div>
           </div>
+          
           <div className="hidden md:flex items-center space-x-6">
             {navigationItems.map((item) => (
               <div key={item.id} className="py-2">
@@ -151,7 +161,7 @@ const Navbar = () => {
                 ) : (
                   <button
                     onClick={() => handleNavigation(item.id)}
-                    className="text-sm font-medium uppercase text-black hover:text-gray-700 transition-colors duration-200"
+                    className="text-sm font-medium uppercase text-white hover:text-purple-100 transition-colors duration-200"
                   >
                     {item.name}
                   </button>
@@ -159,6 +169,7 @@ const Navbar = () => {
               </div>
             ))}
           </div>
+          
           <div className="hidden md:block">
             <Button 
               size="sm"
@@ -168,24 +179,24 @@ const Navbar = () => {
               <HandCoins className="w-4 h-4" /> Give
             </Button>
           </div>
-          <div className="md:hidden">
-            <Button 
-              variant="ghost" 
-              size="sm" 
+          
+          {/* Mobile menu button - simplified without background */}
+          <div className="md:hidden flex items-center">
+            <button 
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-md hover:bg-gray-100 text-black cursor-pointer"
+              className="text-white focus:outline-none"
             >
               {isOpen ? (
-                <X className="w-5 h-5" />
+                <X className="w-6 h-6" />
               ) : (
-                <Menu className="w-5 h-5" />
+                <Menu className="w-6 h-6" />
               )}
-            </Button>
+            </button>
           </div>
         </div>
 
         {isOpen && (
-          <div className="md:hidden bg-white border-t border-gray-200 rounded-b-lg shadow-xl">
+          <div className="md:hidden bg-white border-t border-gray-200 rounded-b-lg shadow-xl max-h-[60vh] overflow-y-auto">
             <div className="flex flex-col px-2 py-3 space-y-1">
               {navigationItems.map((item) => (
                 <div key={item.id} className="px-1">
