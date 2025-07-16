@@ -1,6 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './Components/Navbar';
+import Footer from './Components/Footer';
+import ScrollToTop from './Components/ScrollToTop';
+
 import HeroSection from './Components/HeroSection';
 import About from './Pages/About';
 import Youth from './Pages/ministries/Youth';
@@ -10,34 +13,19 @@ import Kids from './Pages/ministries/Kids';
 import Sermons from './Pages/Sermons';
 import Gallery from './Pages/Gallery';
 import Contact from './Pages/Contacts';
-import Evangelizing from "./Pages/strategies/Evangelizing";
-import Establishing from "./Pages/strategies/Establishing";
-import Edifying from "./Pages/strategies/Edifying";
-import Equipping from "./Pages/strategies/Equipping";
-import Compassion from "./Pages/strategies/Compassion";
-import Footer from './Components/Footer'; // ✅ Import the Footer
+
+import Evangelizing from './Pages/strategies/Evangelizing';
+import Establishing from './Pages/strategies/Establishing';
+import Edifying from './Pages/strategies/Edifying';
+import Equipping from './Pages/strategies/Equipping';
+import Compassion from './Pages/strategies/Compassion';
 
 function App() {
   const location = useLocation();
 
-  useEffect(() => {
-    if (location.hash) {
-      const element = document.getElementById(location.hash.substring(1));
-      if (element) {
-        setTimeout(() => {
-          element.scrollIntoView({ 
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }, 100);
-      }
-    } else if (location.pathname === '/') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, [location]);
-
   return (
     <div className="relative flex flex-col min-h-screen">
+      <ScrollToTop /> {/* ✅ Handles all scroll-to-top logic */}
       <Navbar />
 
       <main className="flex-grow">
@@ -65,15 +53,6 @@ function App() {
                 <section id="contact" className="scroll-mt-20">
                   <Contact asHomeSection={true} />
                 </section>
-
-                {/* Uncomment and implement when ready */}
-                {/* <section id="ministries" className="scroll-mt-20">
-                  <Ministries />
-                </section>
-
-                <section id="events" className="scroll-mt-20">
-                  <Events />
-                </section> */}
               </>
             }
           />
@@ -96,7 +75,7 @@ function App() {
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/contact" element={<Contact />} />
 
-          {/* Fallback to home */}
+          {/* Fallback route */}
           <Route
             path="*"
             element={
@@ -108,7 +87,6 @@ function App() {
         </Routes>
       </main>
 
-  
       <Footer />
     </div>
   );

@@ -142,68 +142,7 @@
           </div>
         </section>
 
-        {/* Call to Action */}
-        <section 
-          className="py-20"
-          style={{
-            background: 'linear-gradient(135deg, hsl(25, 85%, 45%), hsl(35, 90%, 65%))'
-          }}
-        >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <motion.h2
-              className="text-3xl md:text-4xl font-bold mb-6"
-              style={{ color: 'hsl(45, 20%, 98%)' }}
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              Join Our Family
-            </motion.h2>
-            <motion.p
-              className="text-xl mb-8 max-w-2xl mx-auto"
-              style={{ color: 'hsla(45, 20%, 98%, 0.9)' }}
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              Experience the love of Christ and become part of our growing community. 
-              Everyone is welcome at Kapsomoita Africa Gospel Church.
-            </motion.p>
-            <motion.div 
-              className="flex flex-col sm:flex-row gap-4 justify-center"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <Button 
-                size="lg"
-                asChild
-                style={{
-                  backgroundColor: 'hsl(45, 20%, 98%)',
-                  color: 'hsl(25, 35%, 25%)',
-                  boxShadow: '0 4px 20px hsla(45, 20%, 98%, 0.2)'
-                }}
-              >
-                <Link to="/contact">Visit Us This Sunday</Link>
-              </Button>
-              <Button 
-                size="lg"
-                asChild
-                style={{
-                  backgroundColor: 'hsl(25, 35%, 25%)',
-                  color: 'hsl(45, 20%, 98%)',
-                  boxShadow: '0 4px 20px hsla(25, 35%, 25%, 0.2)'
-                }}
-              >
-                <Link to="/events">See Upcoming Events</Link>
-              </Button>
-            </motion.div>
-          </div>
-        </section>
-        {/* <PersistentInfo /> */}
+    
       </div>
       
     );
