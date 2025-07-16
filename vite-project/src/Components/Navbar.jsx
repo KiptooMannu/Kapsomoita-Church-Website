@@ -133,22 +133,17 @@ const Navbar = () => {
   );
 
   return (
-    <nav className="sticky top-0 z-50 bg-purple-800 shadow border-b border-gray-200 font-sans">
+    <nav className="sticky top-0 z-50 bg-white md:bg-purple-800 shadow border-b border-gray-200 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div onClick={() => navigate('/')} className="cursor-pointer flex items-center">
-            {/* Updated logo section */}
+            {/* Updated logo section with larger size on mobile */}
             <div className="flex items-center">
               <img 
                 src={logoImage} 
                 alt="Africa Gospel Church Logo" 
-                className="h-10 md:h-12 object-contain" 
+                className="h-12 md:h-12 object-contain" // Increased h-10 to h-12 for mobile
               />
-              {/* Hide the text on mobile */}
-              {/* <div className="hidden md:block ml-2 text-white">
-                <div className="font-bold text-sm">Africa Gospel Church</div>
-                <div className="text-xs">KENYA</div>
-              </div> */}
             </div>
           </div>
           
@@ -180,11 +175,11 @@ const Navbar = () => {
             </Button>
           </div>
           
-          {/* Mobile menu button - simplified without background */}
+          {/* Mobile menu button - with black color for visibility on white bg */}
           <div className="md:hidden flex items-center">
             <button 
               onClick={() => setIsOpen(!isOpen)}
-              className="text-white focus:outline-none"
+              className="text-black md:text-white focus:outline-none"
             >
               {isOpen ? (
                 <X className="w-6 h-6" />
