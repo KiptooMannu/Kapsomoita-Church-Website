@@ -52,9 +52,7 @@ const MissionVision = () => {
               className="text-lg leading-relaxed mb-6"
               style={{ color: 'hsl(25, 15%, 45%)' }}
             >
-              To proclaim the Gospel of Jesus Christ throughout Africa and beyond, building a 
-              vibrant community of believers who demonstrate God's love through worship, 
-              discipleship, and compassionate service.
+             The purpose of the Africa Gospel Church is to fulfill the Great Commandment and Great Commission of the Lord Jesus Christ according to the Great Plan.
             </p>
             <div className="flex items-center">
               <Cross className="w-5 h-5 mr-2" style={{ color: 'hsl(25, 85%, 45%)' }} />
@@ -93,7 +91,8 @@ const MissionVision = () => {
               className="text-lg leading-relaxed mb-6"
               style={{ color: 'hsl(25, 15%, 45%)' }}
             >
-              To see transformed communities across Africa where Christ's love is evident through:
+              The Whole Church taking the Whole Gospel to the Whole World.
+(Swahili: KANISA LOTE, likieneza INJILI YOTE, ULIMWENGUNI KOTE)
             </p>
             <ul className="space-y-3">
               {visionPoints.map((item, index) => (

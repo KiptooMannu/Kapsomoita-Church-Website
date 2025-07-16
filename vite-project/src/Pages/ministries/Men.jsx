@@ -6,6 +6,7 @@ import event1 from '../../assets/events/men-retreat.jpg';
 import event2 from '../../assets/events/bible-study.jpg';
 import event3 from '../../assets/events/service-project.jpg';
 import event4 from '../../assets/events/conference.jpg';
+import PersistentInfo from '../../Components/PersistentInfo';
 
 const Men = () => {
   const faqs = [
@@ -496,5 +497,5 @@ const Men = () => {
     </div>
   );
 };
-
+     <PersistentInfo />
 export default Men;
