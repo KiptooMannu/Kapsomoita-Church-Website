@@ -26,7 +26,7 @@ function App() {
 
   return (
     <div className="relative flex flex-col min-h-screen">
-      <ScrollToTop /> {/* ✅ Handles all scroll-to-top logic */}
+      <ScrollToTop />
       <Navbar />
 
       <main className="flex-grow">
@@ -75,15 +75,33 @@ function App() {
           <Route path="/sermons" element={<Sermons />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/contact" element={<Contact />} />
-            <Route path="/give" element={<Give />} /> 
+          <Route path="/give" element={<Give />} />
 
-          {/* Fallback route */}
+          {/* Fallback route — render full homepage if unmatched */}
           <Route
             path="*"
             element={
-              <section id="home" className="scroll-mt-20">
-                <HeroSection />
-              </section>
+              <>
+                <section id="home" className="scroll-mt-20">
+                  <HeroSection />
+                </section>
+
+                <section id="about" className="scroll-mt-20">
+                  <About />
+                </section>
+
+                <section id="sermons" className="scroll-mt-20">
+                  <Sermons />
+                </section>
+
+                <section id="gallery" className="scroll-mt-20">
+                  <Gallery asHomeSection={true} />
+                </section>
+
+                <section id="contact" className="scroll-mt-20">
+                  <Contact asHomeSection={true} />
+                </section>
+              </>
             }
           />
         </Routes>
