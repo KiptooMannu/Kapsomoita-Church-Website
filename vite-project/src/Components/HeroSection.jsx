@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "./ui/button";
 import { ArrowRight, MapPin, Clock, Heart } from "lucide-react";
-import { Link as ScrollLink } from 'react-scroll'; // Changed from react-router-dom
+import { Link as ScrollLink } from 'react-scroll';
 import InfoCard from "./hero/InfoCard";
 
 const HeroSection = () => {
@@ -27,9 +27,15 @@ const HeroSection = () => {
     }
   };
 
+  // Church purple color scheme
+  const primaryPurple = 'hsl(270, 50%, 40%)'; // Deep purple
+  const accentPurple = 'hsl(280, 60%, 50%)'; // Brighter purple
+  const darkText = 'hsl(270, 30%, 15%)'; // Dark purple for text
+  const mediumText = 'hsl(270, 20%, 30%)'; // Medium purple for text
+
   return (
     <section 
-      id="home" // Added ID for navigation
+      id="home"
       className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
       style={{
         background: 'linear-gradient(180deg, hsl(45, 25%, 97%), hsl(45, 20%, 98%))'
@@ -52,13 +58,13 @@ const HeroSection = () => {
         {/* Main heading */}
         <motion.h1 
           className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6"
-          style={{ color: 'hsl(25, 25%, 15%)' }}
+          style={{ color: darkText }}
           variants={itemVariants}
         >
           Welcome to{" "}
           <span 
             style={{
-              background: 'linear-gradient(135deg, hsl(25, 85%, 45%), hsl(35, 90%, 65%))',
+              background: `linear-gradient(135deg, ${primaryPurple}, ${accentPurple})`,
               WebkitBackgroundClip: 'text',
               backgroundClip: 'text',
               color: 'transparent'
@@ -70,7 +76,7 @@ const HeroSection = () => {
         
         <motion.h2 
           className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-6"
-          style={{ color: 'hsl(25, 35%, 25%)' }}
+          style={{ color: mediumText }}
           variants={itemVariants}
         >
           Africa Gospel Church
@@ -78,7 +84,7 @@ const HeroSection = () => {
         
         <motion.p 
           className="text-xl md:text-2xl max-w-3xl mx-auto mb-10 leading-relaxed"
-          style={{ color: 'hsl(25, 15%, 45%)' }}
+          style={{ color: 'hsl(270, 15%, 45%)' }}
           variants={itemVariants}
         >
           Come as you are, leave transformed. Join our community of faith, love, and service 
@@ -95,9 +101,9 @@ const HeroSection = () => {
               size="lg"
               className="min-w-56 flex items-center"
               style={{
-                backgroundColor: 'hsl(25, 85%, 45%)',
-                color: 'hsl(45, 20%, 98%)',
-                boxShadow: '0 4px 20px hsla(25, 85%, 45%, 0.15)'
+                backgroundColor: primaryPurple,
+                color: 'white',
+                boxShadow: `0 4px 20px hsla(270, 50%, 40%, 0.2)`
               }}
             >
               <ScrollLink
@@ -116,10 +122,10 @@ const HeroSection = () => {
               size="lg"
               className="min-w-56 flex items-center"
               style={{
-                background: 'linear-gradient(135deg, hsl(45, 95%, 55%), hsl(35, 90%, 65%))',
-                color: 'hsl(25, 35%, 25%)',
+                background: `linear-gradient(135deg, ${accentPurple}, hsl(280, 70%, 60%))`,
+                color: 'white',
                 fontWeight: 600,
-                boxShadow: '0 8px 25px hsla(45, 95%, 55%, 0.3)'
+                boxShadow: `0 8px 25px hsla(280, 60%, 50%, 0.3)`
               }}
             >
               <ScrollLink
@@ -147,9 +153,9 @@ const HeroSection = () => {
               title="Sunday Service"
               mainText="Every Sunday at 9:00 AM"
               subText="Join us for worship and fellowship"
-              iconColor="hsl(25, 85%, 45%)"
-              bgColor="hsla(35, 40%, 92%, 0.8)"
-              borderColor="hsl(35, 20%, 88%)"
+              iconColor={primaryPurple}
+              bgColor="hsla(270, 40%, 95%, 0.8)"
+              borderColor="hsl(270, 20%, 88%)"
             />
           </motion.div>
           <motion.div whileHover={{ y: -5 }}>
@@ -158,9 +164,9 @@ const HeroSection = () => {
               title="Visit Us"
               mainText="Kapsomoita, Kenya"
               subText="Everyone is welcome"
-              iconColor="hsl(25, 85%, 45%)"
-              bgColor="hsla(35, 40%, 92%, 0.8)"
-              borderColor="hsl(35, 20%, 88%)"
+              iconColor={primaryPurple}
+              bgColor="hsla(270, 40%, 95%, 0.8)"
+              borderColor="hsl(270, 20%, 88%)"
             />
           </motion.div>
         </motion.div>

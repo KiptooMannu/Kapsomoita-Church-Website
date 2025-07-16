@@ -1,4 +1,3 @@
-// ChurchStory.jsx
 import { motion } from "framer-motion";
 import { Button } from "../../Components/ui/button";
 import { Heart, Book, Users, Globe, Calendar, Church } from "lucide-react";
@@ -66,7 +65,7 @@ const ChurchStory = () => {
               className="text-2xl font-semibold mb-6"
               style={{ color: 'hsl(25, 35%, 25%)' }}
             >
-              <Church className="inline mr-3 w-6 h-6" style={{ color: 'hsl(25, 85%, 45%)' }} />
+              <Church className="inline mr-3 w-6 h-6" style={{ color: 'hsl(270, 50%, 40%)' }} />
               Founded in Faith
             </h3>
             <p 
@@ -92,7 +91,7 @@ const ChurchStory = () => {
                 className="text-lg font-medium mb-4"
                 style={{ color: 'hsl(25, 35%, 25%)' }}
               >
-                <Calendar className="inline mr-2 w-5 h-5" style={{ color: 'hsl(25, 85%, 45%)' }} />
+                <Calendar className="inline mr-2 w-5 h-5" style={{ color: 'hsl(270, 50%, 40%)' }} />
                 Our Timeline
               </h4>
               <div className="space-y-4">
@@ -100,7 +99,7 @@ const ChurchStory = () => {
                   <motion.div
                     key={index}
                     className="pl-6 border-l-2"
-                    style={{ borderColor: 'hsl(25, 85%, 45%)' }}
+                    style={{ borderColor: 'hsl(270, 50%, 40%)' }}
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     transition={{ delay: index * 0.1 }}
@@ -108,7 +107,7 @@ const ChurchStory = () => {
                   >
                     <p 
                       className="font-bold"
-                      style={{ color: 'hsl(25, 85%, 45%)' }}
+                      style={{ color: 'hsl(270, 50%, 40%)' }}
                     >
                       {item.year}
                     </p>
@@ -173,7 +172,7 @@ const ChurchStory = () => {
                 >
                   <item.icon 
                     className="w-6 h-6 mr-4 mt-1 flex-shrink-0" 
-                    style={{ color: 'hsl(25, 85%, 45%)' }} 
+                    style={{ color: 'hsl(270, 50%, 40%)' }} 
                   />
                   <span style={{ color: 'hsl(25, 15%, 45%)' }}>{item.text}</span>
                 </motion.li>
@@ -189,7 +188,7 @@ const ChurchStory = () => {
               <Button 
                 asChild
                 style={{
-                  backgroundColor: 'hsl(25, 85%, 45%)',
+                  backgroundColor: 'hsl(270, 50%, 40%)',
                   color: 'hsl(45, 20%, 98%)'
                 }}
               >
