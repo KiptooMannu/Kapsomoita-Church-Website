@@ -22,14 +22,12 @@ jobs:
         run: |
           corepack enable
           pnpm install
-        working-directory: ./Kapsomoita-Church-Website
 
       - name: Build Vite App
         run: pnpm run build
-        working-directory: ./Kapsomoita-Church-Website
 
       - name: Deploy to GitHub Pages 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          branch: gh-pages
-          folder: Kapsomoita-Church-Website/dist
+          branch: gh-pages         # Branch to deploy to
+          folder: dist             # Folder to deploy (Vite output)
