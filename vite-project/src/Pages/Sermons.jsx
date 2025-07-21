@@ -9,73 +9,102 @@ const Sermons = () => {
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const audioRef = useRef(null);
   const [viewMode, setViewMode] = useState('video'); // 'video' or 'audio'
+  const [isPlayingVideo, setIsPlayingVideo] = useState(false);
 
-  // Sample sermon data with YouTube and local video examples
+  // Sample sermon data with real YouTube gospel preaching links
   const sermonSeries = [
     'All',
-    'Book of Romans',
-    'Faith Foundations',
-    'Season of Prayer',
-    'Psalms of David',
-    'End Times Prophecy'
+    'Salvation',
+    'Faith',
+    'Prayer',
+    'Holy Spirit',
+    'Christian Living'
   ];
 
   const sermons = [
     {
       id: 1,
-      title: "The Righteousness of God Revealed",
-      preacher: "Pastor John Mwangi",
-      date: "2023-10-15",
-      duration: "45:22",
-      series: "Book of Romans",
-      description: "Exploring Romans 1:16-17 and how the gospel reveals God's righteousness",
-      videoUrl: "https://youtu.be/_BI6o6xlG0s?si=uAs-2m-sMRGQNgoz",
-      audioUrl: "https://example.com/sermons/romans1.mp3",
-      notesUrl: "https://example.com/sermons/romans1.pdf",
-      scripture: "Romans 1:16-17",
-      thumbnail: "https://img.youtube.com/vi/WtcsiSu2_SQ/maxresdefault.jpg"
+      title: "The Power of the Gospel",
+      preacher: "Billy Graham",
+      date: "2023-11-12",
+      duration: "32:45",
+      series: "Salvation",
+      description: "Billy Graham explains the transformative power of the Gospel message",
+      videoUrl: "https://youtu.be/7c_yxXjQMyI?si=VJIujZiuySRxiJhN",
+      audioUrl: "https://example.com/sermons/gospel-power.mp3",
+      notesUrl: "https://example.com/sermons/gospel-power.pdf",
+      scripture: "Romans 1:16",
+      thumbnail: "https://img.youtube.com/vi/6jzdWfW5QlY/maxresdefault.jpg"
     },
     {
       id: 2,
-      title: "Faith That Moves Mountains",
-      preacher: "Pastor Sarah Wambui",
-      date: "2023-10-08",
-      duration: "38:15",
-      series: "Faith Foundations",
-      description: "Understanding the power of faith from Mark 11:22-24",
-      videoUrl: "https://youtu.be/CxjNH_NR74I?si=VpIpl6h1JkXuqKbr",
-      audioUrl: "https://example.com/sermons/faith1.mp3",
-      notesUrl: "https://example.com/sermons/faith1.pdf",
-      scripture: "Mark 11:22-24",
-      thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg"
+      title: "Faith That Pleases God",
+      preacher: "Charles Stanley",
+      date: "2023-11-05",
+      duration: "41:18",
+      series: "Faith",
+      description: "Understanding what it means to have faith that truly pleases God",
+      videoUrl: "https://youtu.be/xtSnD7SrcCs?si=fTlnXyTqcDVcGbL1",
+      audioUrl: "https://example.com/sermons/faith-pleases-god.mp3",
+      notesUrl: "https://example.com/sermons/faith-pleases-god.pdf",
+      scripture: "Hebrews 11:6",
+      thumbnail: "https://img.youtube.com/vi/YVZs8AiVd0E/maxresdefault.jpg"
     },
     {
       id: 3,
-      title: "The Lord Is My Shepherd",
-      preacher: "Elder James Kariuki",
-      date: "2023-10-01",
-      duration: "42:30",
-      series: "Psalms of David",
-      description: "A deep dive into Psalm 23 and God's provision",
-      videoUrl: "https://youtu.be/0CY2Syg0tZU?si=VlFLnir7X-PnHd1g",
-      audioUrl: "https://example.com/sermons/psalm23.mp3",
-      notesUrl: "https://example.com/sermons/psalm23.pdf",
-      scripture: "Psalm 23",
-      thumbnail: "/images/sermon-thumbnails/psalm23.jpg"
+      title: "The Secret of Prayer",
+      preacher: "R.C. Sproul",
+      date: "2023-10-29",
+      duration: "38:22",
+      series: "Prayer",
+      description: "Learning to pray according to God's will",
+      videoUrl: "https://youtu.be/IvWmwvdJ-mU?si=udVw7C_CwmV13R8a",
+      audioUrl: "https://example.com/sermons/secret-prayer.mp3",
+      notesUrl: "https://example.com/sermons/secret-prayer.pdf",
+      scripture: "Matthew 6:9-13",
+      thumbnail: "https://img.youtube.com/vi/KQH4mQk7xwE/maxresdefault.jpg"
     },
     {
       id: 4,
-      title: "Praying Without Ceasing",
-      preacher: "Pastor John Mwangi",
-      date: "2023-09-24",
-      duration: "51:08",
-      series: "Season of Prayer",
-      description: "Practical teachings on 1 Thessalonians 5:16-18",
-      videoUrl: "https://youtu.be/WtcsiSu2_SQ?si=0iFpbEXjbPFMZ8m2",
-      audioUrl: "https://example.com/sermons/prayer1.mp3",
-      notesUrl: "https://example.com/sermons/prayer1.pdf",
-      scripture: "1 Thessalonians 5:16-18",
-      thumbnail: "/images/sermon-thumbnails/prayer1.jpg"
+      title: "The Person and Work of the Holy Spirit",
+      preacher: "Billy Graham ",
+      date: "2023-10-22",
+      duration: "45:10",
+      series: "Holy Spirit",
+      description: "Biblical teaching on the Holy Spirit's role in the believer's life",
+      videoUrl: "https://youtu.be/ASWc-o-Ch_c?si=aDLFzLdha0v3FGxP",
+      audioUrl: "https://example.com/sermons/holy-spirit.mp3",
+      notesUrl: "https://example.com/sermons/holy-spirit.pdf",
+      scripture: "John 14:16-17",
+      thumbnail: "https://img.youtube.com/vi/ZRZv8Q2qP2E/maxresdefault.jpg"
+    },
+    {
+      id: 5,
+      title: "Living as Salt and Light",
+      preacher: "Derek Prince",
+      date: "2023-10-15",
+      duration: "39:55",
+      series: "Christian Living",
+      description: "How Christians should influence the world around them",
+      videoUrl: "https://youtu.be/gQR_xgNcoCk?si=fBJgOEiIPz-Qwmk8",
+      audioUrl: "https://example.com/sermons/salt-light.mp3",
+      notesUrl: "https://example.com/sermons/salt-light.pdf",
+      scripture: "Matthew 5:13-16",
+      thumbnail: "https://img.youtube.com/vi/9pdYdE4Z2e8/maxresdefault.jpg"
+    },
+    {
+      id: 6,
+      title: "The Prodigal Son",
+      preacher: "Alistair Begg",
+      date: "2023-10-08",
+      duration: "42:30",
+      series: "Salvation",
+      description: "A fresh look at Jesus' parable of the prodigal son",
+      videoUrl: "https://www.youtube.com/watch?v=4Ui1XM1nM2Y",
+      audioUrl: "https://example.com/sermons/prodigal-son.mp3",
+      notesUrl: "https://example.com/sermons/prodigal-son.pdf",
+      scripture: "Luke 15:11-32",
+      thumbnail: "https://img.youtube.com/vi/4Ui1XM1nM2Y/maxresdefault.jpg"
     }
   ];
 
@@ -95,6 +124,7 @@ const Sermons = () => {
   const handlePlaySermon = (sermon) => {
     setActiveSermon(sermon);
     setIsPlayingAudio(false);
+    setIsPlayingVideo(false);
     setTimeout(() => {
       document.getElementById('media-player').scrollIntoView({ behavior: 'smooth' });
     }, 100);
@@ -137,7 +167,7 @@ const Sermons = () => {
             Sermon Library
           </h1>
           <p className="text-xl max-w-2xl mx-auto" style={{ color: 'hsl(25, 15%, 45%)' }}>
-            Grow in faith through biblical teaching from our pastors and guest speakers
+            Grow in faith through biblical teaching from renowned preachers
           </p>
         </div>
 
@@ -168,26 +198,49 @@ const Sermons = () => {
             </div>
 
             {viewMode === 'video' ? (
-              <div className="aspect-w-16 aspect-h-9 bg-black">
-                {isYouTubeUrl(activeSermon.videoUrl) ? (
-                  <iframe
-                    src={`https://www.youtube.com/embed/${extractYouTubeID(activeSermon.videoUrl)}?autoplay=1`}
-                    className="w-full h-full"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    title={activeSermon.title}
-                  ></iframe>
+              <div className="aspect-w-16 aspect-h-9 bg-gray-100">
+                {!isPlayingVideo ? (
+                  <div className="relative w-full h-full">
+                    <img
+                      src={`https://img.youtube.com/vi/${extractYouTubeID(activeSermon.videoUrl)}/maxresdefault.jpg`}
+                      alt={activeSermon.title}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.src = `https://img.youtube.com/vi/${extractYouTubeID(activeSermon.videoUrl)}/mqdefault.jpg`;
+                      }}
+                    />
+                    <button 
+                      onClick={() => setIsPlayingVideo(true)}
+                      className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 hover:bg-opacity-50 transition-all"
+                    >
+                      <div className="flex items-center justify-center w-20 h-20 rounded-full bg-white bg-opacity-90">
+                        <Play className="w-10 h-10" style={{ color: 'hsl(25, 85%, 45%)' }} />
+                      </div>
+                    </button>
+                  </div>
                 ) : (
-                  <video 
-                    controls
-                    autoPlay
-                    className="w-full h-full"
-                    poster={activeSermon.thumbnail}
-                  >
-                    <source src={activeSermon.videoUrl} type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
+                  <div className="w-full h-full">
+                    {isYouTubeUrl(activeSermon.videoUrl) ? (
+                      <iframe
+                        src={`https://www.youtube.com/embed/${extractYouTubeID(activeSermon.videoUrl)}?autoplay=1`}
+                        className="w-full h-full"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        title={activeSermon.title}
+                      ></iframe>
+                    ) : (
+                      <video 
+                        controls
+                        autoPlay
+                        className="w-full h-full"
+                        poster={activeSermon.thumbnail}
+                      >
+                        <source src={activeSermon.videoUrl} type="video/mp4" />
+                        Your browser does not support the video tag.
+                      </video>
+                    )}
+                  </div>
                 )}
               </div>
             ) : (
@@ -336,11 +389,11 @@ const Sermons = () => {
             >
               <div className="relative">
                 <img 
-                  src={sermon.thumbnail || (isYouTubeUrl(sermon.videoUrl) ? `https://img.youtube.com/vi/${extractYouTubeID(sermon.videoUrl)}/mqdefault.jpg` : '/images/default-sermon.jpg')}
+                  src={`https://img.youtube.com/vi/${extractYouTubeID(sermon.videoUrl)}/maxresdefault.jpg`}
                   alt={sermon.title}
                   className="w-full h-48 object-cover"
                   onError={(e) => {
-                    e.target.src = '/images/default-sermon.jpg';
+                    e.target.src = `https://img.youtube.com/vi/${extractYouTubeID(sermon.videoUrl)}/mqdefault.jpg`;
                   }}
                 />
                 <button 
