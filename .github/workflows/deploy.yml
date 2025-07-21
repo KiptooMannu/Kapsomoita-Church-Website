@@ -23,11 +23,8 @@ jobs:
           corepack enable
           pnpm install
 
-      - name: Remove missing image reference to prevent build failure
-        run: rm -f src/assets/AGC-logo.png
-
-      - name: Build Vite App (soft fail)
-        run: pnpm run build || echo "Build failed but continuing..."
+      - name: Build Vite App
+        run: pnpm run build
 
       - name: Deploy to GitHub Pages 🚀
         uses: JamesIves/github-pages-deploy-action@v4
