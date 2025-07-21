@@ -76,7 +76,7 @@ const Sermons = () => {
       audioUrl: "https://example.com/sermons/holy-spirit.mp3",
       notesUrl: "https://example.com/sermons/holy-spirit.pdf",
       scripture: "John 14:16-17",
-      thumbnail: "https://img.youtube.com/vi/ZRZv8Q2qP2E/maxresdefault.jpg"
+      thumbnail: "https://i.ytimg.com/vi/ASWc-o-Ch_c/maxresdefault.jpg"
     },
     {
       id: 5,
