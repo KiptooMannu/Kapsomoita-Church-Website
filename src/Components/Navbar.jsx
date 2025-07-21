@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { Menu, X, ChevronDown, HandCoins } from "lucide-react";
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
-import logoImage from '../assets/AGC-logo'; // Adjust the path to your logo image
+import logoImage from '../assets/AGC-logo.png'; // Adjust the path to your logo image
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
