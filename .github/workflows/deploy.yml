@@ -22,15 +22,14 @@ jobs:
         run: |
           corepack enable
           pnpm install
+        working-directory: ./Kapsomoita-Church-Website
 
-      - name: Remove missing image reference to prevent build failure
-        run: rm -f src/assets/AGC-logo.png
-
-      - name: Build Vite App (soft fail)
-        run: pnpm run build || echo "Build failed but continuing..."
+      - name: Build Vite App
+        run: pnpm run build
+        working-directory: ./Kapsomoita-Church-Website
 
       - name: Deploy to GitHub Pages 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
-          folder: dist
+          folder: Kapsomoita-Church-Website/dist
