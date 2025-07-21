@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { Menu, X, ChevronDown, HandCoins } from "lucide-react";
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
-import logoImage from '../assets/AGC-logo.png'; // Adjust the path to your logo image
+import AGCLogo from '../assets/agc.png'; // Adjust the path to your logo image
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -140,7 +140,7 @@ const Navbar = () => {
             {/* Updated logo section with larger size on mobile */}
             <div className="flex items-center">
               <img 
-                src={logoImage} 
+                src={AGCLogo} 
                 alt="Africa Gospel Church Logo" 
                 className="h-12 md:h-12 object-contain" // Increased h-10 to h-12 for mobile
               />
