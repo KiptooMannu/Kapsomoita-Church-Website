@@ -1,10 +1,28 @@
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { ArrowRight, MapPin, Clock, Heart } from "lucide-react";
 import { Link as ScrollLink } from 'react-scroll';
 import InfoCard from "./hero/InfoCard";
 
+// Import your local images
+import image1 from '../assets/hero/church1.jpg'; // Adjust paths as needed
+import image2 from '../assets/hero/church2.jpg';
+import image3 from '../assets/hero/church3.jpg';
+import image4 from '../assets/hero/church4.jpg';
+
 const HeroSection = () => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const images = [image1, image2, image3, image4]; // Add more images as needed
+
+  // Auto-rotate images
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex(prev => (prev + 1) % images.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [images.length]);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -28,29 +46,47 @@ const HeroSection = () => {
   };
 
   // Church purple color scheme
-  const primaryPurple = 'hsl(270, 50%, 40%)'; // Deep purple
-  const accentPurple = 'hsl(280, 60%, 50%)'; // Brighter purple
-  const darkText = 'hsl(270, 30%, 15%)'; // Dark purple for text
-  const mediumText = 'hsl(270, 20%, 30%)'; // Medium purple for text
+  const primaryPurple = 'hsl(270, 50%, 40%)';
+  const accentPurple = 'hsl(280, 60%, 50%)';
+  const darkText = 'hsl(270, 30%, 15%)';
+  const mediumText = 'hsl(270, 20%, 30%)';
 
   return (
     <section 
       id="home"
       className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
-      style={{
-        background: 'linear-gradient(180deg, hsl(45, 25%, 97%), hsl(45, 20%, 98%))'
-      }}
     >
-      {/* Background decoration */}
+      {/* Background Slideshow */}
+      <div className="absolute inset-0 z-0">
+        {images.map((img, index) => (
+          <motion.div
+            key={index}
+            className="absolute inset-0 w-full h-full"
+            initial={{ opacity: 0 }}
+            animate={{ 
+              opacity: index === currentImageIndex ? 0.4 : 0,
+              transition: { duration: 1.5 }
+            }}
+            style={{
+              backgroundImage: `url(${img})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              filter: 'grayscale(10%)'
+            }}
+          />
+        ))}
+      </div>
+      
+      {/* Background pattern overlay */}
       <div 
-        className="absolute inset-0 opacity-30"
+        className="absolute inset-0 z-0 opacity-20"
         style={{
           backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 30c0-16.569-13.431-30-30-30S-30 13.431-30 30s13.431 30 30 30 30-13.431 30-30z' fill='%2325a45f' fill-opacity='0.1'/%3E%3C/svg%3E\")"
         }}
       ></div>
       
       <motion.div 
-        className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
+        className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
