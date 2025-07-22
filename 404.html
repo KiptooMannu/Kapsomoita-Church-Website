@@ -1,13 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
+    <title>Redirecting...</title>
+
+    <!-- ✅ Fix: Viewport for mobile responsiveness -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kapsomoita Church</title>
-    <script type="module" crossorigin src="/Kapsomoita-Church-Website/assets/index-r6dJ9Qh3.js"></script>
-    <link rel="stylesheet" crossorigin href="/Kapsomoita-Church-Website/assets/index-XeJPrVyb.css">
+
+    <!-- ✅ Store the current path in sessionStorage -->
+    <script>
+      sessionStorage.redirect = location.pathname;
+    </script>
+
+    <!-- ✅ Redirect to root (/) where React Router takes over -->
+    <meta http-equiv="refresh" content="0; URL='/'" />
   </head>
   <body>
-    <div id="root"></div>
+    Redirecting to home page...
   </body>
 </html>
