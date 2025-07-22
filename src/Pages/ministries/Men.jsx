@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "../../Components/ui/button";
 import { Link as ScrollLink } from 'react-scroll';
-import menImage from '../../assets/men-ministry';
+import menImage from '../../assets/men-ministry.jpg';
 import event1 from '../../assets/events/men-retreat.jpg';
 import event2 from '../../assets/events/bible-study.jpg';
 import event3 from '../../assets/events/service-project.jpg';
