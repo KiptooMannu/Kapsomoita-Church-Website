@@ -1,12 +1,13 @@
 import { motion } from "framer-motion";
-import { Target, Star, Cross, Globe } from "lucide-react";
+import { Target, Star, Cross, Globe, Users, Heart, Church } from "lucide-react";
 
 const MissionVision = () => {
   const visionPoints = [
-    "Thriving churches nurturing spiritual growth",
-    "Families restored through biblical values",
-    "Youth empowered to fulfill their God-given purpose",
-    "Social justice and compassion in action"
+    "A thriving worship community rooted in Christ",
+    "Families strengthened and restored through faith",
+    "Youth and children raised as leaders for tomorrow",
+    "Compassionate service and outreach that transform lives",
+    "Church sanctuaries that inspire worship and fellowship"
   ];
 
   return (
@@ -42,7 +43,8 @@ const MissionVision = () => {
               </h2>
             </div>
             <p className="text-lg leading-relaxed mb-6" style={{ color: 'hsl(25, 15%, 45%)' }}>
-              The purpose of the Africa Gospel Church is to fulfill the Great Commandment and Great Commission of the Lord Jesus Christ according to the Great Plan.
+              To proclaim the Gospel of Jesus Christ, nurture disciples, and build a Christ-centered 
+              community that impacts Kapsomoita and beyond through worship, fellowship, and service.
             </p>
             <div className="flex items-center">
               <Cross className="w-5 h-5 mr-2" style={{ color: 'hsl(270, 50%, 40%)' }} />
@@ -75,8 +77,8 @@ const MissionVision = () => {
               </h2>
             </div>
             <p className="text-lg leading-relaxed mb-6" style={{ color: 'hsl(25, 15%, 45%)' }}>
-              The Whole Church taking the Whole Gospel to the Whole World.
-              (Swahili: KANISA LOTE, likieneza INJILI YOTE, ULIMWENGUNI KOTE)
+              A vibrant church transforming lives and communities through Christ —
+              growing from a prayer group to a sanctuary of hope and outreach.
             </p>
             <ul className="space-y-3">
               {visionPoints.map((item, index) => (

@@ -1,52 +1,52 @@
 import { motion } from "framer-motion";
-import { Heart, Users, Book, Globe, Target, Star, Cross, HandHeart, Handshake } from "lucide-react";
+import { Heart, Users, Book, Globe, Target, Star, Cross, HandHeart, Handshake, Church } from "lucide-react";
 
 const ChurchValues = () => {
   const values = [
     {
       icon: Cross,
-      title: "Christ-Centered",
-      description: "We keep Jesus at the center of all we do, seeking to glorify Him in our worship, relationships, and service."
+      title: "Faith",
+      description: "Rooted in Christ since our humble beginning under a tree, faith remains our foundation."
+    },
+    {
+      icon: Church,
+      title: "Worship",
+      description: "From our first sanctuary to our current center, we gather to glorify God in spirit and truth."
     },
     {
       icon: Book,
-      title: "Bible-Based",
-      description: "We are committed to the authority of Scripture as our guide for faith and practice."
-    },
-    {
-      icon: Heart,
-      title: "Love",
-      description: "We demonstrate Christ's love through compassion, forgiveness, and sacrificial service."
-    },
-    {
-      icon: Users,
-      title: "Community",
-      description: "We cultivate authentic relationships that foster spiritual growth and mutual support."
-    },
-    {
-      icon: Handshake,
-      title: "Unity",
-      description: "We celebrate diversity while maintaining the unity of the Spirit in the bond of peace."
-    },
-    {
-      icon: Globe,
-      title: "Mission",
-      description: "We actively participate in God's mission locally and globally through evangelism and discipleship."
-    },
-    {
-      icon: Target,
-      title: "Purpose",
-      description: "We live intentionally as God's people, using our gifts to build His kingdom."
-    },
-    {
-      icon: Star,
-      title: "Excellence",
-      description: "We offer God our best in worship, ministry, and stewardship of resources."
+      title: "Scripture",
+      description: "We rely on the Bible as God’s inspired Word to guide every step of our journey."
     },
     {
       icon: HandHeart,
       title: "Service",
-      description: "We follow Jesus' example of humble service to meet physical and spiritual needs."
+      description: "Like our 2010 outreach programs, we serve the community with compassion and love."
+    },
+    {
+      icon: Users,
+      title: "Community",
+      description: "We are a family of believers united in Christ, supporting one another in faith and life."
+    },
+    {
+      icon: Handshake,
+      title: "Unity",
+      description: "We celebrate diversity while remaining one body in Christ."
+    },
+    {
+      icon: Globe,
+      title: "Mission",
+      description: "We carry the Gospel beyond Kapsomoita, reaching out locally and globally."
+    },
+    {
+      icon: Star,
+      title: "Excellence",
+      description: "Our new sanctuary reflects our call to give God our best in worship and stewardship."
+    },
+    {
+      icon: Target,
+      title: "Purpose",
+      description: "We live intentionally, using our gifts to fulfill God’s calling and expand His kingdom."
     }
   ];
 
@@ -64,7 +64,7 @@ const ChurchValues = () => {
             Our Guiding Values
           </h2>
           <p className="text-xl max-w-3xl mx-auto" style={{ color: 'hsl(25, 15%, 45%)' }}>
-            The biblical principles that shape our identity and direct our ministry
+            Shaped by our history, these biblical values direct our ministry and mission today
           </p>
         </motion.div>
 

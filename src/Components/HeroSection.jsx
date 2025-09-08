@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 import { ArrowRight, MapPin, Clock, Heart } from "lucide-react";
 import { Link as ScrollLink } from "react-scroll";
 import InfoCard from "./hero/InfoCard";
-import heroBg from '../assets/agc.png';  // ✅ Local image import (place in src/assets/)
+import heroBg from '../assets/agc.png'; 
 
 
 
