@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "../../Components/ui/button";
 import { Link as ScrollLink } from 'react-scroll';
-import youthImage from '../../assets/youth-ministry.jpg';
+import youthImage from '../../../public/gallery/youth/youth3.jpg';
 import leader1 from '../../assets/leaders/youth-leader1.jpg';
 import leader2 from '../../assets/leaders/youth-leader2.jpg';
 import event1 from '../../assets/events/youth-camp.jpg';
@@ -133,6 +133,18 @@ const Youth = () => {
     }
   ];
 
+
+    // Function to scroll to contact form
+  const scrollToContact = () => {
+    const contactSection = document.getElementById('contact-form');
+    if (contactSection) {
+      contactSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen py-20 bg-gradient-to-b from-blue-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -156,11 +168,10 @@ const Youth = () => {
               <div className="flex flex-wrap gap-4">
                 <Button 
                   size="lg"
-                  className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg transition-all"
+                  className="bg-pink-600 hover:bg-pink-700 text-white shadow-lg transition-all"
+                  onClick={scrollToContact}
                 >
-                  <a href="mailto:youth@church.org">
-                    Join Our Youth
-                  </a>
+                  Join Our Youth Group
                 </Button>
                 <Button 
                   size="lg"

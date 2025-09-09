@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "../../Components/ui/button";
 import womenImage from '../../assets/women-ministry.jpg';
@@ -10,95 +11,83 @@ import event4 from '../../assets/events/conference.jpg';
 import { Link as ScrollLink } from 'react-scroll';
 
 const Women = () => {
-  const faqs = [
-    {
-      question: "When do the women meet for Bible study?",
-      answer: "We meet every Tuesday morning at 10:00 AM in the fellowship hall."
-    },
-    {
-      question: "Is childcare provided during meetings?",
-      answer: "Yes, we provide childcare for all our weekly gatherings."
-    },
-    {
-      question: "How can I join the prayer chain?",
-      answer: "Contact our Prayer Coordinator or attend our monthly prayer breakfast."
-    },
-    {
-      question: "Are there any costs for the annual retreat?",
-      answer: "We offer subsidized rates ($50) and scholarships are available."
+  // ✅ Add form state
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    age: "",
+    skills: "",
+    availability: [],
+    hearAboutUs: "",
+    reason: "",
+    contactMethod: "",
+  });
+
+  // ✅ Handle change for inputs, checkboxes, radios
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
+    if (type === "checkbox") {
+      setFormData((prev) => ({
+        ...prev,
+        availability: checked
+          ? [...prev.availability, value]
+          : prev.availability.filter((opt) => opt !== value),
+      }));
+    } else if (type === "radio") {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
+  };
+
+  // ✅ Handle submit
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form submitted:", formData);
+    alert("✅ Thank you for joining! We'll get back to you soon.");
+
+    // reset
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      age: "",
+      skills: "",
+      availability: [],
+      hearAboutUs: "",
+      reason: "",
+      contactMethod: "",
+    });
+  };
+
+  // --- Your faqs, leaders, events, etc. arrays remain the same ---
+  const faqs = [
+    { question: "When do the women meet for Bible study?", answer: "We meet every Tuesday morning at 10:00 AM in the fellowship hall." },
+    { question: "Is childcare provided during meetings?", answer: "Yes, we provide childcare for all our weekly gatherings." },
+    { question: "How can I join the prayer chain?", answer: "Contact our Prayer Coordinator or attend our monthly prayer breakfast." },
+    { question: "Are there any costs for the annual retreat?", answer: "We offer subsidized rates ($50) and scholarships are available." }
   ];
 
   const memories = [
-    {
-      title: "2023 Women's Conference",
-      date: "March 2023",
-      description: "Three days of worship and teaching with 120 women attending.",
-      image: event1
-    },
-    {
-      title: "Community Outreach",
-      date: "May 2023",
-      description: "Provided meals and supplies to single mothers in our community.",
-      image: event3
-    },
-    {
-      title: "Mother-Daughter Tea",
-      date: "July 2023",
-      description: "Special bonding time for mothers and daughters of all ages.",
-      image: event4
-    },
-    {
-      title: "Bible Study Launch",
-      date: "January 2024",
-      description: "Began our year-long study of the Book of Ruth.",
-      image: event2
-    }
+    { title: "2023 Women's Conference", date: "March 2023", description: "Three days of worship and teaching with 120 women attending.", image: event1 },
+    { title: "Community Outreach", date: "May 2023", description: "Provided meals and supplies to single mothers in our community.", image: event3 },
+    { title: "Mother-Daughter Tea", date: "July 2023", description: "Special bonding time for mothers and daughters of all ages.", image: event4 },
+    { title: "Bible Study Launch", date: "January 2024", description: "Began our year-long study of the Book of Ruth.", image: event2 }
   ];
 
   const upcomingEvents = [
-    {
-      title: "Women's Breakfast",
-      date: "June 10, 2024",
-      time: "9:00 AM",
-      location: "Church Fellowship Hall"
-    },
-    {
-      title: "Service Project: Orphanage Visit",
-      date: "June 20, 2024",
-      time: "8:30 AM",
-      location: "Hope Children's Home"
-    },
-    {
-      title: "Weekly Bible Study",
-      date: "Every Tuesday",
-      time: "10:00 AM",
-      location: "Room 105"
-    },
-    {
-      title: "Annual Women's Retreat",
-      date: "September 13-15, 2024",
-      time: "Friday 4:00 PM",
-      location: "Lakeside Retreat Center"
-    }
+    { title: "Women's Breakfast", date: "June 10, 2024", time: "9:00 AM", location: "Church Fellowship Hall" },
+    { title: "Service Project: Orphanage Visit", date: "June 20, 2024", time: "8:30 AM", location: "Hope Children's Home" },
+    { title: "Weekly Bible Study", date: "Every Tuesday", time: "10:00 AM", location: "Room 105" },
+    { title: "Annual Women's Retreat", date: "September 13-15, 2024", time: "Friday 4:00 PM", location: "Lakeside Retreat Center" }
   ];
 
   const activities = [
-    {
-      title: "Weekly Bible Study",
-      description: "In-depth study of God's Word with practical applications",
-      icon: "✝️"
-    },
-    {
-      title: "Prayer Ministry",
-      description: "Intercessory prayer for families and our community",
-      icon: "🙏"
-    },
-    {
-      title: "Mentorship Program",
-      description: "Older women mentoring younger women in faith and life",
-      icon: "👩‍👧‍👦"
-    }
+    { title: "Weekly Bible Study", description: "In-depth study of God's Word with practical applications", icon: "✝️" },
+    { title: "Prayer Ministry", description: "Intercessory prayer for families and our community", icon: "🙏" },
+    { title: "Mentorship Program", description: "Older women mentoring younger women in faith and life", icon: "👩‍👧‍👦" }
   ];
 
   const leaders = [
@@ -119,6 +108,18 @@ const Women = () => {
       image: leader2
     },
   ];
+
+
+
+    const scrollToContact = () => {
+    const contactSection = document.getElementById('contact-form');
+    if (contactSection) {
+      contactSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen py-20 bg-gradient-to-b from-pink-50 to-white">
@@ -141,13 +142,12 @@ const Women = () => {
                 Building godly women through fellowship, Bible study, and prayer to impact families and communities.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Button 
+             <Button 
                   size="lg"
-                  className="bg-pink-600 hover:bg-pink-700 text-white shadow-lg transition-all"
+                  className="bg-orange-600 hover:bg-orange-700 text-white shadow-lg transition-all"
+                  onClick={scrollToContact}
                 >
-                  <a href="mailto:women@church.org">
-                    Join Our Sisterhood
-                  </a>
+                  Join Our Women Ministry
                 </Button>
                 <Button 
                   size="lg"
@@ -161,11 +161,14 @@ const Women = () => {
                 <Button 
                   size="lg"
                   variant="ghost"
-                  className="text-gray-600 hover:bg-pink-50"
+                  className="text-gray-600 hover:bg-orange-50"
+                  onClick={() => {
+                    document.getElementById('memories')?.scrollIntoView({ 
+                      behavior: 'smooth' 
+                    });
+                  }}
                 >
-                  <ScrollLink to="memories" smooth={true} duration={500} offset={-80}>
-                    Our Memories
-                  </ScrollLink>
+                  Our Memories
                 </Button>
               </div>
             </motion.div>
@@ -409,139 +412,155 @@ const Women = () => {
           </div>
         </section>
 
-        {/* Contact Section */}
+        {/* 🔹 Contact Form */}
         <section id="contact-form" className="mb-20">
           <motion.div
-            className="bg-white p-8 md:p-12 rounded-xl shadow-md border border-gray-100 max-w-4xl mx-auto"
+            className="bg-white p-8 md:p-12 rounded-xl shadow-md border max-w-4xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <div className="text-center mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-800">
-                Get <span className="text-pink-600">Connected</span>
-              </h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
-                Ready to join our sisterhood? Have questions about our ministry? Reach out to us today.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-semibold mb-3 text-gray-800">Contact Information</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-start">
-                      <div className="bg-pink-100 p-2 rounded-lg mr-4">
-                        <svg className="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Email</p>
-                        <a href="mailto:women@church.org" className="text-pink-600 hover:underline">
-                          women@church.org
-                        </a>
-                      </div>
-                    </div>
-                    <div className="flex items-start">
-                      <div className="bg-pink-100 p-2 rounded-lg mr-4">
-                        <svg className="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Phone</p>
-                        <a href="tel:+254712345678" className="text-pink-600 hover:underline">
-                          +254 712 345 678
-                        </a>
-                      </div>
-                    </div>
-                    <div className="flex items-start">
-                      <div className="bg-pink-100 p-2 rounded-lg mr-4">
-                        <svg className="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Meeting Location</p>
-                        <p className="text-pink-600">Fellowship Hall, Main Church Campus</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold mb-3 text-gray-800">Regular Gatherings</h3>
-                  <ul className="space-y-3">
-                    <li className="flex items-center">
-                      <div className="bg-pink-100 text-pink-600 rounded-full w-6 h-6 flex items-center justify-center mr-3">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      </div>
-                      <span className="text-gray-700">Weekly Bible Study: Tuesdays 10AM</span>
-                    </li>
-                    <li className="flex items-center">
-                      <div className="bg-pink-100 text-pink-600 rounded-full w-6 h-6 flex items-center justify-center mr-3">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      </div>
-                      <span className="text-gray-700">Monthly Prayer Breakfast: 2nd Saturday 9AM</span>
-                    </li>
-                    <li className="flex items-center">
-                      <div className="bg-pink-100 text-pink-600 rounded-full w-6 h-6 flex items-center justify-center mr-3">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      </div>
-                      <span className="text-gray-700">Quarterly Retreats</span>
-                    </li>
-                  </ul>
-                </div>
+            <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">
+              Join Our <span className="text-pink-600">Sisterhood</span>
+            </h2>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Full Name + Email */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  placeholder="Full Name"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-500"
+                />
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  placeholder="Email"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-500"
+                />
               </div>
 
+              {/* Phone + Age */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  required
+                  placeholder="Phone Number"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-500"
+                />
+                <input
+                  type="number"
+                  name="age"
+                  value={formData.age}
+                  onChange={handleChange}
+                  placeholder="Age"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-500"
+                />
+              </div>
+
+              {/* Skills */}
+              <textarea
+                name="skills"
+                value={formData.skills}
+                onChange={handleChange}
+                rows={2}
+                placeholder="Your skills or interests"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-500"
+              />
+
+              {/* Availability */}
               <div>
-                <form className="space-y-4">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                    <input 
-                      type="text" 
-                      id="name" 
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
-                      placeholder="Your name"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input 
-                      type="email" 
-                      id="email" 
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
-                      placeholder="your.email@example.com"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">Message</label>
-                    <textarea 
-                      id="message" 
-                      rows={4}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
-                      placeholder="How can we help you?"
-                    ></textarea>
-                  </div>
-                  <Button 
-                    type="submit"
-                    className="w-full bg-pink-600 hover:bg-pink-700 text-white shadow-lg"
-                  >
-                    Send Message
-                  </Button>
-                </form>
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Availability *
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {["Weekdays", "Weekends", "Mornings", "Evenings"].map(
+                    (opt) => (
+                      <label key={opt} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          value={opt}
+                          checked={formData.availability.includes(opt)}
+                          onChange={handleChange}
+                          className="mr-2 text-pink-600"
+                        />
+                        {opt}
+                      </label>
+                    )
+                  )}
+                </div>
               </div>
-            </div>
+
+              {/* How did you hear */}
+              <select
+                name="hearAboutUs"
+                value={formData.hearAboutUs}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-500"
+              >
+                <option value="">How did you hear about us?</option>
+                <option value="church-service">Church Service</option>
+                <option value="friend">Friend/Family</option>
+                <option value="social-media">Social Media</option>
+                <option value="website">Church Website</option>
+                <option value="other">Other</option>
+              </select>
+
+              {/* Reason */}
+              <textarea
+                name="reason"
+                value={formData.reason}
+                onChange={handleChange}
+                rows={3}
+                required
+                placeholder="Why do you want to join?"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-500"
+              />
+
+              {/* Contact Method */}
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Preferred Contact *
+                </label>
+                <div className="space-y-2">
+                  {["Email", "Phone Call", "Text Message", "WhatsApp"].map(
+                    (opt) => (
+                      <label key={opt} className="flex items-center">
+                        <input
+                          type="radio"
+                          name="contactMethod"
+                          value={opt}
+                          checked={formData.contactMethod === opt}
+                          onChange={handleChange}
+                          required
+                          className="mr-2 text-pink-600"
+                        />
+                        {opt}
+                      </label>
+                    )
+                  )}
+                </div>
+              </div>
+
+              {/* Submit */}
+              <Button
+                type="submit"
+                className="w-full bg-pink-600 hover:bg-pink-700 text-white py-3 text-lg"
+              >
+                Submit Application
+              </Button>
+            </form>
           </motion.div>
         </section>
       </div>
@@ -550,3 +569,37 @@ const Women = () => {
 };
 
 export default Women;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -23,10 +23,21 @@ const Kids = () => {
     }
   ];
 
+  // Function to scroll to contact form
+  const scrollToContact = () => {
+    const contactSection = document.getElementById('contact-form');
+    if (contactSection) {
+      contactSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen py-20" style={{ backgroundColor: 'hsl(45, 20%, 98%)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Hero Section - Kept exactly the same */}
+        {/* Hero Section */}
         <section className="relative mb-20">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -52,14 +63,10 @@ const Kids = () => {
               <div className="flex gap-4">
                 <Button 
                   size="lg"
-                  style={{
-                    backgroundColor: 'hsl(25, 85%, 45%)',
-                    color: 'hsl(45, 20%, 98%)'
-                  }}
+                  className="bg-orange-600 hover:bg-orange-700 text-white shadow-lg transition-all"
+                  onClick={scrollToContact}
                 >
-                  <ScrollLink to="contact-form" smooth={true} duration={500} offset={-80}>
-                    Contact Leaders
-                  </ScrollLink>
+                  Join Our Kids Ministry
                 </Button>
                 <Button 
                   size="lg"
@@ -68,10 +75,13 @@ const Kids = () => {
                     borderColor: 'hsl(25, 85%, 45%)',
                     color: 'hsl(25, 85%, 45%)'
                   }}
+                  onClick={() => {
+                    document.getElementById('events')?.scrollIntoView({ 
+                      behavior: 'smooth' 
+                    });
+                  }}
                 >
-                  <ScrollLink to="events" smooth={true} duration={500} offset={-80}>
-                    Upcoming Events
-                  </ScrollLink>
+                  Upcoming Events
                 </Button>
               </div>
             </motion.div>
@@ -85,13 +95,13 @@ const Kids = () => {
                 src={kidsImage} 
                 alt="Kids Ministry" 
                 className="w-full h-auto object-cover"
-                loading="lazy" // Added lazy loading
+                loading="lazy"
               />
             </motion.div>
           </div>
         </section>
 
-        {/* Ministry Highlights - Kept exactly the same */}
+        {/* Ministry Highlights */}
         <section className="mb-20">
           <motion.h2 
             className="text-3xl font-bold mb-12 text-center"
@@ -124,40 +134,40 @@ const Kids = () => {
           </div>
         </section>
 
-  
-<section className="mb-20">
-  <motion.h2 
-    className="text-3xl font-bold mb-12 text-center"
-    style={{ color: 'hsl(25, 35%, 25%)' }}
-    initial={{ opacity: 0 }}
-    whileInView={{ opacity: 1 }}
-    transition={{ duration: 0.6 }}
-    viewport={{ once: true }}
-  >
-    Moments from Our Kids Ministry
-  </motion.h2>
-  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-    {[
-      { id: 1, img: kidsImage },
-      { id: 2, img: kidsImage },
-      { id: 3, img: kidsImage},
-      { id: 4, img: kidsImage }
-    ].map((image) => (
-      <motion.div
-        key={image.id}
-        className="overflow-hidden rounded-xl"
-        whileHover={{ scale: 1.05 }}
-      >
-        <img
-          src={image.img}
-          alt={`Kids event ${image.id}`}
-          className="w-full h-48 object-cover"
-          loading="lazy"
-        />
-      </motion.div>
-    ))}
-  </div>
-</section>
+        {/* Photo Gallery */}
+        <section className="mb-20">
+          <motion.h2 
+            className="text-3xl font-bold mb-12 text-center"
+            style={{ color: 'hsl(25, 35%, 25%)' }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            Moments from Our Kids Ministry
+          </motion.h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { id: 1, img: kidsImage },
+              { id: 2, img: kidsImage },
+              { id: 3, img: kidsImage},
+              { id: 4, img: kidsImage }
+            ].map((image) => (
+              <motion.div
+                key={image.id}
+                className="overflow-hidden rounded-xl"
+                whileHover={{ scale: 1.05 }}
+              >
+                <img
+                  src={image.img}
+                  alt={`Kids event ${image.id}`}
+                  className="w-full h-48 object-cover"
+                  loading="lazy"
+                />
+              </motion.div>
+            ))}
+          </div>
+        </section>
 
         {/* Enhanced Parent Resources Section with PDFs */}
         <section className="mb-20">
@@ -202,7 +212,7 @@ const Kids = () => {
           </div>
         </section>
 
-        {/* FAQ Section - Kept exactly the same */}
+        {/* FAQ Section */}
         <section className="mb-20">
           <motion.h2 
             className="text-3xl font-bold mb-12 text-center"
@@ -235,7 +245,7 @@ const Kids = () => {
           </div>
         </section>
 
-        {/* Programs Section - Kept exactly the same */}
+        {/* Programs Section */}
         <section className="mb-20">
           <motion.h2 
             className="text-3xl font-bold mb-12 text-center"
@@ -290,30 +300,80 @@ const Kids = () => {
           </div>
         </section>
 
-        {/* Contact Form - Kept exactly the same */}
+        {/* Enhanced Contact Form */}
         <section id="contact-form" className="mb-20">
           <motion.div
-            className="bg-white p-8 rounded-lg shadow-sm border border-gray-100 max-w-2xl mx-auto"
+            className="bg-white p-8 rounded-lg shadow-sm border border-gray-100 max-w-4xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
             <h2 className="text-2xl font-bold mb-6 text-center" style={{ color: 'hsl(25, 35%, 25%)' }}>
-              Contact Kids Ministry
+              Join Our Kids Ministry
             </h2>
-            <form className="space-y-4">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium mb-1" style={{ color: 'hsl(25, 35%, 25%)' }}>
-                  Parent's Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  style={{ borderColor: 'hsl(35, 20%, 88%)' }}
-                />
+            <p className="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+              Ready to get your child involved in our ministry? Fill out the form below and we'll get back to you soon.
+            </p>
+            
+            <form className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="parent-name" className="block text-sm font-medium mb-1" style={{ color: 'hsl(25, 35%, 25%)' }}>
+                    Parent's Name *
+                  </label>
+                  <input
+                    type="text"
+                    id="parent-name"
+                    required
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    style={{ borderColor: 'hsl(35, 20%, 88%)' }}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium mb-1" style={{ color: 'hsl(25, 35%, 25%)' }}>
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    required
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    style={{ borderColor: 'hsl(35, 20%, 88%)' }}
+                  />
+                </div>
               </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-medium mb-1" style={{ color: 'hsl(25, 35%, 25%)' }}>
+                    Phone Number *
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    required
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    style={{ borderColor: 'hsl(35, 20%, 88%)' }}
+                    placeholder="+254 700 000 000"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="child-age" className="block text-sm font-medium mb-1" style={{ color: 'hsl(25, 35%, 25%)' }}>
+                    Child's Age *
+                  </label>
+                  <input
+                    type="number"
+                    id="child-age"
+                    min="0"
+                    max="12"
+                    required
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    style={{ borderColor: 'hsl(35, 20%, 88%)' }}
+                  />
+                </div>
+              </div>
+
               <div>
                 <label htmlFor="child-name" className="block text-sm font-medium mb-1" style={{ color: 'hsl(25, 35%, 25%)' }}>
                   Child's Name (if applicable)
@@ -325,39 +385,116 @@ const Kids = () => {
                   style={{ borderColor: 'hsl(35, 20%, 88%)' }}
                 />
               </div>
+
               <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-1" style={{ color: 'hsl(25, 35%, 25%)' }}>
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  style={{ borderColor: 'hsl(35, 20%, 88%)' }}
-                />
-              </div>
-              <div>
-                <label htmlFor="message" className="block text-sm font-medium mb-1" style={{ color: 'hsl(25, 35%, 25%)' }}>
-                  Message
+                <label htmlFor="skills" className="block text-sm font-medium mb-1" style={{ color: 'hsl(25, 35%, 25%)' }}>
+                  Child's Interests or Special Talents
                 </label>
                 <textarea
-                  id="message"
-                  rows="4"
+                  id="skills"
+                  rows={2}
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                   style={{ borderColor: 'hsl(35, 20%, 88%)' }}
+                  placeholder="Arts, sports, music, etc."
+                ></textarea>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'hsl(25, 35%, 25%)' }}>
+                  Availability *
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {['Weekdays', 'Weekends', 'Mornings', 'Evenings'].map(option => (
+                    <label key={option} className="flex items-center">
+                      <input 
+                        type="checkbox" 
+                        className="rounded border-gray-300 text-orange-600 focus:ring-orange-500 mr-2" 
+                      />
+                      <span className="text-sm text-gray-700">{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="hear-about" className="block text-sm font-medium mb-1" style={{ color: 'hsl(25, 35%, 25%)' }}>
+                  How did you hear about us? *
+                </label>
+                <select 
+                  id="hear-about"
+                  required
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  style={{ borderColor: 'hsl(35, 20%, 88%)' }}
+                >
+                  <option value="">Select an option</option>
+                  <option value="church-service">Church Service</option>
+                  <option value="friend">Friend/Family</option>
+                  <option value="social-media">Social Media</option>
+                  <option value="website">Church Website</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="reason" className="block text-sm font-medium mb-1" style={{ color: 'hsl(25, 35%, 25%)' }}>
+                  Why do you want to join? *
+                </label>
+                <textarea
+                  id="reason"
+                  rows={3}
+                  required
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  style={{ borderColor: 'hsl(35, 20%, 88%)' }}
+                  placeholder="Tell us what interests you about our Kids Ministry"
+                ></textarea>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'hsl(25, 35%, 25%)' }}>
+                  Preferred Method of Contact *
+                </label>
+                <div className="space-y-2">
+                  {['Email', 'Phone Call', 'Text Message', 'WhatsApp'].map(option => (
+                    <label key={option} className="flex items-center">
+                      <input 
+                        type="radio" 
+                        name="contactMethod"
+                        value={option.toLowerCase()} 
+                        required
+                        className="text-orange-600 focus:ring-orange-500 mr-2" 
+                      />
+                      <span className="text-sm text-gray-700">{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="special-needs" className="block text-sm font-medium mb-1" style={{ color: 'hsl(25, 35%, 25%)' }}>
+                  Any special needs or allergies we should know about?
+                </label>
+                <textarea
+                  id="special-needs"
+                  rows={2}
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  style={{ borderColor: 'hsl(35, 20%, 88%)' }}
+                  placeholder="Please share any important information about your child"
                 ></textarea>
               </div>
               
               <Button 
                 type="submit"
-                className="w-full"
+                className="w-full py-3 text-lg"
                 style={{
                   backgroundColor: 'hsl(25, 85%, 45%)',
                   color: 'hsl(45, 20%, 98%)'
                 }}
               >
-                Send Message
+                Submit Registration
               </Button>
+              <p className="text-xs text-gray-500 text-center mt-2">
+                We'll contact you within 2-3 business days to welcome you to our Kids Ministry!
+              </p>
             </form>
           </motion.div>
         </section>
