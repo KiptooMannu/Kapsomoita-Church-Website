@@ -16,7 +16,8 @@ const ChurchStory = () => {
       year: "1995",
       event: "Church Founding",
       description: "Started as a small prayer group under a tree in Kapsomoita village",
-      image: "https://images.unsplash.com/photo-1518834107812-67b0b7a584bf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
+      image: "https://images.unsplash.com/photo-1483683804023-6ccdb62f86ef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
+      
     },
     {
       year: "2002",

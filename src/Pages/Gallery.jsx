@@ -1,157 +1,217 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Button } from '../Components/ui/button';
-import { ChevronLeft, ChevronRight, X, Download, Share2, Heart } from 'lucide-react';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Heart, Download, Share2, X } from "lucide-react";
 
-import worship1 from '../assets/gallery/worship1.jpg';
-import baptism1 from '../assets/gallery/baptism1.jpg';
-import christmas1 from '../assets/gallery/christmas1.jpg';
-import mission1 from '../assets/gallery/mission1.jpg';
-import youth1 from '../assets/gallery/youth1.jpg';
-import community1 from '../assets/gallery/community1.jpg';
-import easter1 from '../assets/gallery/easter1.jpg';
-import women1 from '../assets/gallery/women1.jpg';
+// ✅ Step 1: define how many images each category has
+const imageCounts = {
+  worship: 5,
+  events: 3,
+  missions: 2,
+  youth: 4,
+  community: 3,
+  ladies: 3,
+  men: 2,
+  children: 4,
+};
+
+// ✅ Step 2: auto-generate gallery images dynamically with BASE_URL
+const galleryImages = Object.entries(imageCounts).flatMap(([category, count]) =>
+  Array.from({ length: count }, (_, i) => ({
+    id: `${category}-${i + 1}`,
+    title: `${category.charAt(0).toUpperCase() + category.slice(1)} Photo ${i + 1}`,
+    date: new Date().toISOString().split("T")[0],
+    category,
+    image: `${import.meta.env.BASE_URL}gallery/${category}/${category}${i + 1}.jpg`,
+    description: `Captured moments from ${category}`,
+    photographer: "Church Media Team",
+    likes: Math.floor(Math.random() * 200),
+    isFeatured: i === 0,
+  }))
+);
+
+const categories = ["all", ...Object.keys(imageCounts)];
 
 const Gallery = () => {
-  const [activeCategory, setActiveCategory] = useState('all');
+  const [filter, setFilter] = useState("all");
   const [selectedImage, setSelectedImage] = useState(null);
-  const [isFullscreen, setIsFullscreen] = useState(false);
   const [favorites, setFavorites] = useState([]);
+  const [search, setSearch] = useState("");
 
-  const galleryCategories = [
-    { id: 'all', name: 'All Events' },
-    { id: 'worship', name: 'Worship Services' },
-    { id: 'events', name: 'Special Events' },
-    { id: 'missions', name: 'Missions & Outreach' },
-    { id: 'youth', name: 'Youth Activities' },
-    { id: 'community', name: 'Community Service' },
-  ];
+  // ✅ filter + search logic
+  const filteredImages = galleryImages.filter(
+    (img) =>
+      (filter === "all" || img.category === filter) &&
+      img.title.toLowerCase().includes(search.toLowerCase())
+  );
 
-  const galleryImages = [
-    { id: 1, title: 'Sunday Worship Service', date: '2023-11-12', category: 'worship', image: worship1, description: 'Our weekly Sunday morning worship gathering', photographer: 'John Mwangi', likes: 124, isFeatured: true },
-    { id: 2, title: 'Baptism Sunday', date: '2023-10-29', category: 'worship', image: baptism1, description: 'Celebrating new believers being baptized', photographer: 'Sarah Kamau', likes: 215, isFeatured: true },
-    { id: 3, title: 'Christmas Concert', date: '2022-12-18', category: 'events', image: christmas1, description: 'Annual Christmas celebration with choir performances', photographer: 'David Ochieng', likes: 342, isFeatured: true },
-    { id: 4, title: 'Mission Trip to Turkana', date: '2023-07-15', category: 'missions', image: mission1, description: 'Our team serving the community in Turkana', photographer: 'Grace Wanjiru', likes: 178, isFeatured: false },
-    { id: 5, title: 'Youth Camp', date: '2023-08-05', category: 'youth', image: youth1, description: 'Annual youth retreat in the mountains', photographer: 'Michael Ndungu', likes: 156, isFeatured: false },
-    { id: 6, title: 'Food Drive', date: '2023-09-10', category: 'community', image: community1, description: 'Distributing food to families in need', photographer: 'Esther Mumbi', likes: 203, isFeatured: true },
-    { id: 7, title: 'Easter Service', date: '2023-04-09', category: 'worship', image: easter1, description: "Celebrating Christ's resurrection", photographer: 'Peter Maina', likes: 189, isFeatured: false },
-    { id: 8, title: "Women's Conference", date: '2023-03-08', category: 'events', image: women1, description: 'Annual gathering for women of all ages', photographer: 'Faith Atieno', likes: 167, isFeatured: false },
-  ];
-
-  const filteredImages = activeCategory === 'all' ? galleryImages : galleryImages.filter(img => img.category === activeCategory);
-  const featuredImages = galleryImages.filter(img => img.isFeatured);
-
-  const formatDate = (dateString) => new Date(dateString).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
-
+  // ✅ toggle favorites
   const toggleFavorite = (id) => {
-    setFavorites(prev => prev.includes(id) ? prev.filter(fav => fav !== id) : [...prev, id]);
+    setFavorites((prev) =>
+      prev.includes(id) ? prev.filter((fid) => fid !== id) : [...prev, id]
+    );
   };
-
-  const navigateImage = (direction) => {
-    const currentIndex = filteredImages.findIndex(img => img.id === selectedImage.id);
-    const newIndex = direction === 'prev' ? (currentIndex === 0 ? filteredImages.length - 1 : currentIndex - 1) : (currentIndex === filteredImages.length - 1 ? 0 : currentIndex + 1);
-    setSelectedImage(filteredImages[newIndex]);
-  };
-
-  const downloadImage = async (image) => {
-    const response = await fetch(image.image);
-    const blob = await response.blob();
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `church-gallery-${image.title.toLowerCase().replace(/\s+/g, '-')}.jpg`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  };
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (!isFullscreen || !selectedImage) return;
-      if (e.key === 'Escape') setIsFullscreen(false);
-      else if (e.key === 'ArrowLeft') navigateImage('prev');
-      else if (e.key === 'ArrowRight') navigateImage('next');
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFullscreen, selectedImage]);
 
   return (
-    <section className="py-20 bg-gradient-to-b from-purple-50 to-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }} className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4 text-purple-800">Church <span className="text-purple-600">Gallery</span></h2>
-          <p className="text-lg text-purple-500 max-w-3xl mx-auto">Relive our special moments through photos of worship services, events, and community outreach</p>
-        </motion.div>
+    <section className="relative bg-gradient-to-b from-gray-900 via-black to-gray-900 py-20 overflow-hidden">
+      {/* floating lights */}
+      <motion.div
+        className="absolute top-20 left-10 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl"
+        animate={{ y: [0, -25, 0] }}
+        transition={{ repeat: Infinity, duration: 6 }}
+      />
+      <motion.div
+        className="absolute bottom-32 right-20 w-52 h-52 bg-indigo-500/20 rounded-full blur-3xl"
+        animate={{ y: [0, 30, 0] }}
+        transition={{ repeat: Infinity, duration: 8 }}
+      />
 
-        <div className="flex flex-wrap gap-2 justify-center mb-12">
-          {galleryCategories.map((cat) => (
-            <Button
-              key={cat.id}
-              variant={activeCategory === cat.id ? 'default' : 'outline'}
-              className={`${activeCategory === cat.id ? 'bg-purple-600 text-white' : 'text-purple-800 hover:bg-purple-50'}`}
-              onClick={() => setActiveCategory(cat.id)}
-            >
-              {cat.name}
-            </Button>
-          ))}
+      <div className="relative z-10 container mx-auto px-4">
+        {/* header */}
+        <motion.h2
+          className="text-4xl md:text-5xl font-extrabold text-center bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-14"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          Our Church Gallery
+        </motion.h2>
+
+        {/* search + filter */}
+        <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-4">
+          <input
+            type="text"
+            placeholder="Search photos..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-300 focus:outline-none w-full md:w-1/3 backdrop-blur-lg"
+          />
+          <div className="flex flex-wrap gap-2 justify-center">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setFilter(cat)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition backdrop-blur-md border ${
+                  filter === cat
+                    ? "bg-purple-600 text-white border-purple-400"
+                    : "bg-white/10 text-gray-300 border-gray-600 hover:bg-white/20"
+                }`}
+              >
+                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              </button>
+            ))}
+          </div>
         </div>
 
-        <motion.div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {/* grid */}
+        <motion.div
+          layout
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8"
+        >
           {filteredImages.map((img) => (
-            <motion.div key={img.id} whileHover={{ y: -5 }} transition={{ duration: 0.2 }} className="relative group overflow-hidden rounded-xl shadow-md">
-              <img src={img.image} alt={img.title} loading="lazy" className="w-full h-48 object-cover cursor-pointer transition-transform duration-500 group-hover:scale-105" onClick={() => { setSelectedImage(img); setIsFullscreen(true); }} />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-                <h4 className="text-white font-medium text-sm mb-1">{img.title}</h4>
-                <p className="text-purple-300 text-xs">{formatDate(img.date)}</p>
+            <motion.div
+              key={img.id}
+              layout
+              whileHover={{ scale: 1.05 }}
+              className="relative group cursor-pointer rounded-2xl overflow-hidden shadow-lg bg-white/5 backdrop-blur-md border border-white/10"
+              onClick={() => setSelectedImage(img)}
+            >
+              <img
+                src={img.image}
+                alt={img.title}
+                className="w-full h-64 object-cover group-hover:scale-110 transition duration-700 ease-out"
+              />
+              {/* overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition flex flex-col justify-end p-4">
+                <h3 className="text-lg font-semibold text-white">{img.title}</h3>
+                <div className="flex items-center gap-4 mt-2">
+                  <button
+                    className={`p-2 rounded-full ${
+                      favorites.includes(img.id) ? "bg-red-500" : "bg-white/20"
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFavorite(img.id);
+                    }}
+                  >
+                    <Heart
+                      className={`w-5 h-5 ${
+                        favorites.includes(img.id)
+                          ? "text-white"
+                          : "text-red-400"
+                      }`}
+                    />
+                  </button>
+                  <a
+                    href={img.image}
+                    download
+                    className="p-2 rounded-full bg-white/20 hover:bg-white/30"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Download className="w-5 h-5 text-white" />
+                  </a>
+                </div>
               </div>
-              <button onClick={(e) => { e.stopPropagation(); toggleFavorite(img.id); }} className={`absolute top-2 right-2 p-1 rounded-full ${favorites.includes(img.id) ? 'text-purple-500' : 'text-white/70 hover:text-white'}`}>
-                <Heart className={`w-4 h-4 ${favorites.includes(img.id) ? 'fill-current' : ''}`} />
-              </button>
             </motion.div>
           ))}
         </motion.div>
+      </div>
 
-        {isFullscreen && selectedImage && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4" onClick={() => setIsFullscreen(false)}>
-            <div className="relative max-w-6xl max-h-screen">
-              <button className="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/50 text-white" onClick={() => setIsFullscreen(false)}><X className="w-6 h-6" /></button>
-              <button className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-black/50 text-white" onClick={(e) => { e.stopPropagation(); navigateImage('prev'); }}><ChevronLeft className="w-6 h-6" /></button>
-              <button className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-black/50 text-white" onClick={(e) => { e.stopPropagation(); navigateImage('next'); }}><ChevronRight className="w-6 h-6" /></button>
-
-              <div className="flex flex-col md:flex-row gap-6 items-center">
-                <div className="flex-1 flex justify-center">
-                  <img src={selectedImage.image} alt={selectedImage.title} loading="lazy" className="max-h-[80vh] max-w-full object-contain rounded-lg" onClick={(e) => e.stopPropagation()} />
-                </div>
-
-                <div className="md:w-80 bg-gray-900/80 p-6 rounded-lg text-white">
-                  <h3 className="text-xl font-bold mb-2">{selectedImage.title}</h3>
-                  <p className="text-purple-400 text-sm mb-4">{formatDate(selectedImage.date)}</p>
-                  <p className="text-gray-300 text-sm mb-4">{selectedImage.description}</p>
-                  <p className="text-gray-400 text-xs mb-6">Photographer: {selectedImage.photographer}</p>
-                  <div className="flex items-center justify-between">
-                    <button className={`flex items-center gap-2 ${favorites.includes(selectedImage.id) ? 'text-purple-500' : 'text-gray-300 hover:text-white'}`} onClick={(e) => { e.stopPropagation(); toggleFavorite(selectedImage.id); }}>
-                      <Heart className={`w-5 h-5 ${favorites.includes(selectedImage.id) ? 'fill-current' : ''}`} />
-                      <span>{favorites.includes(selectedImage.id) ? 'Saved' : 'Save'}</span>
-                    </button>
-                    <div className="flex gap-4">
-                      <button className="text-gray-300 hover:text-white" onClick={(e) => { e.stopPropagation(); downloadImage(selectedImage); }}><Download className="w-5 h-5" /></button>
-                      <button className="text-gray-300 hover:text-white" onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(window.location.href); alert('Link copied to clipboard!'); }}><Share2 className="w-5 h-5" /></button>
-                    </div>
-                  </div>
-                </div>
+      {/* fullscreen viewer */}
+      {selectedImage && (
+        <motion.div
+          className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 backdrop-blur-lg"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <div className="relative bg-gray-900 rounded-2xl shadow-lg max-w-5xl w-full mx-4 overflow-hidden">
+            <button
+              className="absolute top-3 right-3 p-2 bg-black/60 text-white rounded-full hover:bg-black"
+              onClick={() => setSelectedImage(null)}
+            >
+              <X className="w-6 h-6" />
+            </button>
+            <img
+              src={selectedImage.image}
+              alt={selectedImage.title}
+              className="w-full h-[70vh] object-contain bg-black"
+            />
+            <div className="p-6 space-y-3 text-white">
+              <h3 className="text-2xl font-bold">{selectedImage.title}</h3>
+              <p className="text-gray-300">{selectedImage.description}</p>
+              <p className="text-sm text-gray-400">
+                Photographer: {selectedImage.photographer}
+              </p>
+              <div className="flex gap-4 pt-2">
+                <button
+                  className={`flex items-center gap-1 ${
+                    favorites.includes(selectedImage.id)
+                      ? "text-red-400"
+                      : "text-gray-300"
+                  }`}
+                  onClick={() => toggleFavorite(selectedImage.id)}
+                >
+                  <Heart className="w-5 h-5" />
+                  {favorites.includes(selectedImage.id)
+                    ? "Unfavorite"
+                    : "Favorite"}
+                </button>
+                <button
+                  className="flex items-center gap-1 text-gray-300"
+                  onClick={() =>
+                    navigator.share?.({
+                      title: selectedImage.title,
+                      text: selectedImage.description,
+                      url: window.location.href,
+                    })
+                  }
+                >
+                  <Share2 className="w-5 h-5" /> Share
+                </button>
               </div>
             </div>
-          </motion.div>
-        )}
-
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }} className="mt-16 text-center">
-          <h3 className="text-xl font-bold mb-4 text-purple-800">Have photos to share?</h3>
-          <p className="text-purple-500 mb-6 max-w-2xl mx-auto">We'd love to include your photos in our gallery! Share your moments from church events with us.</p>
-          <Button className="bg-purple-600 hover:bg-purple-700 text-white">Submit Your Photos</Button>
+          </div>
         </motion.div>
-      </div>
+      )}
     </section>
   );
 };
