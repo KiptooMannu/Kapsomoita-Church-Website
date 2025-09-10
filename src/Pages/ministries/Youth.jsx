@@ -8,6 +8,7 @@ import event1 from '../../assets/events/youth-camp.jpg';
 import event2 from '../../assets/events/bible-study.jpg';
 import event3 from '../../assets/events/service-project.jpg';
 import event4 from '../../assets/events/worship-night.jpg';
+import PersistentInfo from '../../Components/Footer';
 
 const Youth = () => {
   const faqs = [
@@ -133,8 +134,7 @@ const Youth = () => {
     }
   ];
 
-
-    // Function to scroll to contact form
+  // Function to scroll to contact form
   const scrollToContact = () => {
     const contactSection = document.getElementById('contact-form');
     if (contactSection) {
@@ -168,7 +168,7 @@ const Youth = () => {
               <div className="flex flex-wrap gap-4">
                 <Button 
                   size="lg"
-                  className="bg-pink-600 hover:bg-pink-700 text-white shadow-lg transition-all"
+                  className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg transition-all"
                   onClick={scrollToContact}
                 >
                   Join Our Youth Group
@@ -177,19 +177,25 @@ const Youth = () => {
                   size="lg"
                   variant="outline"
                   className="border-blue-600 text-blue-600 hover:bg-blue-50 shadow-sm"
+                  onClick={() => {
+                    document.getElementById('events')?.scrollIntoView({ 
+                      behavior: 'smooth' 
+                    });
+                  }}
                 >
-                  <ScrollLink to="events" smooth={true} duration={500} offset={-80}>
-                    Upcoming Events
-                  </ScrollLink>
+                  Upcoming Events
                 </Button>
                 <Button 
                   size="lg"
                   variant="ghost"
                   className="text-gray-600 hover:bg-blue-50"
+                  onClick={() => {
+                    document.getElementById('memories')?.scrollIntoView({ 
+                      behavior: 'smooth' 
+                    });
+                  }}
                 >
-                  <ScrollLink to="memories" smooth={true} duration={500} offset={-80}>
-                    Our Memories
-                  </ScrollLink>
+                  Our Memories
                 </Button>
               </div>
             </motion.div>
@@ -348,13 +354,6 @@ const Youth = () => {
                   </svg>
                   {event.location}
                 </p>
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  className="w-full mt-4 border-blue-500 text-blue-500 hover:bg-blue-50"
-                >
-                  Add to Calendar
-                </Button>
               </motion.div>
             ))}
           </div>
@@ -486,7 +485,7 @@ const Youth = () => {
                 Get <span className="text-blue-600">Connected</span>
               </h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
-                Ready to join our youth group? Have questions about our ministry? Reach out to us today.
+                Ready to join our youth group or have questions? Fill out the form below and we'll get back to you soon.
               </p>
             </div>
 
@@ -569,45 +568,138 @@ const Youth = () => {
 
               <div>
                 <form className="space-y-4">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                    <input 
-                      type="text" 
-                      id="name" 
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="Your name"
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+                      <input 
+                        type="text" 
+                        id="name" 
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Your full name"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address *</label>
+                      <input 
+                        type="email" 
+                        id="email" 
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="your.email@example.com"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input 
-                      type="email" 
-                      id="email" 
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="your.email@example.com"
-                    />
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label>
+                      <input 
+                        type="tel" 
+                        id="phone" 
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="+254 700 000 000"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-1">Age</label>
+                      <input 
+                        type="number" 
+                        id="age" 
+                        min="13"
+                        max="25"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Your age"
+                      />
+                    </div>
                   </div>
+
                   <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                    <label htmlFor="skills" className="block text-sm font-medium text-gray-700 mb-1">Skills or Interests</label>
                     <textarea 
-                      id="message" 
-                      rows={4}
+                      id="skills" 
+                      rows={2}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="How can we help you?"
+                      placeholder="What skills or interests would you like to share with the ministry?"
                     ></textarea>
                   </div>
-                  <Button 
-                    type="submit"
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
-                  >
-                    Send Message
-                  </Button>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Availability</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {['Weekdays', 'Weekends', 'Mornings', 'Evenings'].map(option => (
+                        <label key={option} className="flex items-center">
+                          <input 
+                            type="checkbox" 
+                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 mr-2" 
+                          />
+                          <span className="text-sm text-gray-700">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="hearAboutUs" className="block text-sm font-medium text-gray-700 mb-1">How did you hear about us?</label>
+                    <select 
+                      id="hearAboutUs"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="">Select an option</option>
+                      <option value="church-service">Church Service</option>
+                      <option value="friend">Friend/Family</option>
+                      <option value="social-media">Social Media</option>
+                      <option value="website">Church Website</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label htmlFor="reason" className="block text-sm font-medium text-gray-700 mb-1">Why do you want to join?</label>
+                    <textarea 
+                      id="reason" 
+                      rows={3}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Tell us what motivates you to join the Youth Ministry"
+                    ></textarea>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Preferred Method of Contact</label>
+                    <div className="space-y-2">
+                      {['Email', 'Phone Call', 'Text Message', 'WhatsApp'].map(option => (
+                        <label key={option} className="flex items-center">
+                          <input 
+                            type="radio" 
+                            name="contactMethod"
+                            value={option.toLowerCase()} 
+                            className="text-blue-600 focus:ring-blue-500 mr-2" 
+                          />
+                          <span className="text-sm text-gray-700">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="pt-4">
+                    <Button 
+                      type="submit"
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg py-3 text-lg"
+                    >
+                      Submit Your Application
+                    </Button>
+                    <p className="text-xs text-gray-500 mt-2 text-center">
+                      We'll get back to you within 2-3 business days
+                    </p>
+                  </div>
                 </form>
               </div>
             </div>
           </motion.div>
         </section>
       </div>
+      <PersistentInfo />
     </div>
   );
 };

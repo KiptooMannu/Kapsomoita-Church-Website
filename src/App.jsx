@@ -1,25 +1,26 @@
-import React from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
-import Navbar from './Components/Navbar';
-import Footer from './Components/Footer';
-import ScrollToTop from './Components/ScrollToTop';
-import Give from './Pages/Give';
+import React from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
+import Navbar from "./Components/Navbar";
+import Footer from "./Components/Footer";
+import ScrollToTop from "./Components/ScrollToTop";
+import Give from "./Pages/Give";
+import Serve from "./Pages/Serve";
+import ServeForm from "./Pages/ServeForm";
+import HeroSection from "./Components/HeroSection";
+import About from "./Pages/About";
+import Youth from "./Pages/ministries/Youth";
+import Women from "./Pages/ministries/Women";
+import Men from "./Pages/ministries/Men";
+import Kids from "./Pages/ministries/Kids";
+import Sermons from "./Pages/Sermons";
+import Gallery from "./Pages/Gallery";
+import Contact from "./Pages/Contacts";
 
-import HeroSection from './Components/HeroSection';
-import About from './Pages/About';
-import Youth from './Pages/ministries/Youth';
-import Women from './Pages/ministries/Women';
-import Men from './Pages/ministries/Men';
-import Kids from './Pages/ministries/Kids';
-import Sermons from './Pages/Sermons';
-import Gallery from './Pages/Gallery';
-import Contact from './Pages/Contacts';
-
-import Evangelizing from './Pages/strategies/Evangelizing';
-import Establishing from './Pages/strategies/Establishing';
-import Edifying from './Pages/strategies/Edifying';
-import Equipping from './Pages/strategies/Equipping';
-import Compassion from './Pages/strategies/Compassion';
+import Evangelizing from "./Pages/strategies/Evangelizing";
+import Establishing from "./Pages/strategies/Establishing";
+import Edifying from "./Pages/strategies/Edifying";
+import Equipping from "./Pages/strategies/Equipping";
+import Compassion from "./Pages/strategies/Compassion";
 
 function App() {
   const location = useLocation();
@@ -30,7 +31,9 @@ function App() {
       <Navbar />
 
       <main className="flex-grow">
-        <Routes>
+        {/* ✅ Force re-render when route changes */}
+        <Routes location={location} key={location.pathname}>
+          {/* Homepage */}
           <Route
             path="/"
             element={
@@ -51,12 +54,20 @@ function App() {
                   <Gallery asHomeSection={true} />
                 </section>
 
+                {/* Serve section */}
+                <section id="serve" className="scroll-mt-20">
+                  <Serve />
+                </section>
+
                 <section id="contact" className="scroll-mt-20">
                   <Contact asHomeSection={true} />
                 </section>
               </>
             }
           />
+
+          {/* ✅ Serve Form page */}
+          <Route path="/serve" element={<ServeForm />} />
 
           {/* Ministry Pages */}
           <Route path="/ministries/youth" element={<Youth />} />
@@ -77,7 +88,7 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/give" element={<Give />} />
 
-          {/* Fallback route — render full homepage if unmatched */}
+          {/* Fallback → homepage */}
           <Route
             path="*"
             element={
@@ -96,6 +107,10 @@ function App() {
 
                 <section id="gallery" className="scroll-mt-20">
                   <Gallery asHomeSection={true} />
+                </section>
+
+                <section id="serve" className="scroll-mt-20">
+                  <Serve />
                 </section>
 
                 <section id="contact" className="scroll-mt-20">
