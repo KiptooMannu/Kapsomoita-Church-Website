@@ -1,16 +1,11 @@
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { Button } from "./ui/button";
 import { ArrowRight, MapPin, Clock, Heart, Cross, Book, ChurchIcon } from "lucide-react";
 import { Link as ScrollLink } from "react-scroll";
 import InfoCard from "./hero/InfoCard";
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 const HeroSection = () => {
-  const containerRef = useRef(null);
-  const { scrollY } = useScroll();
-  const y = useTransform(scrollY, [0, 500], [0, 100]);
-  const opacity = useTransform(scrollY, [0, 300], [1, 0]);
-  
   const [currentVerse, setCurrentVerse] = useState(0);
   
   // Bible verses to cycle through
@@ -47,31 +42,26 @@ const HeroSection = () => {
   const primaryPurple = "hsl(270, 50%, 40%)";
   const accentPurple = "hsl(280, 60%, 50%)";
   const darkText = "hsl(270, 30%, 15%)";
-  const mediumText = "hsl(270, 20%, 30%)";
 
   return (
     <section
       id="home"
-      ref={containerRef}
       className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
     >
-      {/* Background image with parallax effect */}
-      <motion.div 
-        className="absolute inset-0"
-        style={{ y }}
-      >
+      {/* Background image without parallax */}
+      <div className="absolute inset-0">
         <img
           src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJsUBWBAfnUdIZ_Swif8RvZ2ENyNVNVfPYZw&s"
           alt="Church Background"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-center scale-110"
         />
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/60"></div>
-      </motion.div>
+      </div>
 
       {/* Animated floating elements */}
       <motion.div
-        className="absolute top-1/4 left-1/4 w-16 h-16 rounded-full bg-purple-200 opacity-40"
+        className="absolute top-1/4 left-1/4 w-16 h-16 rounded-full bg-purple-200 opacity-40 hidden sm:block"
         animate={{ 
           y: [0, -20, 0],
           x: [0, 15, 0],
@@ -80,7 +70,7 @@ const HeroSection = () => {
         transition={{ duration: 8, repeat: Infinity }}
       />
       <motion.div
-        className="absolute bottom-1/3 right-1/4 w-20 h-20 rounded-full bg-purple-300 opacity-30"
+        className="absolute bottom-1/3 right-1/4 w-20 h-20 rounded-full bg-purple-300 opacity-30 hidden md:block"
         animate={{ 
           y: [0, 30, 0],
           x: [0, -15, 0],
@@ -89,7 +79,7 @@ const HeroSection = () => {
         transition={{ duration: 10, repeat: Infinity, delay: 1 }}
       />
       <motion.div
-        className="absolute top-1/3 right-1/3 w-12 h-12"
+        className="absolute top-1/3 right-1/3 w-12 h-12 hidden lg:block"
         animate={{ 
           y: [0, -15, 0],
           rotate: [0, 10, 0],
@@ -99,7 +89,7 @@ const HeroSection = () => {
         <Cross className="w-full h-full text-purple-200 opacity-60" />
       </motion.div>
       <motion.div
-        className="absolute bottom-1/4 left-1/3 w-10 h-10"
+        className="absolute bottom-1/4 left-1/3 w-10 h-10 hidden md:block"
         animate={{ 
           y: [0, 20, 0],
           rotate: [0, -15, 0],
@@ -111,15 +101,15 @@ const HeroSection = () => {
 
       {/* Bible verse carousel */}
       <motion.div 
-        className="absolute top-6 left-0 right-0 mx-auto w-full max-w-2xl px-4 z-20"
+        className="absolute top-4 md:top-6 left-0 right-0 mx-auto w-full max-w-2xl px-4 z-20"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1 }}
       >
-        <div className="bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg">
+        <div className="bg-white/90 backdrop-blur-sm rounded-lg p-3 md:p-4 shadow-lg">
           <motion.p 
             key={currentVerse}
-            className="text-center font-medium text-purple-900"
+            className="text-center font-medium text-purple-900 text-sm md:text-base"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -135,23 +125,22 @@ const HeroSection = () => {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        style={{ opacity }}
       >
         {/* Church logo/icon */}
         <motion.div
-          className="mb-8"
+          className="mb-6 md:mb-8"
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ duration: 0.8, type: "spring" }}
         >
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm border border-white/30">
-            <ChurchIcon className="w-12 h-12 text-white" />
+          <div className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full bg-white/20 backdrop-blur-sm border border-white/30">
+            <ChurchIcon className="w-10 h-10 md:w-12 md:h-12 text-white" />
           </div>
         </motion.div>
 
         {/* Main heading */}
         <motion.h1
-          className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 text-white drop-shadow-lg"
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-4 md:mb-6 text-white drop-shadow-lg"
           variants={itemVariants}
         >
           Welcome to{" "}
@@ -168,14 +157,14 @@ const HeroSection = () => {
         </motion.h1>
 
         <motion.h2
-          className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-6 text-white"
+          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold mb-4 md:mb-6 text-white"
           variants={itemVariants}
         >
           Africa Gospel Church
         </motion.h2>
 
         <motion.p
-          className="text-xl md:text-2xl max-w-3xl mx-auto mb-10 leading-relaxed text-white drop-shadow-md"
+          className="text-lg sm:text-xl md:text-2xl max-w-2xl md:max-w-3xl mx-auto mb-8 md:mb-10 leading-relaxed text-white drop-shadow-md px-2"
           variants={itemVariants}
         >
           Come as you are, leave transformed. Join our community of faith, love,
@@ -185,24 +174,24 @@ const HeroSection = () => {
 
         {/* Live service indicator */}
         <motion.div 
-          className="inline-flex items-center bg-red-600/90 text-white px-4 py-2 rounded-full mb-8"
+          className="inline-flex items-center bg-red-600/90 text-white px-3 py-1 md:px-4 md:py-2 rounded-full mb-6 md:mb-8 text-sm md:text-base"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2 }}
         >
-          <div className="w-3 h-3 bg-white rounded-full mr-2 animate-pulse"></div>
+          <div className="w-2 h-2 md:w-3 md:h-3 bg-white rounded-full mr-2 animate-pulse"></div>
           <span className="font-medium">Live Now: Sunday Service</span>
         </motion.div>
 
         {/* Action buttons */}
         <motion.div
-          className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16"
+          className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-12 md:mb-16 px-2"
           variants={itemVariants}
         >
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button
               size="lg"
-              className="min-w-56 flex items-center rounded-2xl group"
+              className="w-full sm:min-w-48 md:min-w-56 flex items-center rounded-xl md:rounded-2xl group text-sm md:text-base"
               style={{
                 backgroundColor: "white",
                 color: primaryPurple,
@@ -216,14 +205,14 @@ const HeroSection = () => {
                 offset={-80}
                 className="flex items-center cursor-pointer"
               >
-                Learn About Us <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                Learn About Us <ArrowRight className="ml-2 w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
               </ScrollLink>
             </Button>
           </motion.div>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button
               size="lg"
-              className="min-w-56 flex items-center rounded-2xl group"
+              className="w-full sm:min-w-48 md:min-w-56 flex items-center rounded-xl md:rounded-2xl group text-sm md:text-base"
               style={{
                 background: `linear-gradient(135deg, ${accentPurple}, hsl(280, 70%, 60%))`,
                 color: "white",
@@ -238,16 +227,16 @@ const HeroSection = () => {
                 offset={-80}
                 className="flex items-center cursor-pointer"
               >
-                <Heart className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />
+                <Heart className="mr-2 w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform" />
                 Give & Support
               </ScrollLink>
             </Button>
           </motion.div>
         </motion.div>
 
-        {/* Quick info cards */}
+        {/* Quick info cards - Now always visible */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto mb-20"
+          className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-3xl mx-auto mb-16 md:mb-20 px-2"
           variants={itemVariants}
         >
           <motion.div whileHover={{ y: -5 }}>
@@ -278,28 +267,36 @@ const HeroSection = () => {
 
         {/* Scroll indicator */}
         <motion.div 
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+          className="absolute bottom-6 md:bottom-8 left-1/2 transform -translate-x-1/2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5 }}
         >
-          <div className="flex flex-col items-center text-white">
-            <span className="text-sm mb-2">Scroll to explore</span>
-            <motion.div
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-            >
-              <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center">
-                <motion.div
-                  className="w-1 h-3 bg-white rounded-full mt-2"
-                  animate={{ opacity: [0, 1, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                />
-              </div>
-            </motion.div>
-          </div>
+   
         </motion.div>
       </motion.div>
+
+      {/* Media queries as style tag for additional control */}
+      <style jsx>{`
+        @media (max-width: 640px) {
+          .hero-content {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+          }
+        }
+        
+        @media (min-width: 1280px) {
+          .hero-bg img {
+            object-position: center 25%;
+          }
+        }
+        
+        @media (min-width: 768px) and (max-width: 1023px) {
+          .hero-bg img {
+            object-position: center 30%;
+          }
+        }
+      `}</style>
     </section>
   );
 };
