@@ -28,7 +28,7 @@ const ServeForm = () => {
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
               Fill out the form below and let us know how you'd like to serve at
-              Karen AGC. There's a place for you!
+              Kapsomoita AGC. There's a place for you!
             </p>
           </div>
 
