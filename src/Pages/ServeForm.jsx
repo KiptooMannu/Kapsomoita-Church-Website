@@ -233,7 +233,7 @@ const ServeForm = () => {
                 required
               />
               <label htmlFor="consent" className="text-sm text-gray-600">
-                I consent to have Karen AGC store my submitted information so they
+                I consent to have Kapsomoita AGC store my submitted information so they
                 can respond to my inquiry.
               </label>
             </div>

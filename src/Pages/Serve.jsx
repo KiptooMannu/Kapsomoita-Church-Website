@@ -23,7 +23,7 @@ const Serve = () => {
           whileInView={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.6 }}
         >
-          At Karen Africa Gospel Church, everyone has a vital role. Whether it's
+          At <Kapsomoita></Kapsomoita> Africa Gospel Church, everyone has a vital role. Whether it's
           the{" "}
           <span className="font-semibold">
             Worship Team, Children’s Ministry, Ushering, Youth, Men’s,
