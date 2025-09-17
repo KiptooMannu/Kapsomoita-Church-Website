@@ -538,7 +538,7 @@ const Kids = () => {
           </motion.div>
         </section>
       </div>
-      <PersistentInfo />
+      {/* <PersistentInfo /> */}
     </div>
   );
 };

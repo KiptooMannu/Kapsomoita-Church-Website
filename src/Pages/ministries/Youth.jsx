@@ -699,7 +699,7 @@ const Youth = () => {
           </motion.div>
         </section>
       </div>
-      <PersistentInfo />
+      {/* <PersistentInfo /> */}
     </div>
   );
 };
