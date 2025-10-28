@@ -11,8 +11,6 @@
     "preview": "vite preview",
     "deploy": "gh-pages -d dist",
     "predeploy": "vite build && copy dist\\index.html dist\\404.html"
-
-    
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.3",
@@ -24,7 +22,8 @@
     "react-dom": "^19.1.0",
     "react-player": "^3.2.0",
     "react-router-dom": "^7.6.3",
-    "react-scroll": "^1.9.3"
+    "react-scroll": "^1.9.3",
+    "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",
