@@ -1,14 +1,19 @@
-// Contact.jsx
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Clock } from 'lucide-react';
 
-const Contact = () => {
+// ✅ Shared color scheme
+const primaryPurple = "hsl(270, 50%, 40%)";
+const accentPurple = "hsl(280, 60%, 50%)";
+const darkText = "hsl(0, 0%, 15%)";
+const mediumText = "hsl(0, 0%, 30%)";
+
+const Contact = ({ asHomeSection = false }) => {
   const contactInfo = [
     {
       icon: <Mail className="w-5 h-5" />,
       title: "Email Us",
-      value: "info@churchdomain.com",
-      href: "mailto:info@churchdomain.com",
+      value: "info@kapsomoitagospel.org",
+      href: "mailto:info@kapsomoitagospel.org",
       description: "We'll respond within 24 hours"
     },
     {
@@ -21,8 +26,8 @@ const Contact = () => {
     {
       icon: <MapPin className="w-5 h-5" />,
       title: "Visit Us",
-      value: "123 Chebole, Bomet",
-      href: "https://maps.google.com?q=123+Faith+Avenue,+Bomet",
+      value: "Kapsomoita, Bomet County",
+      href: "https://maps.google.com?q=Kapsomoita+Bomet",
       description: "Get directions to our location"
     },
     {
@@ -35,26 +40,50 @@ const Contact = () => {
   ];
 
   return (
-    <section id="contact" className="py-20 bg-gradient-to-b from-purple-50 to-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section 
+      id="contact" 
+      className={`relative bg-white ${asHomeSection ? 'py-12' : 'py-20'}`}
+    >
+      {/* Animated background elements - only for standalone page */}
+      {!asHomeSection && (
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-20 right-10 w-64 h-64 rounded-full opacity-5" style={{ backgroundColor: primaryPurple }}></div>
+          <div className="absolute bottom-20 left-10 w-48 h-48 rounded-full opacity-5" style={{ backgroundColor: accentPurple }}></div>
+        </div>
+      )}
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-12"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
-            Get In <span className="text-purple-600">Touch</span>
-          </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            We'd love to hear from you. Reach out through any of these channels.
-          </p>
+          {asHomeSection ? (
+            <>
+              <h2 className="text-3xl font-bold mb-3 text-gray-800">
+                Contact <span style={{ color: primaryPurple }}>Us</span>
+              </h2>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                Reach out to us for any inquiries or visit our services
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-800">
+                Get In <span style={{ color: primaryPurple }}>Touch</span>
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                We'd love to hear from you. Reach out through any of these channels.
+              </p>
+            </>
+          )}
         </motion.div>
 
         {/* Contact Info Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {contactInfo.map((item, index) => (
             <motion.div
               key={index}
@@ -62,18 +91,28 @@ const Contact = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6 border border-purple-100"
+              className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6 border border-gray-100"
             >
               <div className="flex items-center mb-4">
-                <div className="p-2 rounded-full bg-purple-100 text-purple-600 mr-4">
+                <div 
+                  className="p-2 rounded-full mr-4"
+                  style={{ 
+                    backgroundColor: `${primaryPurple}15`,
+                    color: primaryPurple
+                  }}
+                >
                   {item.icon}
                 </div>
                 <h3 className="text-lg font-semibold text-gray-800">{item.title}</h3>
               </div>
 
               {item.href !== "#" ? (
-                <a href={item.href} className="block group">
-                  <p className="text-purple-600 font-medium group-hover:text-purple-700 transition-colors mb-2">
+                <a 
+                  href={item.href} 
+                  className="block group"
+                  style={{ color: primaryPurple }}
+                >
+                  <p className="font-medium group-hover:underline transition-colors mb-2">
                     {item.value}
                   </p>
                 </a>
@@ -91,7 +130,7 @@ const Contact = () => {
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="mt-16 rounded-xl overflow-hidden shadow-lg border border-purple-200"
+          className="mb-12 rounded-xl overflow-hidden shadow-sm border border-gray-100"
         >
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.808156238038!2d36.82154831533049!3d-1.2923595359796903!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f10d664f5f5e7%3A0x4e35e6a5e6a5e6a5!2sNairobi!5e0!3m2!1sen!2ske!4v1620000000000!5m2!1sen!2ske"
@@ -111,27 +150,131 @@ const Contact = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="mt-16 bg-purple-50 rounded-xl p-8 text-center"
+          className="bg-gray-50 rounded-xl p-6 md:p-8"
         >
-          <h3 className="text-xl font-bold mb-4 text-gray-800">Weekly Service Schedule</h3>
+          <h3 className="text-2xl font-bold mb-6 text-gray-800 text-center">Weekly Service Schedule</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <div className="bg-white p-4 rounded-lg shadow-sm">
-              <h4 className="font-semibold text-purple-600 mb-2">Sunday</h4>
-              <p className="text-gray-700">Morning Service: 8:00am</p>
-              <p className="text-gray-700">Main Service: 10:30am</p>
+            <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+              <h4 className="font-semibold mb-3 text-lg" style={{ color: primaryPurple }}>Sunday</h4>
+              <div className="space-y-2">
+                <p className="text-gray-700 flex justify-between">
+                  <span>Morning Service:</span>
+                  <span className="font-medium">8:00am</span>
+                </p>
+                <p className="text-gray-700 flex justify-between">
+                  <span>Main Service:</span>
+                  <span className="font-medium">10:30am</span>
+                </p>
+                <p className="text-gray-700 flex justify-between">
+                  <span>Sunday School:</span>
+                  <span className="font-medium">9:00am</span>
+                </p>
+              </div>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow-sm">
-              <h4 className="font-semibold text-purple-600 mb-2">Wednesday</h4>
-              <p className="text-gray-700">Bible Study: 5:30pm</p>
-              <p className="text-gray-700">Prayer Meeting: 6:30pm</p>
+            <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+              <h4 className="font-semibold mb-3 text-lg" style={{ color: primaryPurple }}>Wednesday</h4>
+              <div className="space-y-2">
+                <p className="text-gray-700 flex justify-between">
+                  <span>Bible Study:</span>
+                  <span className="font-medium">5:30pm</span>
+                </p>
+                <p className="text-gray-700 flex justify-between">
+                  <span>Prayer Meeting:</span>
+                  <span className="font-medium">6:30pm</span>
+                </p>
+                <p className="text-gray-700 flex justify-between">
+                  <span>Choir Practice:</span>
+                  <span className="font-medium">7:30pm</span>
+                </p>
+              </div>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow-sm">
-              <h4 className="font-semibold text-purple-600 mb-2">Friday</h4>
-              <p className="text-gray-700">Youth Service: 4:00pm</p>
-              <p className="text-gray-700">Choir Practice: 6:00pm</p>
+            <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+              <h4 className="font-semibold mb-3 text-lg" style={{ color: primaryPurple }}>Friday</h4>
+              <div className="space-y-2">
+                <p className="text-gray-700 flex justify-between">
+                  <span>Youth Service:</span>
+                  <span className="font-medium">4:00pm</span>
+                </p>
+                <p className="text-gray-700 flex justify-between">
+                  <span>Ladies Fellowship:</span>
+                  <span className="font-medium">6:00pm</span>
+                </p>
+                <p className="text-gray-700 flex justify-between">
+                  <span>Men's Meeting:</span>
+                  <span className="font-medium">7:00pm</span>
+                </p>
+              </div>
             </div>
           </div>
+
+          {/* Special Notice */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            viewport={{ once: true }}
+            className="mt-8 pt-6 border-t border-gray-200 text-center"
+          >
+            <p className="text-gray-600">
+              <span className="font-medium" style={{ color: primaryPurple }}>Note:</span> All are welcome to join our services. 
+              Children's programs available during all Sunday services.
+            </p>
+          </motion.div>
         </motion.div>
+
+        {/* Quick Contact Form - Optional */}
+        {!asHomeSection && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="mt-12 bg-white rounded-xl p-8 shadow-sm border border-gray-100"
+          >
+            <h3 className="text-2xl font-bold mb-6 text-gray-800 text-center">Send Us a Message</h3>
+            <form className="max-w-2xl mx-auto space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-gray-700 mb-2" htmlFor="name">Your Name</label>
+                  <input
+                    type="text"
+                    id="name"
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:border-transparent"
+                    style={{ focusRingColor: primaryPurple }}
+                    placeholder="John Doe"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-700 mb-2" htmlFor="email">Email Address</label>
+                  <input
+                    type="email"
+                    id="email"
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:border-transparent"
+                    style={{ focusRingColor: primaryPurple }}
+                    placeholder="john@example.com"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-gray-700 mb-2" htmlFor="message">Message</label>
+                <textarea
+                  id="message"
+                  rows="4"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:border-transparent"
+                  style={{ focusRingColor: primaryPurple }}
+                  placeholder="Your message here..."
+                ></textarea>
+              </div>
+              <button
+                type="submit"
+                className="w-full md:w-auto px-8 py-3 rounded-lg font-medium text-white hover:opacity-90 transition-opacity"
+                style={{ backgroundColor: primaryPurple }}
+              >
+                Send Message
+              </button>
+            </form>
+          </motion.div>
+        )}
       </div>
     </section>
   );

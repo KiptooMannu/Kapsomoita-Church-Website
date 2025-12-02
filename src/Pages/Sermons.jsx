@@ -11,6 +11,12 @@ const Sermons = () => {
   const [viewMode, setViewMode] = useState('video'); // 'video' or 'audio'
   const [isPlayingVideo, setIsPlayingVideo] = useState(false);
 
+  // ✅ Shared church color scheme
+  const primaryPurple = "hsl(270, 50%, 40%)";
+  const darkText = "hsl(0, 0%, 15%)";
+  const mediumText = "hsl(0, 0%, 30%)";
+  const lightGray = "hsl(0, 0%, 93%)";
+
   // Sample sermon data with real YouTube gospel preaching links
   const sermonSeries = [
     'All',
@@ -159,27 +165,27 @@ const Sermons = () => {
   }, []);
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'hsl(45, 20%, 98%)' }}>
+    <div className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: 'hsl(25, 35%, 25%)' }}>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-800">
             Sermon Library
           </h1>
-          <p className="text-xl max-w-2xl mx-auto" style={{ color: 'hsl(25, 15%, 45%)' }}>
+          <p className="text-xl max-w-2xl mx-auto text-gray-600">
             Grow in faith through biblical teaching from renowned preachers
           </p>
         </div>
 
         {/* Media Player */}
         {activeSermon && (
-          <div id="media-player" className="mb-12 rounded-xl overflow-hidden shadow-lg">
-            <div className="flex border-b" style={{ borderColor: 'hsl(35, 20%, 88%)' }}>
+          <div id="media-player" className="mb-12 rounded-xl overflow-hidden shadow-lg border border-gray-100 bg-white">
+            <div className="flex border-b border-gray-100">
               <button
                 className={`px-6 py-3 font-medium ${viewMode === 'video' ? 'border-b-2' : ''}`}
                 style={{ 
-                  borderColor: viewMode === 'video' ? 'hsl(25, 85%, 45%)' : 'transparent',
-                  color: viewMode === 'video' ? 'hsl(25, 85%, 45%)' : 'hsl(25, 15%, 45%)'
+                  borderColor: viewMode === 'video' ? primaryPurple : 'transparent',
+                  color: viewMode === 'video' ? primaryPurple : 'hsl(0, 0%, 45%)'
                 }}
                 onClick={() => setViewMode('video')}
               >
@@ -188,8 +194,8 @@ const Sermons = () => {
               <button
                 className={`px-6 py-3 font-medium ${viewMode === 'audio' ? 'border-b-2' : ''}`}
                 style={{ 
-                  borderColor: viewMode === 'audio' ? 'hsl(25, 85%, 45%)' : 'transparent',
-                  color: viewMode === 'audio' ? 'hsl(25, 85%, 45%)' : 'hsl(25, 15%, 45%)'
+                  borderColor: viewMode === 'audio' ? primaryPurple : 'transparent',
+                  color: viewMode === 'audio' ? primaryPurple : 'hsl(0, 0%, 45%)'
                 }}
                 onClick={() => setViewMode('audio')}
               >
@@ -214,7 +220,7 @@ const Sermons = () => {
                       className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 hover:bg-opacity-50 transition-all"
                     >
                       <div className="flex items-center justify-center w-20 h-20 rounded-full bg-white bg-opacity-90">
-                        <Play className="w-10 h-10" style={{ color: 'hsl(25, 85%, 45%)' }} />
+                        <Play className="w-10 h-10" style={{ color: primaryPurple }} />
                       </div>
                     </button>
                   </div>
@@ -248,17 +254,17 @@ const Sermons = () => {
                 <div className="w-full max-w-2xl">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h3 className="text-xl font-bold" style={{ color: 'hsl(25, 35%, 25%)' }}>
+                      <h3 className="text-xl font-bold text-gray-800">
                         {activeSermon.title}
                       </h3>
-                      <p className="text-sm" style={{ color: 'hsl(25, 15%, 45%)' }}>
+                      <p className="text-sm text-gray-600">
                         {activeSermon.preacher} • {activeSermon.duration}
                       </p>
                     </div>
                     <button
                       onClick={toggleAudioPlayback}
                       className="p-3 rounded-full"
-                      style={{ backgroundColor: 'hsl(25, 85%, 45%)', color: 'white' }}
+                      style={{ backgroundColor: primaryPurple, color: 'white' }}
                     >
                       {isPlayingAudio ? (
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -277,7 +283,7 @@ const Sermons = () => {
                   />
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div 
-                      className="bg-orange-600 h-2 rounded-full" 
+                      className="bg-purple-600 h-2 rounded-full" 
                       style={{ width: audioRef.current ? `${(audioRef.current.currentTime / audioRef.current.duration) * 100}%` : '0%' }}
                     ></div>
                   </div>
@@ -285,25 +291,25 @@ const Sermons = () => {
               </div>
             )}
 
-            <div className="p-6" style={{ backgroundColor: 'hsl(45, 20%, 98%)' }}>
-              <h2 className="text-2xl font-bold mb-2" style={{ color: 'hsl(25, 35%, 25%)' }}>
+            <div className="p-6 bg-white">
+              <h2 className="text-2xl font-bold mb-2 text-gray-800">
                 {activeSermon.title}
               </h2>
               <div className="flex flex-wrap items-center gap-4 mb-4">
-                <span className="flex items-center" style={{ color: 'hsl(25, 15%, 45%)' }}>
+                <span className="flex items-center text-gray-600">
                   <BookOpen className="w-4 h-4 mr-1" />
                   {activeSermon.scripture}
                 </span>
-                <span className="flex items-center" style={{ color: 'hsl(25, 15%, 45%)' }}>
+                <span className="flex items-center text-gray-600">
                   <Calendar className="w-4 h-4 mr-1" />
                   {formatDate(activeSermon.date)}
                 </span>
-                <span className="flex items-center" style={{ color: 'hsl(25, 15%, 45%)' }}>
+                <span className="flex items-center text-gray-600">
                   <Clock className="w-4 h-4 mr-1" />
                   {activeSermon.duration}
                 </span>
               </div>
-              <p className="mb-4" style={{ color: 'hsl(25, 15%, 45%)' }}>
+              <p className="mb-4 text-gray-600">
                 {activeSermon.description}
               </p>
               <div className="flex flex-wrap gap-3">
@@ -312,8 +318,8 @@ const Sermons = () => {
                   download
                   className="flex items-center px-4 py-2 rounded-md"
                   style={{ 
-                    backgroundColor: 'hsl(25, 85%, 45%)',
-                    color: 'hsl(45, 20%, 98%)'
+                    backgroundColor: primaryPurple,
+                    color: 'white'
                   }}
                 >
                   <Download className="w-4 h-4 mr-2" />
@@ -324,8 +330,8 @@ const Sermons = () => {
                   download
                   className="flex items-center px-4 py-2 rounded-md border"
                   style={{ 
-                    borderColor: 'hsl(25, 85%, 45%)',
-                    color: 'hsl(25, 85%, 45%)'
+                    borderColor: primaryPurple,
+                    color: primaryPurple
                   }}
                 >
                   <Download className="w-4 h-4 mr-2" />
@@ -340,28 +346,19 @@ const Sermons = () => {
         <div className="mb-8">
           <div className="flex flex-col md:flex-row gap-4 mb-6">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5" style={{ color: 'hsl(25, 15%, 45%)' }} />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search sermons by title, preacher or topic..."
-                className="w-full pl-10 pr-4 py-2 rounded-md border"
-                style={{ 
-                  borderColor: 'hsl(35, 20%, 88%)',
-                  backgroundColor: 'hsl(45, 20%, 98%)'
-                }}
+                className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-200 bg-white"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             <div className="relative">
-              <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5" style={{ color: 'hsl(25, 15%, 45%)' }} />
+              <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
               <select
-                className="appearance-none pl-10 pr-8 py-2 rounded-md border"
-                style={{ 
-                  borderColor: 'hsl(35, 20%, 88%)',
-                  backgroundColor: 'hsl(45, 20%, 98%)',
-                  color: 'hsl(25, 15%, 45%)'
-                }}
+                className="appearance-none pl-10 pr-8 py-2 rounded-md border border-gray-200 bg-white text-gray-600"
                 value={selectedSeries}
                 onChange={(e) => setSelectedSeries(e.target.value)}
               >
@@ -371,7 +368,7 @@ const Sermons = () => {
               </select>
             </div>
           </div>
-          <p style={{ color: 'hsl(25, 15%, 45%)' }}>
+          <p className="text-gray-600">
             Showing {filteredSermons.length} sermons {selectedSeries !== 'All' ? `in "${selectedSeries}"` : ''}
           </p>
         </div>
@@ -381,11 +378,7 @@ const Sermons = () => {
           {filteredSermons.map(sermon => (
             <div 
               key={sermon.id} 
-              className="rounded-xl overflow-hidden shadow-sm border hover:shadow-md transition-shadow"
-              style={{ 
-                borderColor: 'hsl(35, 20%, 88%)',
-                backgroundColor: 'hsl(45, 20%, 98%)'
-              }}
+              className="rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow bg-white"
             >
               <div className="relative">
                 <img 
@@ -401,38 +394,38 @@ const Sermons = () => {
                   className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 hover:bg-opacity-50 transition-all"
                 >
                   <div className="flex items-center justify-center w-16 h-16 rounded-full bg-white bg-opacity-90">
-                    <Play className="w-6 h-6" style={{ color: 'hsl(25, 85%, 45%)' }} />
+                    <Play className="w-6 h-6" style={{ color: primaryPurple }} />
                   </div>
                 </button>
               </div>
               <div className="p-6">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-lg font-bold" style={{ color: 'hsl(25, 35%, 25%)' }}>
+                  <h3 className="text-lg font-bold text-gray-800">
                     {sermon.title}
                   </h3>
                   <span className="text-sm px-2 py-1 rounded" style={{ 
-                    backgroundColor: 'hsla(25, 85%, 45%, 0.1)',
-                    color: 'hsl(25, 85%, 45%)'
+                    backgroundColor: `${primaryPurple}15`,
+                    color: primaryPurple
                   }}>
                     {sermon.series}
                   </span>
                 </div>
-                <p className="text-sm mb-3" style={{ color: 'hsl(25, 85%, 45%)' }}>
+                <p className="text-sm mb-3" style={{ color: primaryPurple }}>
                   {sermon.preacher}
                 </p>
-                <p className="text-sm mb-4" style={{ color: 'hsl(25, 15%, 45%)' }}>
+                <p className="text-sm mb-4 text-gray-600">
                   {sermon.description}
                 </p>
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="flex items-center text-xs" style={{ color: 'hsl(25, 15%, 45%)' }}>
+                  <span className="flex items-center text-xs text-gray-500">
                     <Calendar className="w-3 h-3 mr-1" />
                     {formatDate(sermon.date)}
                   </span>
-                  <span className="flex items-center text-xs" style={{ color: 'hsl(25, 15%, 45%)' }}>
+                  <span className="flex items-center text-xs text-gray-500">
                     <Clock className="w-3 h-3 mr-1" />
                     {sermon.duration}
                   </span>
-                  <span className="flex items-center text-xs" style={{ color: 'hsl(25, 15%, 45%)' }}>
+                  <span className="flex items-center text-xs text-gray-500">
                     <BookOpen className="w-3 h-3 mr-1" />
                     {sermon.scripture}
                   </span>
@@ -444,7 +437,7 @@ const Sermons = () => {
 
         {filteredSermons.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-lg" style={{ color: 'hsl(25, 15%, 45%)' }}>
+            <p className="text-lg text-gray-600">
               No sermons found matching your criteria
             </p>
             <Button 
@@ -453,8 +446,8 @@ const Sermons = () => {
                 setSelectedSeries('All');
               }}
               style={{ 
-                backgroundColor: 'hsl(25, 85%, 45%)',
-                color: 'hsl(45, 20%, 98%)',
+                backgroundColor: primaryPurple,
+                color: 'white',
                 marginTop: '1rem'
               }}
             >
