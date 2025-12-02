@@ -43,8 +43,7 @@ const ChurchStory = () => {
 
   return (
     <section 
-      className="py-20 relative overflow-hidden"
-      style={{ backgroundColor: 'hsla(35, 40%, 92%, 0.3)' }}
+      className="py-20 relative overflow-hidden bg-white"
       ref={ref}
     >
       {/* Animated background elements */}
@@ -82,14 +81,12 @@ const ChurchStory = () => {
           transition={{ duration: 0.6 }}
         >
           <h2 
-            className="text-3xl md:text-4xl font-bold mb-4"
-            style={{ color: 'hsl(25, 35%, 25%)' }}
+            className="text-3xl md:text-4xl font-bold mb-4 text-gray-800"
           >
             Our Sacred <span style={{ color: 'hsl(270, 50%, 40%)' }}>Journey</span>
           </h2>
           <p 
-            className="text-xl max-w-3xl mx-auto"
-            style={{ color: 'hsl(25, 15%, 45%)' }}
+            className="text-xl max-w-3xl mx-auto text-gray-600"
           >
             A testament of faith that began with a vision to serve God and transform communities
           </p>
@@ -102,15 +99,13 @@ const ChurchStory = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <h3 
-              className="text-2xl font-semibold mb-6"
-              style={{ color: 'hsl(25, 35%, 25%)' }}
+              className="text-2xl font-semibold mb-6 text-gray-800"
             >
               <Church className="inline mr-3 w-6 h-6" style={{ color: 'hsl(270, 50%, 40%)' }} />
               Founded in Faith
             </h3>
             <p 
-              className="mb-6 leading-relaxed"
-              style={{ color: 'hsl(25, 15%, 45%)' }}
+              className="mb-6 leading-relaxed text-gray-600"
             >
               Kapsomoita Africa Gospel Church was born in 1995 out of a deep desire to serve God 
               and bring His love to the people of Kapsomoita and the surrounding regions. 
@@ -118,8 +113,7 @@ const ChurchStory = () => {
               a vibrant community of over 500 faithful members.
             </p>
             <p 
-              className="mb-6 leading-relaxed"
-              style={{ color: 'hsl(25, 15%, 45%)' }}
+              className="mb-6 leading-relaxed text-gray-600"
             >
               Our church has been a cornerstone of spiritual revival in the region, providing not just 
               spiritual guidance but also practical support through various outreach programs, 
@@ -129,8 +123,7 @@ const ChurchStory = () => {
             {/* Interactive Timeline */}
             <div className="mt-10">
               <h4 
-                className="text-lg font-medium mb-4"
-                style={{ color: 'hsl(25, 35%, 25%)' }}
+                className="text-lg font-medium mb-4 text-gray-800"
               >
                 <Calendar className="inline mr-2 w-5 h-5" style={{ color: 'hsl(270, 50%, 40%)' }} />
                 Our Timeline
@@ -177,18 +170,17 @@ const ChurchStory = () => {
                   >
                     {activeTimelineItem.event}
                   </p>
-                  <p style={{ color: 'hsl(25, 15%, 45%)' }}>{activeTimelineItem.description}</p>
+                  <p className="text-gray-600">{activeTimelineItem.description}</p>
                 </motion.div>
               )}
             </div>
           </motion.div>
 
           <motion.div
-            className="rounded-xl p-8 relative overflow-hidden"
+            className="rounded-xl p-8 relative overflow-hidden bg-white"
             style={{
-              backgroundColor: 'hsl(45, 20%, 98%)',
-              boxShadow: '0 4px 20px hsla(25, 85%, 45%, 0.1)',
-              border: '1px solid hsl(35, 20%, 88%)'
+              boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+              border: '1px solid hsl(0, 0%, 93%)'
             }}
             initial={{ opacity: 0, x: 20 }}
             animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
@@ -200,8 +192,7 @@ const ChurchStory = () => {
             <div className="absolute -bottom-8 -left-8 w-20 h-20 rounded-full opacity-5" style={{ backgroundColor: 'hsl(280, 60%, 50%)' }}></div>
             
             <h3 
-              className="text-2xl font-semibold mb-8 text-center relative z-10"
-              style={{ color: 'hsl(25, 35%, 25%)' }}
+              className="text-2xl font-semibold mb-8 text-center relative z-10 text-gray-800"
             >
               Our Core Beliefs
             </h3>
@@ -236,7 +227,7 @@ const ChurchStory = () => {
                     className="w-6 h-6 mr-4 mt-1 flex-shrink-0 group-hover:scale-110 transition-transform" 
                     style={{ color: 'hsl(270, 50%, 40%)' }} 
                   />
-                  <span style={{ color: 'hsl(25, 15%, 45%)' }} className="group-hover:text-purple-800 transition-colors">{item.text}</span>
+                  <span className="text-gray-600 group-hover:text-purple-800 transition-colors">{item.text}</span>
                 </motion.li>
               ))}
             </ul>
@@ -272,7 +263,7 @@ const ChurchStory = () => {
                 className="group/btn"
                 style={{
                   backgroundColor: 'hsl(270, 50%, 40%)',
-                  color: 'hsl(45, 20%, 98%)'
+                  color: 'white'
                 }}
               >
                 <Link to="/contact" className="flex items-center justify-center">

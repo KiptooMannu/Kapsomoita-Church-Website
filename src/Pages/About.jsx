@@ -4,10 +4,8 @@ import { useState } from "react";
 
 // ✅ Shared church color scheme
 const primaryPurple = "hsl(270, 50%, 40%)"; 
-const accentPurple = "hsl(280, 60%, 50%)"; 
-const darkText = "hsl(270, 30%, 15%)"; 
-const mediumText = "hsl(270, 20%, 30%)"; 
-const creamBg = "#fcf8f3"; // Soft cream background
+const darkText = "hsl(0, 0%, 15%)"; 
+const mediumText = "hsl(0, 0%, 30%)"; 
 
 const About = () => {
   const [activeYear, setActiveYear] = useState("1995");
@@ -60,7 +58,7 @@ const About = () => {
       title: "Bible-Based",
       description: "We are committed to the authority of Scripture as our guide for faith and practice.",
       verse: "2 Timothy 3:16-17",
-      color: accentPurple
+      color: "hsl(280, 60%, 50%)"
     },
     {
       icon: HeartHandshake,
@@ -99,9 +97,9 @@ const About = () => {
   };
 
   return (
-    <div className="relative min-h-screen" style={{ backgroundColor: creamBg }}>
+    <div className="relative min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative py-28 text-center" style={{ backgroundColor: "rgba(252, 248, 243, 0.8)" }}>
+      <section className="relative py-28 text-center bg-white">
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-full opacity-5">
             <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-purple-300"></div>
@@ -116,14 +114,13 @@ const About = () => {
           animate="visible"
         >
           <motion.h1
-            className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6"
-            style={{ color: darkText }}
+            className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-gray-800"
             variants={itemVariants}
           >
             About{" "}
             <span
               style={{
-                background: `linear-gradient(135deg, ${primaryPurple}, ${accentPurple})`,
+                background: `linear-gradient(135deg, ${primaryPurple}, hsl(280, 60%, 50%))`,
                 WebkitBackgroundClip: "text",
                 backgroundClip: "text",
                 color: "transparent",
@@ -133,8 +130,7 @@ const About = () => {
             </span>
           </motion.h1>
           <motion.p
-            className="text-xl max-w-3xl mx-auto leading-relaxed"
-            style={{ color: mediumText }}
+            className="text-xl max-w-3xl mx-auto leading-relaxed text-gray-600"
             variants={itemVariants}
           >
             Learn about our history, mission, and the heart behind{" "}
@@ -158,7 +154,7 @@ const About = () => {
             {stats.map((stat, index) => (
               <motion.div
                 key={stat.label}
-                className="bg-white p-8 rounded-2xl shadow-sm border border-purple-50 hover:shadow-md transition-all"
+                className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all"
                 whileHover={{ scale: 1.05, y: -5 }}
                 variants={itemVariants}
               >
@@ -167,14 +163,12 @@ const About = () => {
                   style={{ color: primaryPurple }}
                 />
                 <p
-                  className="text-4xl font-bold mb-2"
-                  style={{ color: darkText }}
+                  className="text-4xl font-bold mb-2 text-gray-800"
                 >
                   {stat.value}
                 </p>
                 <p
-                  className="text-base font-medium"
-                  style={{ color: mediumText }}
+                  className="text-base font-medium text-gray-600"
                 >
                   {stat.label}
                 </p>
@@ -190,7 +184,7 @@ const About = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Mission Block */}
             <motion.div
-              className="bg-white p-8 rounded-xl shadow-sm border border-purple-50"
+              className="bg-white p-8 rounded-xl shadow-sm border border-gray-100"
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
@@ -204,17 +198,17 @@ const About = () => {
                     backgroundColor: `${primaryPurple}15`
                   }}
                 />
-                <h2 className="text-3xl font-bold" style={{ color: darkText }}>
+                <h2 className="text-3xl font-bold text-gray-800">
                   Our Mission
                 </h2>
               </div>
-              <p className="text-lg leading-relaxed mb-6" style={{ color: mediumText }}>
+              <p className="text-lg leading-relaxed mb-6 text-gray-600">
                 To fulfill the Great Commandment and Great Commission of the Lord Jesus Christ 
                 according to the Great Plan - making disciples of all nations.
               </p>
               <div className="flex items-center">
                 <Cross className="w-5 h-5 mr-2" style={{ color: primaryPurple }} />
-                <p style={{ color: mediumText }}>
+                <p className="text-gray-600">
                   <strong>Matthew 28:19-20</strong> — "Go therefore and make disciples..."
                 </p>
               </div>
@@ -222,7 +216,7 @@ const About = () => {
 
             {/* Vision Block */}
             <motion.div
-              className="bg-white p-8 rounded-xl shadow-sm border border-purple-50"
+              className="bg-white p-8 rounded-xl shadow-sm border border-gray-100"
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
@@ -236,11 +230,11 @@ const About = () => {
                     backgroundColor: `${primaryPurple}15`
                   }}
                 />
-                <h2 className="text-3xl font-bold" style={{ color: darkText }}>
+                <h2 className="text-3xl font-bold text-gray-800">
                   Our Vision
                 </h2>
               </div>
-              <p className="text-lg leading-relaxed mb-6" style={{ color: mediumText }}>
+              <p className="text-lg leading-relaxed mb-6 text-gray-600">
                 The Whole Church taking the Whole Gospel to the Whole World.
                 (Swahili: KANISA LOTE, likieneza INJILI YOTE, ULIMWENGUNI KOTE)
               </p>
@@ -251,14 +245,14 @@ const About = () => {
                   return (
                     <motion.div
                       key={index}
-                      className="flex items-start p-3 rounded-lg bg-purple-50"
+                      className="flex items-start p-3 rounded-lg bg-gray-50"
                       initial={{ opacity: 0, y: 10 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
                       viewport={{ once: true }}
                     >
                       <Icon className="w-5 h-5 mr-3 mt-1 flex-shrink-0" style={{ color: primaryPurple }} />
-                      <span style={{ color: mediumText }}>{item.text}</span>
+                      <span className="text-gray-600">{item.text}</span>
                     </motion.div>
                   );
                 })}
@@ -278,10 +272,10 @@ const About = () => {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: darkText }}>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
               Our Sacred <span style={{ color: primaryPurple }}>Journey</span>
             </h2>
-            <p className="text-xl max-w-3xl mx-auto" style={{ color: mediumText }}>
+            <p className="text-xl max-w-3xl mx-auto text-gray-600">
               A testament of faith that began with a vision to serve God and transform communities
             </p>
           </motion.div>
@@ -293,11 +287,11 @@ const About = () => {
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <h3 className="text-2xl font-semibold mb-6" style={{ color: darkText }}>
+              <h3 className="text-2xl font-semibold mb-6 text-gray-800">
                 <Church className="inline mr-3 w-6 h-6" style={{ color: primaryPurple }} />
                 Founded in Faith
               </h3>
-              <p className="mb-6 leading-relaxed" style={{ color: mediumText }}>
+              <p className="mb-6 leading-relaxed text-gray-600">
                 Kapsomoita Africa Gospel Church was born in 1995 out of a deep desire to serve God 
                 and bring His love to the people of Kapsomoita and the surrounding regions. 
                 What started as a small gathering of 12 believers under a mango tree has grown into 
@@ -306,7 +300,7 @@ const About = () => {
               
               {/* Interactive Timeline */}
               <div className="mt-10">
-                <h4 className="text-lg font-medium mb-4" style={{ color: darkText }}>
+                <h4 className="text-lg font-medium mb-4 text-gray-800">
                   <Calendar className="inline mr-2 w-5 h-5" style={{ color: primaryPurple }} />
                   Our Timeline
                 </h4>
@@ -349,20 +343,20 @@ const About = () => {
                     <p className="font-bold text-lg mb-1" style={{ color: primaryPurple }}>
                       {activeTimelineItem.event}
                     </p>
-                    <p style={{ color: mediumText }}>{activeTimelineItem.description}</p>
+                    <p className="text-gray-600">{activeTimelineItem.description}</p>
                   </motion.div>
                 )}
               </div>
             </motion.div>
 
             <motion.div
-              className="bg-white p-8 rounded-xl shadow-sm border border-purple-50"
+              className="bg-white p-8 rounded-xl shadow-sm border border-gray-100"
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <h3 className="text-2xl font-semibold mb-8 text-center" style={{ color: darkText }}>
+              <h3 className="text-2xl font-semibold mb-8 text-center text-gray-800">
                 Our Core Beliefs
               </h3>
               <ul className="space-y-6">
@@ -395,7 +389,7 @@ const About = () => {
                       viewport={{ once: true }}
                     >
                       <Icon className="w-6 h-6 mr-4 mt-1 flex-shrink-0" style={{ color: primaryPurple }} />
-                      <span style={{ color: mediumText }}>{item.text}</span>
+                      <span className="text-gray-600">{item.text}</span>
                     </motion.li>
                   );
                 })}
@@ -415,10 +409,10 @@ const About = () => {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: darkText }}>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
               Our Guiding <span style={{ color: primaryPurple }}>Values</span>
             </h2>
-            <p className="text-xl max-w-3xl mx-auto" style={{ color: mediumText }}>
+            <p className="text-xl max-w-3xl mx-auto text-gray-600">
               The biblical principles that shape our identity and direct our ministry
             </p>
           </motion.div>
@@ -430,7 +424,7 @@ const About = () => {
               return (
                 <motion.div
                   key={index}
-                  className="bg-white p-8 rounded-xl shadow-sm border border-purple-50 text-center group cursor-pointer"
+                  className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 text-center group cursor-pointer"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.2 }}
@@ -445,10 +439,10 @@ const About = () => {
                       backgroundColor: `${value.color}15`
                     }}
                   />
-                  <h3 className="text-xl font-semibold mb-3" style={{ color: darkText }}>
+                  <h3 className="text-xl font-semibold mb-3 text-gray-800">
                     {value.title}
                   </h3>
-                  <p style={{ color: mediumText }}>{value.description}</p>
+                  <p className="text-gray-600">{value.description}</p>
                 </motion.div>
               );
             })}

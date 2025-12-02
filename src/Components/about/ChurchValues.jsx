@@ -74,7 +74,7 @@ const ChurchValues = () => {
   ];
 
   return (
-    <section className="py-20 relative overflow-hidden" style={{ backgroundColor: 'hsl(45, 20%, 98%)' }} ref={ref}>
+    <section className="py-20 relative overflow-hidden bg-white" ref={ref}>
       {/* Animated background elements */}
       <motion.div 
         className="absolute -top-20 -left-20 w-40 h-40 rounded-full opacity-5"
@@ -96,10 +96,10 @@ const ChurchValues = () => {
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: 'hsl(25, 35%, 25%)' }}>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
             Our Guiding <span style={{ color: 'hsl(270, 50%, 40%)' }}>Values</span>
           </h2>
-          <p className="text-xl max-w-3xl mx-auto" style={{ color: 'hsl(25, 15%, 45%)' }}>
+          <p className="text-xl max-w-3xl mx-auto text-gray-600">
             The biblical principles that shape our identity and direct our ministry
           </p>
         </motion.div>
@@ -111,22 +111,21 @@ const ChurchValues = () => {
             return (
               <motion.div
                 key={index}
-                className="rounded-xl p-8 text-center group cursor-pointer relative overflow-hidden"
+                className="rounded-xl p-8 text-center group cursor-pointer relative overflow-hidden bg-white"
                 style={{
-                  backgroundColor: 'hsl(45, 20%, 98%)',
-                  boxShadow: '0 4px 20px hsla(270, 50%, 40%, 0.05)',
-                  border: '1px solid hsl(35, 20%, 88%)'
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+                  border: '1px solid hsl(0, 0%, 93%)'
                 }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                 transition={{ delay: Math.floor(index / 3) * 0.2 }}
                 whileHover={{
                   y: -5,
-                  boxShadow: '0 8px 25px hsla(270, 50%, 40%, 0.1)'
+                  boxShadow: '0 8px 25px rgba(0,0,0,0.1)'
                 }}
                 onClick={() => setActiveValue(index)}
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"></div>
                 
                 <Icon
                   className="w-12 h-12 mx-auto mb-4 p-2 rounded-full relative z-10"
@@ -135,10 +134,10 @@ const ChurchValues = () => {
                     backgroundColor: `${value.color}15`
                   }}
                 />
-                <h3 className="text-xl font-semibold mb-3 relative z-10" style={{ color: 'hsl(25, 35%, 25%)' }}>
+                <h3 className="text-xl font-semibold mb-3 relative z-10 text-gray-800">
                   {value.title}
                 </h3>
-                <p className="relative z-10" style={{ color: 'hsl(25, 15%, 45%)' }}>{value.description}</p>
+                <p className="relative z-10 text-gray-600">{value.description}</p>
                 
                 <div className="mt-4 pt-4 border-t border-gray-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300 relative z-10">
                   <p className="text-sm italic" style={{ color: value.color }}>
@@ -184,7 +183,7 @@ const ChurchValues = () => {
                         backgroundColor: `${values[activeValue].color}15`
                       }}
                     />
-                    <h3 className="text-2xl font-bold" style={{ color: 'hsl(25, 35%, 25%)' }}>
+                    <h3 className="text-2xl font-bold text-gray-800">
                       {values[activeValue].title}
                     </h3>
                     <button 
@@ -197,7 +196,7 @@ const ChurchValues = () => {
                 );
               })()}
 
-              <p className="mb-6" style={{ color: 'hsl(25, 15%, 45%)' }}>
+              <p className="mb-6 text-gray-600">
                 {values[activeValue].description}
               </p>
               
@@ -205,20 +204,20 @@ const ChurchValues = () => {
                 <p className="font-semibold mb-2" style={{ color: values[activeValue].color }}>
                   Biblical Foundation:
                 </p>
-                <p className="italic" style={{ color: 'hsl(25, 15%, 45%)' }}>
+                <p className="italic text-gray-600">
                   "{values[activeValue].verse}"
                 </p>
               </div>
               
               <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="font-semibold mb-2" style={{ color: 'hsl(25, 35%, 25%)' }}>
+                <p className="font-semibold mb-2 text-gray-800">
                   How we live this out:
                 </p>
                 <ul className="list-disc pl-5 space-y-2">
-                  <li style={{ color: 'hsl(25, 15%, 45%)' }}>Regular Bible study and application</li>
-                  <li style={{ color: 'hsl(25, 15%, 45%)' }}>Prayerful decision-making</li>
-                  <li style={{ color: 'hsl(25, 15%, 45%)' }}>Service opportunities in the community</li>
-                  <li style={{ color: 'hsl(25, 15%, 45%)' }}>Accountability partnerships</li>
+                  <li className="text-gray-600">Regular Bible study and application</li>
+                  <li className="text-gray-600">Prayerful decision-making</li>
+                  <li className="text-gray-600">Service opportunities in the community</li>
+                  <li className="text-gray-600">Accountability partnerships</li>
                 </ul>
               </div>
             </motion.div>
@@ -230,4 +229,3 @@ const ChurchValues = () => {
 };
 
 export default ChurchValues;
-                                                                                      
