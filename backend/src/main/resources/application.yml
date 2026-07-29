@@ -1,0 +1,132 @@
+spring:
+  application:
+    name: kapsomoita-church-api
+
+  datasource:
+    url: ${DB_JDBC_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      # Neon's pooler drops idle connections; keep the local pool small and
+      # recycle connections well before the server-side idle timeout.
+      pool-name: church-pool
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 120000      # 2 min
+      max-lifetime: 900000      # 15 min
+      connection-timeout: 30000 # 30 s
+      keepalive-time: 60000     # 1 min
+
+  jpa:
+    # Flyway owns the schema. Hibernate must never alter it.
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+          batch_size: 25
+        order_inserts: true
+        order_updates: true
+        format_sql: true
+    show-sql: false
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+    validate-on-migrate: true
+
+  servlet:
+    multipart:
+      # Must stay at or above cloudinary.max-video-bytes (200 MB). The servlet
+      # container rejects an oversized request before any application code runs,
+      # so a lower value here would produce an opaque error instead of the
+      # validation message the upload service is written to return.
+      max-file-size: 205MB
+      max-request-size: 220MB
+      file-size-threshold: 2MB
+
+  mail:
+    host: ${MAIL_HOST:}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: never
+  compression:
+    enabled: true
+    mime-types: application/json,text/html,text/css,application/javascript
+  forward-headers-strategy: framework
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+
+# ---------------------------------------------------------------------------
+# Application-specific configuration (bound to typed @ConfigurationProperties)
+# ---------------------------------------------------------------------------
+app:
+  api-prefix: /api
+
+  cors:
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:5173}
+
+  jwt:
+    issuer: ${JWT_ISSUER:kapsomoita-church}
+    access-secret: ${JWT_ACCESS_SECRET}
+    refresh-secret: ${JWT_REFRESH_SECRET}
+    access-ttl-seconds: ${JWT_ACCESS_TTL_SECONDS:900}
+    refresh-ttl-seconds: ${JWT_REFRESH_TTL_SECONDS:1209600}
+
+  bootstrap:
+    admin-email: ${ADMIN_BOOTSTRAP_EMAIL:}
+    admin-password: ${ADMIN_BOOTSTRAP_PASSWORD:}
+    admin-name: ${ADMIN_BOOTSTRAP_NAME:Super Admin}
+
+# ---------------------------------------------------------------------------
+# Cloudinary media storage.
+# Folders are created implicitly by the upload API, so none of the paths below
+# the root folder need to exist beforehand.
+# ---------------------------------------------------------------------------
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:}
+  api-key: ${CLOUDINARY_API_KEY:}
+  api-secret: ${CLOUDINARY_API_SECRET:}
+  root-folder: ${CLOUDINARY_ROOT_FOLDER:church}
+  max-image-bytes: ${CLOUDINARY_MAX_IMAGE_BYTES:10485760}     # 10 MB
+  max-video-bytes: ${CLOUDINARY_MAX_VIDEO_BYTES:209715200}    # 200 MB
+  max-raw-bytes: ${CLOUDINARY_MAX_RAW_BYTES:26214400}         # 25 MB
+  use-filename-as-public-id-prefix: true
+
+logging:
+  level:
+    root: INFO
+    com.kapsomoita: DEBUG
+    org.flywaydb: INFO
+    org.hibernate.SQL: WARN

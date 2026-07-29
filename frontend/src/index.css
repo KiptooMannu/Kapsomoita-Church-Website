@@ -1,0 +1,503 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+
+/* Class-based dark mode, so the theme provider can force light or dark
+   independently of the OS setting. */
+@custom-variant dark (&:is(.dark *));
+
+/* ===========================================================================
+   DESIGN TOKENS
+   ---------------------------------------------------------------------------
+   Two layers, deliberately:
+
+     1. RAW BRAND SCALES (--brand-*, --gold-*) — the church's palette. Referenced
+        by the semantic layer, never used directly in components.
+     2. SEMANTIC ROLES (--background, --primary, --card, …) — what components
+        actually consume. Swapping a brand hue therefore never requires touching
+        a component.
+
+   Colours are oklch: perceptually uniform, so a lightness step reads as the same
+   visual step across hues, which is what makes the dark mode below a *selected*
+   set of steps rather than a mechanical inversion.
+   =========================================================================== */
+
+:root {
+  /* --- Brand: deep indigo. Reverent, trustworthy, calm. ------------------ */
+  --brand-50: oklch(0.97 0.014 265);
+  --brand-100: oklch(0.94 0.03 265);
+  --brand-200: oklch(0.88 0.06 265);
+  --brand-300: oklch(0.79 0.1 265);
+  --brand-400: oklch(0.68 0.14 265);
+  --brand-500: oklch(0.57 0.17 265);
+  --brand-600: oklch(0.48 0.17 265);
+  --brand-700: oklch(0.4 0.15 265);
+  --brand-800: oklch(0.32 0.12 265);
+  --brand-900: oklch(0.25 0.09 265);
+  --brand-950: oklch(0.18 0.06 265);
+
+  /* --- Accent: warm gold. Light, welcome, celebration. ------------------- */
+  --gold-50: oklch(0.98 0.02 85);
+  --gold-100: oklch(0.95 0.05 85);
+  --gold-200: oklch(0.9 0.09 85);
+  --gold-300: oklch(0.85 0.12 82);
+  --gold-400: oklch(0.79 0.14 80);
+  --gold-500: oklch(0.72 0.145 78);
+  --gold-600: oklch(0.63 0.135 72);
+  --gold-700: oklch(0.53 0.115 68);
+  --gold-800: oklch(0.43 0.09 65);
+  --gold-900: oklch(0.35 0.07 62);
+
+  /* --- Warm neutrals. A pure grey reads clinical; these carry warmth. ---- */
+  --neutral-0: oklch(1 0 0);
+  --neutral-25: oklch(0.994 0.002 85); /* page plane  #fdfcfa */
+  --neutral-50: oklch(0.98 0.003 85);
+  --neutral-100: oklch(0.96 0.004 85);
+  --neutral-200: oklch(0.92 0.005 85);
+  --neutral-300: oklch(0.86 0.006 85);
+  --neutral-400: oklch(0.7 0.008 85);
+  --neutral-500: oklch(0.56 0.008 85);
+  --neutral-600: oklch(0.45 0.008 85);
+  --neutral-700: oklch(0.36 0.008 85);
+  --neutral-800: oklch(0.26 0.008 85);
+  --neutral-900: oklch(0.19 0.008 270);
+  --neutral-950: oklch(0.14 0.012 275); /* dark surface #15151b */
+
+  /* --- Semantic roles: LIGHT ------------------------------------------- */
+  --background: var(--neutral-25);
+  --foreground: oklch(0.16 0.01 270);
+
+  --card: var(--neutral-0);
+  --card-foreground: var(--foreground);
+  --popover: var(--neutral-0);
+  --popover-foreground: var(--foreground);
+
+  --primary: var(--brand-600);
+  --primary-foreground: oklch(0.99 0.002 85);
+  --primary-hover: var(--brand-700);
+
+  --secondary: var(--neutral-100);
+  --secondary-foreground: var(--brand-800);
+
+  --accent: var(--gold-500);
+  --accent-foreground: oklch(0.2 0.03 70);
+  --accent-subtle: var(--gold-100);
+
+  --muted: var(--neutral-100);
+  --muted-foreground: var(--neutral-600);
+
+  --destructive: oklch(0.55 0.2 27);
+  --destructive-foreground: oklch(0.99 0.002 85);
+
+  --success: oklch(0.55 0.15 150);
+  --success-foreground: oklch(0.99 0.002 85);
+  --warning: oklch(0.75 0.15 75);
+  --warning-foreground: oklch(0.2 0.03 70);
+  --info: var(--brand-500);
+  --info-foreground: oklch(0.99 0.002 85);
+
+  --border: oklch(0.9 0.005 85);
+  --input: oklch(0.88 0.006 85);
+  --ring: var(--brand-500);
+
+  /* --- Admin sidebar: darker plane, so the shell frames the content. ---- */
+  --sidebar: var(--brand-900);
+  --sidebar-foreground: oklch(0.93 0.01 265);
+  --sidebar-primary: var(--gold-500);
+  --sidebar-primary-foreground: oklch(0.18 0.03 70);
+  --sidebar-accent: oklch(0.32 0.08 265);
+  --sidebar-accent-foreground: oklch(0.97 0.005 265);
+  --sidebar-border: oklch(0.32 0.06 265);
+  --sidebar-ring: var(--gold-400);
+
+  /* --- Chart tokens ----------------------------------------------------- */
+  /* Validated with the data-viz palette validator against this mode's surface
+     (#fdfcfa): lightness band, chroma floor, adjacent-pair CVD separation
+     (worst ΔE 9.1) and normal-vision floor (worst ΔE 19.6) all PASS.
+     Assign these in fixed slot order and never cycle them — the ordering is
+     what keeps adjacent series distinguishable under colour-vision deficiency.
+
+     One caveat carried from validation: slots 3, 4 and 5 fall below 3:1 against
+     the light surface. Charts using them must ship visible direct labels or a
+     table view, so identity never rests on fill contrast alone. */
+  --chart-1: #2a78d6; /* blue    */
+  --chart-2: #eb6834; /* orange  */
+  --chart-3: #1baf7a; /* aqua    */
+  --chart-4: #eda100; /* yellow  */
+  --chart-5: #e87ba4; /* magenta */
+  --chart-6: #008300; /* green   */
+  --chart-7: #4a3aa7; /* violet  */
+  --chart-8: #e34948; /* red     */
+
+  /* Chart chrome. Recessive by design: the data is the figure, not the frame. */
+  --chart-surface: #fdfcfa;
+  --chart-grid: oklch(0.91 0.004 85);
+  --chart-axis: oklch(0.82 0.006 85);
+  --chart-ink: oklch(0.16 0.01 270);
+  --chart-ink-muted: oklch(0.56 0.008 85);
+
+  /* --- Geometry & elevation -------------------------------------------- */
+  --radius: 0.75rem;
+
+  /* Layered, low-opacity shadows read as soft depth rather than a dark halo. */
+  --shadow-soft: 0 1px 2px oklch(0.2 0.02 270 / 0.04), 0 2px 8px oklch(0.2 0.02 270 / 0.05);
+  --shadow-card: 0 1px 3px oklch(0.2 0.02 270 / 0.05), 0 8px 24px oklch(0.2 0.02 270 / 0.06);
+  --shadow-lifted: 0 2px 6px oklch(0.2 0.02 270 / 0.07), 0 16px 48px oklch(0.2 0.02 270 / 0.1);
+
+  /* Glassmorphism, used sparingly: the scrolled navbar and drawer backdrop. */
+  --glass-bg: oklch(1 0 0 / 0.72);
+  --glass-border: oklch(1 0 0 / 0.35);
+
+  /* Height of the sticky header, so sections can offset their scroll anchor. */
+  --header-height: 4.5rem;
+}
+
+/* ===========================================================================
+   DARK MODE
+   Each value is a step chosen for the dark surface, not an inversion. Chart
+   hues are the same eight, re-stepped and re-validated against #15151b, where
+   all eight clear 3:1 (so the light-mode relief caveat does not apply here).
+   =========================================================================== */
+.dark {
+  --background: var(--neutral-950);
+  --foreground: oklch(0.96 0.005 85);
+
+  --card: oklch(0.18 0.012 272);
+  --card-foreground: var(--foreground);
+  --popover: oklch(0.2 0.012 272);
+  --popover-foreground: var(--foreground);
+
+  /* Lifted from brand-600: a dark surface needs a lighter primary to hold the
+     same apparent contrast. */
+  --primary: var(--brand-400);
+  --primary-foreground: oklch(0.16 0.03 270);
+  --primary-hover: var(--brand-300);
+
+  --secondary: oklch(0.25 0.015 272);
+  --secondary-foreground: oklch(0.94 0.008 265);
+
+  --accent: var(--gold-400);
+  --accent-foreground: oklch(0.16 0.03 70);
+  --accent-subtle: oklch(0.28 0.05 75);
+
+  --muted: oklch(0.24 0.012 272);
+  --muted-foreground: oklch(0.7 0.01 85);
+
+  --destructive: oklch(0.65 0.19 27);
+  --destructive-foreground: oklch(0.15 0.02 27);
+
+  --success: oklch(0.68 0.16 150);
+  --success-foreground: oklch(0.15 0.02 150);
+  --warning: oklch(0.8 0.15 78);
+  --warning-foreground: oklch(0.18 0.03 70);
+  --info: var(--brand-400);
+  --info-foreground: oklch(0.15 0.02 265);
+
+  --border: oklch(0.3 0.012 272);
+  --input: oklch(0.33 0.014 272);
+  --ring: var(--brand-400);
+
+  --sidebar: oklch(0.16 0.014 272);
+  --sidebar-foreground: oklch(0.92 0.01 265);
+  --sidebar-primary: var(--gold-400);
+  --sidebar-primary-foreground: oklch(0.16 0.03 70);
+  --sidebar-accent: oklch(0.26 0.02 268);
+  --sidebar-accent-foreground: oklch(0.96 0.005 265);
+  --sidebar-border: oklch(0.28 0.016 270);
+  --sidebar-ring: var(--gold-400);
+
+  --chart-1: #3987e5;
+  --chart-2: #d95926;
+  --chart-3: #199e70;
+  --chart-4: #c98500;
+  --chart-5: #d55181;
+  --chart-6: #008300;
+  --chart-7: #9085e9;
+  --chart-8: #e66767;
+
+  --chart-surface: #15151b;
+  --chart-grid: oklch(0.27 0.012 272);
+  --chart-axis: oklch(0.36 0.014 272);
+  --chart-ink: oklch(0.96 0.005 85);
+  --chart-ink-muted: oklch(0.7 0.01 85);
+
+  --shadow-soft: 0 1px 2px oklch(0 0 0 / 0.3), 0 2px 8px oklch(0 0 0 / 0.28);
+  --shadow-card: 0 1px 3px oklch(0 0 0 / 0.34), 0 8px 24px oklch(0 0 0 / 0.32);
+  --shadow-lifted: 0 2px 6px oklch(0 0 0 / 0.4), 0 16px 48px oklch(0 0 0 / 0.42);
+
+  --glass-bg: oklch(0.18 0.012 272 / 0.72);
+  --glass-border: oklch(1 0 0 / 0.08);
+}
+
+/* ===========================================================================
+   TAILWIND THEME MAPPING
+   Exposes the semantic tokens as Tailwind utilities: bg-background, text-primary,
+   border-border, rounded-xl, shadow-card and so on.
+   =========================================================================== */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-subtle: var(--accent-subtle);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-brand-50: var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-400: var(--brand-400);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-800: var(--brand-800);
+  --color-brand-900: var(--brand-900);
+  --color-brand-950: var(--brand-950);
+
+  --color-gold-50: var(--gold-50);
+  --color-gold-100: var(--gold-100);
+  --color-gold-200: var(--gold-200);
+  --color-gold-300: var(--gold-300);
+  --color-gold-400: var(--gold-400);
+  --color-gold-500: var(--gold-500);
+  --color-gold-600: var(--gold-600);
+  --color-gold-700: var(--gold-700);
+  --color-gold-800: var(--gold-800);
+  --color-gold-900: var(--gold-900);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6);
+  --color-chart-7: var(--chart-7);
+  --color-chart-8: var(--chart-8);
+  --color-chart-grid: var(--chart-grid);
+  --color-chart-axis: var(--chart-axis);
+  --color-chart-ink: var(--chart-ink);
+  --color-chart-ink-muted: var(--chart-ink-muted);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+
+  --shadow-soft: var(--shadow-soft);
+  --shadow-card: var(--shadow-card);
+  --shadow-lifted: var(--shadow-lifted);
+
+  --font-sans:
+    system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  /* Breakpoints from the specification, mobile-first. The defaults cover sm–2xl;
+     these add the very small and very large ends. */
+  --breakpoint-xs: 30rem; /* 480px  large mobile */
+  --breakpoint-3xl: 120rem; /* 1920px full HD     */
+  --breakpoint-4xl: 160rem; /* 2560px 2K          */
+  --breakpoint-5xl: 240rem; /* 3840px 4K          */
+
+  --animate-fade-in: fade-in 0.5s ease-out both;
+  --animate-fade-up: fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-shimmer: shimmer 1.8s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.5rem);
+  }
+}
+
+/* ===========================================================================
+   BASE LAYER
+   =========================================================================== */
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    /* Smooth in-page navigation, but never for users who ask for less motion. */
+    scroll-behavior: smooth;
+    scroll-padding-top: var(--header-height);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    /* The spec is explicit that nothing may scroll horizontally. This is the
+       backstop; the real fix is always to constrain the offending child. */
+    overflow-x: clip;
+    min-height: 100dvh;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Visible, consistent keyboard focus everywhere. :focus-visible rather than
+     :focus so pointer users do not see rings on click. */
+  :focus-visible {
+    @apply outline-ring outline-2 outline-offset-2;
+  }
+
+  /* Headings tighten as they grow: large type needs less leading and tracking. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-semibold tracking-tight text-balance;
+  }
+
+  /* Keeps long prose from stretching past a comfortable measure. */
+  p {
+    @apply text-pretty;
+  }
+
+  /* Media never overflows its container. */
+  img,
+  video,
+  svg,
+  canvas {
+    @apply max-w-full;
+  }
+
+  /* Match the themed surface so overscroll and native controls do not flash white. */
+  ::selection {
+    @apply bg-primary/20;
+  }
+
+  /* Reserve the scrollbar gutter so opening a modal (which locks scroll) does
+     not shift the page horizontally. */
+  html {
+    scrollbar-gutter: stable;
+  }
+}
+
+/* ===========================================================================
+   REDUCED MOTION
+   A single global opt-out. Honours the OS setting for every animation and
+   transition, including Framer Motion's inline styles.
+   =========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ===========================================================================
+   COMPONENT UTILITIES
+   =========================================================================== */
+@utility container-page {
+  /* The standard page gutter, widening with the viewport. */
+  @apply mx-auto w-full max-w-[100rem] px-4 xs:px-5 sm:px-6 lg:px-8 2xl:px-12;
+}
+
+@utility glass-panel {
+  background: var(--glass-bg);
+  border-color: var(--glass-border);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+}
+
+@utility shimmer-surface {
+  /* Loading placeholder: a moving highlight across the muted surface. */
+  background-image: linear-gradient(
+    90deg,
+    var(--muted) 0%,
+    color-mix(in oklch, var(--muted), var(--foreground) 6%) 50%,
+    var(--muted) 100%
+  );
+  background-size: 200% 100%;
+  animation: var(--animate-shimmer);
+}
+
+@utility text-gradient-brand {
+  @apply bg-gradient-to-r from-brand-600 via-brand-500 to-gold-500 bg-clip-text text-transparent;
+}
+
+/* Screen-reader-only text that becomes visible when focused — the skip link. */
+@utility sr-only-focusable {
+  @apply sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground;
+}

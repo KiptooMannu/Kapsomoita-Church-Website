@@ -5,6 +5,12 @@ on:
     branches:
       - main
 
+# The frontend now lives in frontend/ (monorepo layout), so every Node step
+# runs with that as its working directory.
+defaults:
+  run:
+    working-directory: frontend
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -16,12 +22,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
 
       - name: Enable corepack and install dependencies
         run: |
           corepack enable
-          pnpm install
+          pnpm install --frozen-lockfile
 
       - name: Build Vite App
         env: # ✅ mark build as GitHub Pages
@@ -29,11 +35,11 @@ jobs:
           VITE_GITHUB_PAGES: true
         run: |
           pnpm run build
-          cp dist/index.html dist/404.html   
+          cp dist/index.html dist/404.html
 
       - name: Deploy to GitHub Pages 🚀
         uses: JamesIves/github-pages-deploy-action@v4.6.8
         with:
           branch: gh-pages
-          folder: dist
+          folder: frontend/dist # action paths are repo-root relative
           token: ${{ secrets.GITHUB_TOKEN }}

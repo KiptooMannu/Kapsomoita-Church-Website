@@ -1,4 +1,16 @@
+# ---------------------------------------------------------------------------
+# Secrets — never commit real credentials. Only *.env.example is tracked.
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# ---------------------------------------------------------------------------
 # Logs
+# ---------------------------------------------------------------------------
 logs
 *.log
 npm-debug.log*
@@ -7,19 +19,37 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# ---------------------------------------------------------------------------
+# Frontend (Vite / React)
+# ---------------------------------------------------------------------------
 node_modules
 dist
 dist-ssr
+.vite
 *.local
+frontend/tsconfig.tsbuildinfo
 
-# Editor directories and files
+# ---------------------------------------------------------------------------
+# Backend (Java / Spring Boot / Maven)
+# ---------------------------------------------------------------------------
+target/
+.mvn/timing.properties
+backend/uploads/
+*.class
+hs_err_pid*
+replay_pid*
+
+# ---------------------------------------------------------------------------
+# Editor / OS
+# ---------------------------------------------------------------------------
 .vscode/*
 !.vscode/extensions.json
 .idea
+*.iml
 .DS_Store
+Thumbs.db
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-
