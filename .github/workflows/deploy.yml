@@ -5,8 +5,9 @@ on:
     branches:
       - main
 
-# The frontend now lives in frontend/ (monorepo layout), so every Node step
-# runs with that as its working directory.
+permissions:
+  contents: write
+
 defaults:
   run:
     working-directory: frontend
@@ -16,34 +17,49 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout 🛎️
+      - name: Checkout Repository 🛎️
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
 
-      # --no-frozen-lockfile is required until a lockfile matching the current
-      # package.json is committed. Regenerate with `cd frontend && pnpm install`,
-      # commit pnpm-lock.yaml, then restore --frozen-lockfile so builds are
-      # reproducible again.
-      - name: Enable corepack and install dependencies
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Enable pnpm
+        run: corepack prepare pnpm@latest --activate
+
+      - name: Verify Versions
         run: |
-          corepack enable
-          pnpm install --no-frozen-lockfile
+          node -v
+          pnpm -v
+
+      - name: Install Dependencies
+        run: pnpm install --no-frozen-lockfile
 
       - name: Build Vite App
-        env: # ✅ mark build as GitHub Pages
+        env:
           GITHUB_PAGES: true
           VITE_GITHUB_PAGES: true
         run: |
           pnpm run build
-          cp dist/index.html dist/404.html
+
+      - name: Create 404.html
+        run: cp dist/index.html dist/404.html
+
+      - name: Verify Build Output
+        run: |
+          echo "Contents of dist:"
+          ls -la dist
 
       - name: Deploy to GitHub Pages 🚀
         uses: JamesIves/github-pages-deploy-action@v4.6.8
         with:
           branch: gh-pages
-          folder: frontend/dist # action paths are repo-root relative
+          folder: frontend/dist
+          clean: true
           token: ${{ secrets.GITHUB_TOKEN }}
