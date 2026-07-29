@@ -1,5 +1,5 @@
 import { ArrowUpIcon } from 'lucide-react'
-import { useScrollPosition } from '@/hooks/useScrollPosition'
+import { useIsScrolled } from '@/hooks/useScrollPosition'
 import { cn } from '@/lib/utils'
 
 /**
@@ -13,7 +13,8 @@ import { cn } from '@/lib/utils'
  * indicator.
  */
 export function BackToTop() {
-  const { isScrolled } = useScrollPosition(600)
+  // Only re-renders when the boolean flips, not on every scroll frame.
+  const isScrolled = useIsScrolled(600)
 
   return (
     <button

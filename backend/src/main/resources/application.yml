@@ -2,6 +2,33 @@ spring:
   application:
     name: kapsomoita-church-api
 
+  # -------------------------------------------------------------------------
+  # Local secrets.
+  #
+  # Both paths are imported and both are optional, so the application starts
+  # correctly whether it is launched from the repository root (as the VS Code
+  # Java launcher does) or from backend/ (as `mvn spring-boot:run` does).
+  #
+  # This replaced spring-dotenv, which only ever looked in the current working
+  # directory: launching from the repo root silently found no .env, left
+  # ${JWT_ACCESS_SECRET} unresolved, and produced a confusing
+  # "must decode to at least 64 bytes (got 20)" — 20 being the length of the
+  # literal placeholder text.
+  #
+  # The [.properties] hint tells Spring how to parse a file whose name has no
+  # recognised extension. In production, set real environment variables instead;
+  # these imports simply find nothing and are skipped.
+  # -------------------------------------------------------------------------
+  # Only paths inside the project are imported. A `../backend/.env` entry was tried
+  # and removed: it resolved to an unrelated project's .env sitting in the parent
+  # directory and, being imported last, silently overrode the real secrets with a
+  # 6-character one — which surfaced as the baffling "must decode to at least 64
+  # bytes (got 4)". Never import configuration from outside the project.
+  config:
+    import:
+      - optional:file:./.env[.properties]
+      - optional:file:./backend/.env[.properties]
+
   datasource:
     url: ${DB_JDBC_URL}
     username: ${DB_USERNAME}

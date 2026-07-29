@@ -1,50 +1,80 @@
 import { useEffect, useState } from 'react'
 
-export interface ScrollState {
-  /** Pixels scrolled from the top. */
-  y: number
-  /** True once scrolled past the given threshold. */
-  isScrolled: boolean
-  /** Fraction of the page scrolled, 0–1. */
-  progress: number
-}
-
 /**
- * Tracks vertical scroll position.
+ * True once the page is scrolled past `threshold`.
  *
- * The listener is passive and the state update is coalesced into a single
- * `requestAnimationFrame`. Without that, a scroll handler firing on every wheel
- * event triggers a React re-render per event and visibly stutters on a mid-range
- * phone — which is the whole reason this is a hook rather than an inline listener.
+ * Split out from the progress value on purpose. The previous version returned
+ * `{ y, isScrolled, progress }` from one hook, so any consumer re-rendered on
+ * **every scroll frame** — roughly 60 times a second. In the header that meant
+ * re-rendering the navigation and the mobile drawer continuously, and a tap on the
+ * hamburger had to wait behind that work, which is exactly the lag you saw. It was
+ * worst in light mode because the header also paints a `backdrop-filter`, and blur
+ * is re-rasterised on each of those renders.
  *
- * @param threshold pixels after which `isScrolled` becomes true
+ * This hook only changes state when the boolean actually flips — twice per scroll
+ * through the threshold, not sixty times a second.
  */
-export function useScrollPosition(threshold = 24): ScrollState {
-  const [state, setState] = useState<ScrollState>({ y: 0, isScrolled: false, progress: 0 })
+export function useIsScrolled(threshold = 24): boolean {
+  const [isScrolled, setIsScrolled] = useState(false)
 
   useEffect(() => {
     let frame = 0
 
     const measure = () => {
-      const y = window.scrollY
-      // The scrollable distance, which is zero on a page shorter than the viewport.
-      const scrollable = document.documentElement.scrollHeight - window.innerHeight
-      const progress = scrollable > 0 ? Math.min(1, Math.max(0, y / scrollable)) : 0
-
-      setState({ y, isScrolled: y > threshold, progress })
       frame = 0
+      const next = window.scrollY > threshold
+      // Bail out unless the value genuinely changed. React would bail on an
+      // identical value anyway, but this avoids even queueing the update.
+      setIsScrolled((current) => (current === next ? current : next))
     }
 
     const onScroll = () => {
-      // Ignore further events until the queued frame runs.
-      if (frame === 0) {
-        frame = window.requestAnimationFrame(measure)
-      }
+      if (frame === 0) frame = window.requestAnimationFrame(measure)
     }
 
     measure()
     window.addEventListener('scroll', onScroll, { passive: true })
-    // The page height changes as lazy content loads, so progress must be remeasured.
+
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (frame !== 0) window.cancelAnimationFrame(frame)
+    }
+  }, [threshold])
+
+  return isScrolled
+}
+
+/**
+ * Drives a scroll-progress indicator without re-rendering React at all.
+ *
+ * The ratio is written straight to a CSS custom property on the given element, so
+ * the browser updates the bar on the compositor while React stays idle. Returning a
+ * number here instead would reintroduce the per-frame re-render this file exists to
+ * avoid.
+ *
+ * @param ref element whose `--scroll-progress` property is updated
+ */
+export function useScrollProgressVar(ref: React.RefObject<HTMLElement | null>): void {
+  useEffect(() => {
+    let frame = 0
+
+    const measure = () => {
+      frame = 0
+      const element = ref.current
+      if (!element) return
+
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight
+      const progress = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0
+      element.style.setProperty('--scroll-progress', progress.toFixed(4))
+    }
+
+    const onScroll = () => {
+      if (frame === 0) frame = window.requestAnimationFrame(measure)
+    }
+
+    measure()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    // The document grows as lazy content loads, so the ratio must be remeasured.
     window.addEventListener('resize', onScroll, { passive: true })
 
     return () => {
@@ -52,7 +82,5 @@ export function useScrollPosition(threshold = 24): ScrollState {
       window.removeEventListener('resize', onScroll)
       if (frame !== 0) window.cancelAnimationFrame(frame)
     }
-  }, [threshold])
-
-  return state
+  }, [ref])
 }

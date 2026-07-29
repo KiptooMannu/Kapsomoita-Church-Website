@@ -65,6 +65,21 @@ public record AppProperties(
             if (secret == null || secret.isBlank()) {
                 throw new IllegalStateException(name + " must be set (see backend/.env.example)");
             }
+
+            // An unresolved placeholder means the .env was never loaded. Detected
+            // explicitly because the alternative — falling through to the length
+            // check — reports "got 20" and sends you looking at the wrong problem.
+            if (secret.startsWith("${") && secret.endsWith("}")) {
+                throw new IllegalStateException(
+                        name + " was not resolved: the value is still the literal placeholder "
+                                + secret + ". This means backend/.env was not found. It is loaded "
+                                + "by spring.config.import in application.yml, which looks in "
+                                + "./.env and ./backend/.env relative to the working directory "
+                                + "(currently " + System.getProperty("user.dir") + "). Either run "
+                                + "from the repository root or from backend/, or set the "
+                                + "environment variable directly.");
+            }
+
             int decodedBytes;
             try {
                 decodedBytes = java.util.Base64.getDecoder().decode(secret).length;

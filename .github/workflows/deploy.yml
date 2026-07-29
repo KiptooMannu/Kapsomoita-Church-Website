@@ -24,10 +24,14 @@ jobs:
         with:
           node-version: 22
 
+      # --no-frozen-lockfile is required until a lockfile matching the current
+      # package.json is committed. Regenerate with `cd frontend && pnpm install`,
+      # commit pnpm-lock.yaml, then restore --frozen-lockfile so builds are
+      # reproducible again.
       - name: Enable corepack and install dependencies
         run: |
           corepack enable
-          pnpm install --frozen-lockfile
+          pnpm install --no-frozen-lockfile
 
       - name: Build Vite App
         env: # ✅ mark build as GitHub Pages

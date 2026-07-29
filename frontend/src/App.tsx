@@ -14,20 +14,18 @@ import ScrollToTop from './components/ScrollToTop'
 import HomePage from './pages/HomePage'
 
 const AboutPage = lazy(() => import('./pages/AboutPage'))
+const GalleryPage = lazy(() => import('./pages/GalleryPage'))
+const GivePage = lazy(() => import('./pages/GivePage'))
 const LegalPage = lazy(() => import('./pages/LegalPage'))
+const MinistriesIndexPage = lazy(() => import('./pages/MinistriesIndexPage'))
+const MinistryPage = lazy(() => import('./pages/MinistryPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
 
 // Original pages, still JavaScript. Being migrated section by section; they work
 // unchanged in the meantime.
 const Sermons = lazy(() => import('./pages/Sermons'))
-const Gallery = lazy(() => import('./pages/Gallery'))
 const Contact = lazy(() => import('./pages/Contacts'))
-const Give = lazy(() => import('./pages/Give'))
 const ServeForm = lazy(() => import('./pages/ServeForm'))
-const Youth = lazy(() => import('./pages/ministries/Youth'))
-const Women = lazy(() => import('./pages/ministries/Women'))
-const Men = lazy(() => import('./pages/ministries/Men'))
-const Kids = lazy(() => import('./pages/ministries/Kids'))
 const Evangelizing = lazy(() => import('./pages/strategies/Evangelizing'))
 const Establishing = lazy(() => import('./pages/strategies/Establishing'))
 const Edifying = lazy(() => import('./pages/strategies/Edifying'))
@@ -155,15 +153,16 @@ export default function App() {
           <Route path="/about" element={<AboutPage />} />
 
           <Route path="/sermons" element={<Sermons />} />
-          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/gallery" element={<GalleryPage />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/give" element={<Give />} />
+          <Route path="/give" element={<GivePage />} />
           <Route path="/serve" element={<ServeForm />} />
 
-          <Route path="/ministries/youth" element={<Youth />} />
-          <Route path="/ministries/women" element={<Women />} />
-          <Route path="/ministries/men" element={<Men />} />
-          <Route path="/ministries/kids" element={<Kids />} />
+          {/* One template serves all eleven ministries, so the seven that
+              previously had no page — Sunday School, Choir, Praise Team, Prayer,
+              Evangelism, Missions, Media — now have full pages too. */}
+          <Route path="/ministries" element={<MinistriesIndexPage />} />
+          <Route path="/ministries/:slug" element={<MinistryPage />} />
 
           <Route path="/strategies/evangelizing" element={<Evangelizing />} />
           <Route path="/strategies/establishing" element={<Establishing />} />

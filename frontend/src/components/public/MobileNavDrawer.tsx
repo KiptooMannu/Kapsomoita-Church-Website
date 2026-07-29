@@ -1,6 +1,7 @@
 import { ChevronDownIcon, HeartHandshakeIcon, PhoneIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
+import { ChurchLogo } from '@/components/brand/ChurchLogo'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { navigation, site } from '@/config/site'
@@ -39,9 +40,12 @@ export function MobileNavDrawer({ open, onOpenChange }: MobileNavDrawerProps) {
         <SheetTitle className="sr-only">Site navigation</SheetTitle>
 
         <div className="border-border flex h-16 shrink-0 items-center border-b px-5">
-          <Link to="/" onClick={close} className="flex flex-col">
-            <span className="text-base font-bold tracking-tight">{site.name}</span>
-            <span className="text-muted-foreground text-xs">{site.tagline}</span>
+          <Link to="/" onClick={close} className="flex items-center gap-2.5">
+            <ChurchLogo size={32} variant="tile" />
+            <span className="flex flex-col leading-tight">
+              <span className="text-base font-bold tracking-tight">{site.name}</span>
+              <span className="text-muted-foreground text-xs">{site.tagline}</span>
+            </span>
           </Link>
         </div>
 

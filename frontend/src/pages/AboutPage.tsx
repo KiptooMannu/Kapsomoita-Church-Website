@@ -1,5 +1,6 @@
 import {
   BookOpenIcon,
+  ChurchIcon,
   CompassIcon,
   HandHeartIcon,
   HeartIcon,
@@ -8,8 +9,11 @@ import {
   TargetIcon,
   UsersIcon,
 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { LeadershipSection } from '@/components/public/sections/LeadershipSection'
 import { Section, SectionHeading } from '@/components/public/Section'
 import { SeoHead } from '@/components/seo/SeoHead'
 import { site } from '@/config/site'
@@ -129,22 +133,29 @@ export default function AboutPage() {
       />
 
       {/* --- Page header ------------------------------------------------- */}
-      <header className="bg-brand-950 relative overflow-hidden pt-[calc(var(--header-height)+4rem)] pb-16 text-white sm:pb-20">
+      <header className="bg-brand-950 relative overflow-hidden py-16 text-white sm:py-20">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
           <div className="bg-gold-500/12 absolute -top-20 right-1/4 size-72 rounded-full blur-3xl" />
           <div className="bg-brand-400/12 absolute -bottom-20 left-1/4 size-72 rounded-full blur-3xl" />
         </div>
 
         <div className="container-page relative">
-          <div className="flex max-w-3xl flex-col gap-4">
-            <Badge variant="gold" className="w-fit">
-              About us
-            </Badge>
+          {/*
+            mx-auto centres the block itself, items-center centres its children
+            within it, and text-center centres the wrapped lines. All three are
+            needed — max-w alone leaves the block hard against the left gutter,
+            which is what looked off before.
+          */}
+          <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
+            <span className="bg-gold-500/15 text-gold-300 flex size-14 items-center justify-center rounded-2xl">
+              <ChurchIcon className="size-7" aria-hidden="true" />
+            </span>
+            <Badge variant="gold">About us</Badge>
             {/* The only h1 on this page. */}
-            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+            <h1 className="text-3xl font-bold tracking-tight text-balance sm:text-4xl lg:text-5xl">
               {site.fullName}
             </h1>
-            <p className="text-base leading-relaxed text-white/80 sm:text-lg">
+            <p className="max-w-2xl text-base leading-relaxed text-white/80 sm:text-lg">
               An ordinary family of believers in Kapsomoita, learning together what it means
               to follow Jesus faithfully — in our homes, our church and our community.
             </p>
@@ -154,9 +165,10 @@ export default function AboutPage() {
 
       {/* --- Vision & mission -------------------------------------------- */}
       <Section id="vision-mission">
-        <div className="grid gap-6 lg:grid-cols-2">
+        {/* Centred cards, capped so two columns do not stretch on a 4K display. */}
+        <div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-2">
           <Card className="py-8">
-            <CardContent className="flex flex-col gap-4">
+            <CardContent className="flex flex-col items-center gap-4 text-center">
               <span className="bg-primary/10 text-primary flex size-12 items-center justify-center rounded-xl">
                 <TargetIcon className="size-6" aria-hidden="true" />
               </span>
@@ -166,7 +178,7 @@ export default function AboutPage() {
           </Card>
 
           <Card className="py-8">
-            <CardContent className="flex flex-col gap-4">
+            <CardContent className="flex flex-col items-center gap-4 text-center">
               <span className="bg-accent-subtle text-accent-foreground flex size-12 items-center justify-center rounded-xl">
                 <CompassIcon className="size-6" aria-hidden="true" />
               </span>
@@ -211,15 +223,16 @@ export default function AboutPage() {
         />
 
         {/* An ordered list, because the sequence carries meaning. */}
-        <ol className="relative mx-auto mt-12 flex max-w-3xl flex-col gap-8">
-          {/* The connecting line, decorative only. */}
+        <ol className="relative mx-auto mt-12 flex w-full max-w-2xl flex-col gap-8">
+          {/* The connecting line, decorative only. Aligned to the centre of the
+              markers: half their width, so it stays centred at both sizes. */}
           <span
             aria-hidden="true"
-            className="bg-border absolute top-2 bottom-2 left-[15px] w-px sm:left-[19px]"
+            className="bg-border absolute top-2 bottom-2 left-4 w-px sm:left-5"
           />
 
           {TIMELINE.map((entry) => (
-            <li key={entry.year} className="relative flex gap-5 pl-0">
+            <li key={entry.year} className="relative flex gap-5">
               <span
                 aria-hidden="true"
                 className={cn(
@@ -266,29 +279,30 @@ export default function AboutPage() {
       </Section>
 
       {/* --- Leadership -------------------------------------------------- */}
-      <Section id="leadership">
-        <SectionHeading
-          eyebrow="Our leaders"
-          title="Church leadership"
-          description="The pastors and leaders who serve this congregation."
-        />
+      {/* The shared section, in `full` mode so every leader is listed rather than
+          only those with a photograph. Names come from config/leadership.ts. */}
+      <LeadershipSection full />
 
-        {/*
-          Deliberately not populated with invented people. Leadership profiles come
-          from the Leadership admin module, which is not built yet — inventing names
-          and photographs for a real church's leadership page would be worse than an
-          honest placeholder.
-        */}
-        <Card className="mx-auto mt-12 max-w-2xl py-10">
+      {/* --- Visit us ---------------------------------------------------- */}
+      <Section id="visit" className="py-12 sm:py-16">
+        <Card className="mx-auto max-w-2xl py-10">
           <CardContent className="flex flex-col items-center gap-4 text-center">
-            <span className="bg-secondary text-secondary-foreground flex size-14 items-center justify-center rounded-xl">
+            <span className="bg-primary/10 text-primary flex size-14 items-center justify-center rounded-2xl">
               <UsersIcon className="size-7" aria-hidden="true" />
             </span>
-            <h3 className="text-lg font-semibold">Leadership profiles coming soon</h3>
+            <h2 className="text-xl font-bold tracking-tight">Come and visit</h2>
             <p className="text-muted-foreground max-w-md text-sm leading-relaxed">
-              We are preparing profiles for our pastors and ministry leaders. In the meantime,
-              you are very welcome to visit on a Sunday and meet them in person.
+              The best way to get to know us is to join us on a Sunday. Our main service runs
+              from 8:00 AM, and someone will be at the door to welcome you.
             </p>
+            <div className="flex flex-col gap-3 pt-2 xs:flex-row">
+              <Button asChild>
+                <Link to="/contact">Plan your visit</Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link to="/ministries">Explore our ministries</Link>
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </Section>

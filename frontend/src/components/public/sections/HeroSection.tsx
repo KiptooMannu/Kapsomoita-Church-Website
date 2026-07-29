@@ -3,25 +3,17 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { CloudinaryImage } from '@/components/media/CloudinaryImage'
-import { mediaPublicId } from '@/config/media-manifest'
+import { resolveImage, type ImageKey } from '@/config/images'
 import { site } from '@/config/site'
 import { cn } from '@/lib/utils'
 
-// Bundled fallbacks, used until the Cloudinary import has run.
-import church1 from '@/assets/hero/church1.jpg'
-import church2 from '@/assets/hero/church2.jpg'
-import church3 from '@/assets/hero/church3.jpg'
-import church4 from '@/assets/hero/church4.jpg'
-import church5 from '@/assets/hero/church5.jpg'
-
-/** Rotating hero backdrops, paired with their pre-import fallback. */
-const SLIDES = [
-  { localPath: 'src/assets/hero/church1.jpg', fallback: church1 },
-  { localPath: 'src/assets/hero/church2.jpg', fallback: church2 },
-  { localPath: 'src/assets/hero/church3.jpg', fallback: church3 },
-  { localPath: 'src/assets/hero/church4.jpg', fallback: church4 },
-  { localPath: 'src/assets/hero/church5.jpg', fallback: church5 },
-] as const
+/**
+ * Rotating hero backdrops.
+ *
+ * Sourced through `config/images.ts`, so changing a hero photograph is a one-line
+ * edit in that file — paste any Unsplash (or other) URL — with no change here.
+ */
+const SLIDE_KEYS: readonly ImageKey[] = ['hero1', 'hero2', 'hero3', 'hero4', 'hero5']
 
 const SLIDE_INTERVAL_MS = 6500
 
@@ -52,7 +44,7 @@ export function HeroSection() {
     if (prefersReducedMotion) return
 
     const slideTimer = window.setInterval(
-      () => setSlideIndex((current) => (current + 1) % SLIDES.length),
+      () => setSlideIndex((current) => (current + 1) % SLIDE_KEYS.length),
       SLIDE_INTERVAL_MS,
     )
     const wordTimer = window.setInterval(
@@ -76,26 +68,29 @@ export function HeroSection() {
     >
       {/* --- Rotating backdrop ------------------------------------------- */}
       <div aria-hidden="true" className="absolute inset-0">
-        {SLIDES.map((slide, index) => (
-          <div
-            key={slide.localPath}
-            className={cn(
-              'absolute inset-0 transition-opacity duration-1000 ease-in-out',
-              index === slideIndex ? 'opacity-100' : 'opacity-0',
-            )}
-          >
-            <CloudinaryImage
-              publicId={mediaPublicId(slide.localPath) ?? ''}
-              fallbackSrc={slide.fallback}
-              alt=""
-              width={2560}
-              sizes="100vw"
-              priority={index === 0}
-              containerClassName="size-full"
-              className="scale-105"
-            />
-          </div>
-        ))}
+        {SLIDE_KEYS.map((key, index) => {
+          const image = resolveImage(key)
+          return (
+            <div
+              key={key}
+              className={cn(
+                'absolute inset-0 transition-opacity duration-1000 ease-in-out',
+                index === slideIndex ? 'opacity-100' : 'opacity-0',
+              )}
+            >
+              <CloudinaryImage
+                publicId={image.publicId}
+                fallbackSrc={image.fallbackSrc}
+                alt=""
+                width={2560}
+                sizes="100vw"
+                priority={index === 0}
+                containerClassName="size-full"
+                className="scale-105"
+              />
+            </div>
+          )
+        })}
 
         {/* Darkest at the bottom where the text sits. */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/55 to-black/25" />
@@ -202,12 +197,12 @@ export function HeroSection() {
 
       {/* --- Slide controls ---------------------------------------------- */}
       <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 gap-2">
-        {SLIDES.map((slide, index) => (
+        {SLIDE_KEYS.map((key, index) => (
           <button
-            key={slide.localPath}
+            key={key}
             type="button"
             onClick={() => setSlideIndex(index)}
-            aria-label={`Show background image ${index + 1} of ${SLIDES.length}`}
+            aria-label={`Show background image ${index + 1} of ${SLIDE_KEYS.length}`}
             aria-current={index === slideIndex}
             className={cn(
               // 44px tap target via padding, while the visible dot stays small.

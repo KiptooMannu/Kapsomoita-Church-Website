@@ -9,6 +9,7 @@ import {
   YoutubeIcon,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { ChurchLogo } from '@/components/brand/ChurchLogo'
 import { footerLinks, serviceTimes, site } from '@/config/site'
 import { cn } from '@/lib/utils'
 
@@ -57,17 +58,12 @@ export function SiteFooter() {
         {/* Brand + social */}
         <div className="flex flex-col gap-4 lg:col-span-2">
           <Link to="/" className="flex items-center gap-3">
-            <img
-              src="/AGC-logo.png"
-              alt=""
-              width={44}
-              height={44}
-              className="size-11 rounded-lg object-contain"
-            />
+            <ChurchLogo size={44} className="text-white" />
             <span className="flex flex-col leading-tight">
               <span className="text-lg font-bold">{site.name}</span>
               <span className="text-xs text-white/60">{site.tagline}</span>
             </span>
+            <span className="sr-only">{site.fullName} — home</span>
           </Link>
 
           <p className="max-w-sm text-sm leading-relaxed text-white/70">

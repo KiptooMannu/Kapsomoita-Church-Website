@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <!--
+    Church favicon. Replaces the previous AGC-logo.png, which was a 0-byte file and
+    therefore never rendered. Matches the ChurchLogo component's mark.
+    currentColor is not available in a favicon, so the brand indigo is inlined.
+  -->
+  <rect width="48" height="48" rx="10" fill="#3a3f9e"/>
+  <g fill="#ffffff">
+    <path d="M24 8v7M21 11h6" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <path d="M24 15 11 25v1.5h26V25L24 15Z" fill-opacity="0.95"/>
+    <path d="M13.5 27.5h21V40a.8.8 0 0 1-.8.8H14.3a.8.8 0 0 1-.8-.8V27.5Z" fill-opacity="0.7"/>
+    <path d="M24 31a4.2 4.2 0 0 0-4.2 4.2v5.6h8.4v-5.6A4.2 4.2 0 0 0 24 31Z" fill-opacity="0.35"/>
+  </g>
+</svg>

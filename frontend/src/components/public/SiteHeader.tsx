@@ -1,9 +1,10 @@
 import { ChevronDownIcon, HeartHandshakeIcon } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
+import { ChurchLogo, ChurchWordmark } from '@/components/brand/ChurchLogo'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/features/theme/ThemeToggle'
-import { useScrollPosition } from '@/hooks/useScrollPosition'
+import { useIsScrolled, useScrollProgressVar } from '@/hooks/useScrollPosition'
 import { navigation, site } from '@/config/site'
 import { cn } from '@/lib/utils'
 import { HamburgerButton } from './HamburgerButton'
@@ -23,7 +24,14 @@ import { MobileNavDrawer } from './MobileNavDrawer'
  */
 export function SiteHeader() {
   const location = useLocation()
-  const { isScrolled, progress } = useScrollPosition(32)
+
+  // Two separate concerns, deliberately. `isScrolled` re-renders only when it
+  // flips; the progress bar is driven by a CSS variable so it never re-renders
+  // React at all. Combining them made the header re-render ~60×/second, which is
+  // what made tapping the hamburger feel unresponsive.
+  const isScrolled = useIsScrolled(32)
+  const headerRef = useRef<HTMLElement>(null)
+  useScrollProgressVar(headerRef)
 
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
@@ -52,18 +60,26 @@ export function SiteHeader() {
   return (
     <>
       <header
+        ref={headerRef}
         className={cn(
-          'fixed top-0 right-0 left-0 z-40 transition-all duration-300',
+          'fixed top-0 right-0 left-0 z-40 transition-colors duration-300',
           isTransparent
             ? 'bg-transparent'
             : 'glass-panel border-border/60 border-b shadow-soft',
         )}
       >
-        {/* Scroll progress. Decorative, so hidden from assistive tech. */}
+        {/*
+          Scroll progress, driven entirely by the --scroll-progress custom property
+          the hook writes. scaleX on a composited layer costs nothing per frame,
+          whereas re-rendering this from React state cost a full header render.
+        */}
         <div
           aria-hidden="true"
-          className="absolute inset-x-0 bottom-0 h-0.5 origin-left bg-gradient-to-r from-brand-500 to-gold-500 transition-transform duration-150"
-          style={{ transform: `scaleX(${progress})` }}
+          className={cn(
+            'from-brand-500 to-gold-500 absolute inset-x-0 bottom-0 h-0.5 origin-left',
+            'bg-gradient-to-r will-change-transform',
+          )}
+          style={{ transform: 'scaleX(var(--scroll-progress, 0))' }}
         />
 
         <div className="container-page flex h-[var(--header-height)] items-center gap-3">
@@ -75,31 +91,20 @@ export function SiteHeader() {
               'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
             )}
           >
-            <img
-              src="/AGC-logo.png"
-              alt=""
-              width={40}
-              height={40}
-              className="size-10 shrink-0 rounded-lg object-contain"
+            {/* A real inline SVG mark. The old /AGC-logo.png was a 0-byte file, so
+                the logo never rendered at all. */}
+            <ChurchLogo
+              size={40}
+              variant={isTransparent ? 'plain' : 'tile'}
+              className={cn(isTransparent && 'text-white')}
             />
-            <span className="flex flex-col leading-tight">
-              <span
-                className={cn(
-                  'text-base font-bold tracking-tight transition-colors sm:text-lg',
-                  isTransparent ? 'text-white' : 'text-foreground',
-                )}
-              >
-                {site.name}
-              </span>
-              <span
-                className={cn(
-                  'hidden text-xs transition-colors sm:block',
-                  isTransparent ? 'text-white/75' : 'text-muted-foreground',
-                )}
-              >
-                {site.tagline}
-              </span>
-            </span>
+            <ChurchWordmark
+              name={site.name}
+              tagline={site.tagline}
+              onDark={isTransparent}
+            />
+            {/* The link's accessible name; the mark and wordmark are presentational. */}
+            <span className="sr-only">{site.fullName} — home</span>
           </Link>
 
           {/* --- Desktop navigation --------------------------------------- */}

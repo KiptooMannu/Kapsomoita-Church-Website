@@ -20,7 +20,6 @@
     <properties>
         <java.version>21</java.version>
         <jjwt.version>0.12.6</jjwt.version>
-        <spring-dotenv.version>4.0.0</spring-dotenv.version>
         <cloudinary.version>2.3.0</cloudinary.version>
         <tika.version>3.2.0</tika.version>
     </properties>
@@ -90,12 +89,12 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Loads backend/.env into the Spring Environment for local dev -->
-        <dependency>
-            <groupId>me.paulschwarz</groupId>
-            <artifactId>spring-dotenv</artifactId>
-            <version>${spring-dotenv.version}</version>
-        </dependency>
+        <!--
+          spring-dotenv was removed here. It only searched the current working
+          directory for .env, so launching from the repository root silently loaded
+          nothing. Spring Boot's own `spring.config.import` (see application.yml)
+          does the same job, takes explicit paths, and is one dependency fewer.
+        -->
 
         <!-- Media storage and delivery (images, video, raw documents) -->
         <dependency>
