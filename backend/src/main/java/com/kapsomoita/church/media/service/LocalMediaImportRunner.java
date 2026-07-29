@@ -1,6 +1,5 @@
 package com.kapsomoita.church.media.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kapsomoita.church.media.domain.GalleryCategory;
 import com.kapsomoita.church.media.domain.MediaFolder;
 import com.kapsomoita.church.media.dto.MediaDtos.UploadMetadata;
@@ -74,7 +73,6 @@ public class LocalMediaImportRunner implements ApplicationRunner {
     private final MediaAssetService mediaAssetService;
     private final MediaValidationService validationService;
     private final MediaAssetRepository mediaAssetRepository;
-    private final ObjectMapper objectMapper;
 
     @Value("${media.import.enabled:false}")
     private boolean enabled;
@@ -85,12 +83,10 @@ public class LocalMediaImportRunner implements ApplicationRunner {
 
     public LocalMediaImportRunner(MediaAssetService mediaAssetService,
                                   MediaValidationService validationService,
-                                  MediaAssetRepository mediaAssetRepository,
-                                  ObjectMapper objectMapper) {
+                                  MediaAssetRepository mediaAssetRepository) {
         this.mediaAssetService = mediaAssetService;
         this.validationService = validationService;
         this.mediaAssetRepository = mediaAssetRepository;
-        this.objectMapper = objectMapper;
     }
 
     @Override

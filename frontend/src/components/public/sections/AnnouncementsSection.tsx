@@ -1,27 +1,33 @@
+import { useQuery } from '@tanstack/react-query'
 import { ArrowRightIcon, CalendarIcon, MegaphoneIcon } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Section, SectionHeading } from '@/components/public/Section'
-import { announcements } from '@/config/content'
+import { announcements as fallbackAnnouncements } from '@/config/content'
+import { contentApi } from '@/features/content/content-api'
 import { cn } from '@/lib/utils'
 
-/** Tone maps to a badge variant; each badge always carries text as well. */
-const TONE_LABEL = {
-  info: 'Notice',
-  success: 'Good news',
-  warning: 'Important',
-} as const
-
-/**
- * Church announcements.
- *
- * Currently reads from `config/content.ts`. Once the Announcements admin module
- * lands this switches to a query against `/api/announcements` — the card markup
- * stays as-is, only the data source changes.
- */
 export function AnnouncementsSection() {
-  if (announcements.length === 0) {
+  const { data: liveAnnouncements } = useQuery({
+    queryKey: ['public', 'announcements'],
+    queryFn: contentApi.publicAnnouncements,
+    staleTime: 5 * 60_000,
+  })
+
+  // Use live data if returned from API, otherwise fallback to default config
+  const items = (liveAnnouncements && liveAnnouncements.length > 0)
+    ? liveAnnouncements.map((a) => ({
+        id: a.id,
+        title: a.title,
+        body: a.body,
+        tone: (a.tone?.toLowerCase() ?? 'info') as 'info' | 'success' | 'warning',
+        date: a.displayDate || 'Notice',
+        link: a.linkUrl ? { label: a.linkLabel || 'Learn more', to: a.linkUrl } : undefined,
+      }))
+    : fallbackAnnouncements
+
+  if (items.length === 0) {
     return null
   }
 
@@ -34,7 +40,7 @@ export function AnnouncementsSection() {
       />
 
       <ul className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {announcements.map((announcement) => (
+        {items.map((announcement) => (
           <li key={announcement.id}>
             <Card className="h-full py-6 transition-shadow duration-300 hover:shadow-lifted">
               <CardContent className="flex h-full flex-col gap-3">
@@ -57,7 +63,11 @@ export function AnnouncementsSection() {
                           : 'warning'
                     }
                   >
-                    {TONE_LABEL[announcement.tone]}
+                    {announcement.tone === 'success'
+                      ? 'Good news'
+                      : announcement.tone === 'warning'
+                      ? 'Important'
+                      : 'Notice'}
                   </Badge>
                 </div>
 

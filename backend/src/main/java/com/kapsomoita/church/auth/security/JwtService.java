@@ -177,7 +177,6 @@ public class JwtService {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private static Set<String> stringSet(Claims claims, String claimName) {
         Object raw = claims.get(claimName);
         if (raw instanceof List<?> list) {

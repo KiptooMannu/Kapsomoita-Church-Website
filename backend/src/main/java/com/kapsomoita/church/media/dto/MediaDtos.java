@@ -1,8 +1,6 @@
 package com.kapsomoita.church.media.dto;
 
-import com.kapsomoita.church.media.domain.GalleryCategory;
 import com.kapsomoita.church.media.domain.MediaAsset;
-import com.kapsomoita.church.media.domain.MediaFolder;
 import com.kapsomoita.church.media.domain.MediaVisibility;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

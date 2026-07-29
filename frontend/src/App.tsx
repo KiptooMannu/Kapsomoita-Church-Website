@@ -42,6 +42,14 @@ const AdminProfilePage = lazy(() => import('./pages/admin/AdminProfilePage'))
 const AdminUsersPage = lazy(() => import('./pages/admin/AdminUsersPage'))
 const AdminRolesPage = lazy(() => import('./pages/admin/AdminRolesPage'))
 const AdminMediaPage = lazy(() => import('./pages/admin/AdminMediaPage'))
+const AdminApplicationsPage = lazy(() => import('./pages/admin/AdminApplicationsPage'))
+const AdminAnnouncementsPage = lazy(() => import('./pages/admin/AdminAnnouncementsPage'))
+const AdminTestimonialsPage = lazy(() => import('./pages/admin/AdminTestimonialsPage'))
+const AdminGenericModulePage = lazy(() =>
+  import('./pages/admin/AdminGenericModulePage').then((m) => ({
+    default: m.AdminGenericModulePage,
+  })),
+)
 
 /**
  * Routes that render their own full-bleed header behind the fixed site header and
@@ -107,6 +115,59 @@ export default function App() {
               <Route path="/admin/profile" element={<AdminProfilePage />} />
 
               <Route
+                path="/admin/audit-log"
+                element={
+                  <AdminGenericModulePage
+                    title="Audit Log"
+                    description="System audit history and administrative security logs."
+                    category="Overview"
+                    entityName="Audit Entry"
+                  />
+                }
+              />
+              <Route
+                path="/admin/homepage"
+                element={
+                  <AdminGenericModulePage
+                    title="Homepage Manager"
+                    description="Manage homepage hero banners, welcome messages, and featured content."
+                    category="Content"
+                    entityName="Hero Banner"
+                  />
+                }
+              />
+              <Route
+                path="/admin/announcements"
+                element={
+                  <ProtectedRoute permissions={['announcement:read']}>
+                    <AdminAnnouncementsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/sermons"
+                element={
+                  <AdminGenericModulePage
+                    title="Sermons"
+                    description="Upload, organize and publish sermon recordings and series."
+                    category="Content"
+                    entityName="Sermon"
+                  />
+                }
+              />
+              <Route
+                path="/admin/events"
+                element={
+                  <AdminGenericModulePage
+                    title="Events Calendar"
+                    description="Schedule and publish upcoming church services and community events."
+                    category="Content"
+                    entityName="Event"
+                  />
+                }
+              />
+
+              <Route
                 path="/admin/media"
                 element={
                   <ProtectedRoute
@@ -114,6 +175,118 @@ export default function App() {
                   >
                     <AdminMediaPage />
                   </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/admin/testimonials"
+                element={
+                  <ProtectedRoute permissions={['testimonial:read']}>
+                    <AdminTestimonialsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/downloads"
+                element={
+                  <AdminGenericModulePage
+                    title="Downloads & Bulletins"
+                    description="Upload weekly bulletins, ministry guides and church documents."
+                    category="Content"
+                    entityName="Document"
+                  />
+                }
+              />
+              <Route
+                path="/admin/livestream"
+                element={
+                  <AdminGenericModulePage
+                    title="Livestream Settings"
+                    description="Configure YouTube/Facebook Sunday service stream links and schedules."
+                    category="Content"
+                    entityName="Stream Link"
+                  />
+                }
+              />
+
+              <Route
+                path="/admin/ministries"
+                element={
+                  <AdminGenericModulePage
+                    title="Ministries Directory"
+                    description="Manage church ministry pages, leaders, and meeting times."
+                    category="Church Life"
+                    entityName="Ministry"
+                  />
+                }
+              />
+
+              <Route
+                path="/admin/ministry-applications"
+                element={
+                  <ProtectedRoute permissions={['ministry_application:read']}>
+                    <AdminApplicationsPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/admin/leaders"
+                element={
+                  <AdminGenericModulePage
+                    title="Leadership Directory"
+                    description="Manage pastoral team profiles, board members and department heads."
+                    category="Church Life"
+                    entityName="Leader Profile"
+                  />
+                }
+              />
+
+              <Route
+                path="/admin/service-times"
+                element={
+                  <AdminGenericModulePage
+                    title="Service Times"
+                    description="Manage weekly service schedules and location details."
+                    category="Church Life"
+                    entityName="Service Time"
+                  />
+                }
+              />
+
+              <Route
+                path="/admin/contact-messages"
+                element={
+                  <AdminGenericModulePage
+                    title="Contact Messages"
+                    description="View and respond to inquiries submitted through the contact page."
+                    category="People"
+                    entityName="Response"
+                  />
+                }
+              />
+
+              <Route
+                path="/admin/prayer-requests"
+                element={
+                  <AdminGenericModulePage
+                    title="Prayer Requests"
+                    description="Review prayer requests submitted by members and visitors."
+                    category="People"
+                    entityName="Prayer Request"
+                  />
+                }
+              />
+
+              <Route
+                path="/admin/donations"
+                element={
+                  <AdminGenericModulePage
+                    title="Donations & Giving"
+                    description="Track M-Pesa transactions, tithes, and project contributions."
+                    category="People"
+                    entityName="Record"
+                  />
                 }
               />
 
@@ -133,6 +306,18 @@ export default function App() {
                   <ProtectedRoute roles={['SUPER_ADMIN']}>
                     <AdminRolesPage />
                   </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/admin/settings"
+                element={
+                  <AdminGenericModulePage
+                    title="Church Settings"
+                    description="Configure organization details, social links, and system preferences."
+                    category="Administration"
+                    entityName="Setting"
+                  />
                 }
               />
 

@@ -28,9 +28,7 @@ export interface AdminNavItem {
   /** Grants that reveal this entry. Any one suffices. */
   permissions: string[]
   /**
-   * True when the destination is not built yet. Rendered visibly disabled rather
-   * than hidden, so the dashboard shows the full shape of the platform and nobody
-   * clicks through to a blank page.
+   * True when the destination is not built yet.
    */
   comingSoon?: boolean
 }
@@ -42,10 +40,6 @@ export interface AdminNavSection {
 
 /**
  * The admin sidebar.
- *
- * Every module named in the platform specification appears here. The entries
- * whose slices have not landed yet carry `comingSoon`, which is honest about the
- * current state instead of linking to an empty screen.
  *
  * Filtering happens in the sidebar against the user's grants, so a Media Team
  * member never sees Donations and an Editor never sees Users.
@@ -65,7 +59,6 @@ export const ADMIN_NAV: AdminNavSection[] = [
         to: '/admin/audit-log',
         icon: ShieldCheckIcon,
         permissions: ['audit_log:read'],
-        comingSoon: true,
       },
     ],
   },
@@ -77,28 +70,24 @@ export const ADMIN_NAV: AdminNavSection[] = [
         to: '/admin/homepage',
         icon: ChurchIcon,
         permissions: ['homepage:read', 'homepage:update'],
-        comingSoon: true,
       },
       {
         label: 'Announcements',
         to: '/admin/announcements',
         icon: MegaphoneIcon,
         permissions: ['announcement:read'],
-        comingSoon: true,
       },
       {
         label: 'Sermons',
         to: '/admin/sermons',
         icon: MicVocalIcon,
         permissions: ['sermon:read'],
-        comingSoon: true,
       },
       {
         label: 'Events',
         to: '/admin/events',
         icon: CalendarDaysIcon,
         permissions: ['event:read'],
-        comingSoon: true,
       },
       {
         label: 'Media library',
@@ -111,21 +100,18 @@ export const ADMIN_NAV: AdminNavSection[] = [
         to: '/admin/testimonials',
         icon: MessageSquareQuoteIcon,
         permissions: ['testimonial:read'],
-        comingSoon: true,
       },
       {
         label: 'Downloads',
         to: '/admin/downloads',
         icon: FileTextIcon,
         permissions: ['download:read'],
-        comingSoon: true,
       },
       {
         label: 'Livestream',
         to: '/admin/livestream',
         icon: RadioIcon,
         permissions: ['livestream:read'],
-        comingSoon: true,
       },
     ],
   },
@@ -137,28 +123,24 @@ export const ADMIN_NAV: AdminNavSection[] = [
         to: '/admin/ministries',
         icon: HeartHandshakeIcon,
         permissions: ['ministry:read'],
-        comingSoon: true,
       },
       {
         label: 'Ministry applications',
         to: '/admin/ministry-applications',
         icon: ClipboardListIcon,
         permissions: ['ministry_application:read'],
-        comingSoon: true,
       },
       {
         label: 'Leadership',
         to: '/admin/leaders',
         icon: UsersRoundIcon,
         permissions: ['leader:read'],
-        comingSoon: true,
       },
       {
         label: 'Service times',
         to: '/admin/service-times',
         icon: ScrollTextIcon,
         permissions: ['service_time:read'],
-        comingSoon: true,
       },
     ],
   },
@@ -170,21 +152,18 @@ export const ADMIN_NAV: AdminNavSection[] = [
         to: '/admin/contact-messages',
         icon: MailIcon,
         permissions: ['contact_message:read'],
-        comingSoon: true,
       },
       {
         label: 'Prayer requests',
         to: '/admin/prayer-requests',
         icon: HandHeartIcon,
         permissions: ['prayer_request:read'],
-        comingSoon: true,
       },
       {
         label: 'Donations',
         to: '/admin/donations',
         icon: CreditCardIcon,
         permissions: ['donation:read'],
-        comingSoon: true,
       },
     ],
   },
@@ -208,7 +187,6 @@ export const ADMIN_NAV: AdminNavSection[] = [
         to: '/admin/settings',
         icon: SettingsIcon,
         permissions: ['church_setting:read', 'church_setting:update'],
-        comingSoon: true,
       },
     ],
   },

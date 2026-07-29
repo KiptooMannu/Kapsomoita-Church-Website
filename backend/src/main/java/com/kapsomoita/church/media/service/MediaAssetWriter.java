@@ -1,6 +1,5 @@
 package com.kapsomoita.church.media.service;
 
-import com.kapsomoita.church.auth.domain.User;
 import com.kapsomoita.church.auth.repository.UserRepository;
 import com.kapsomoita.church.media.domain.GalleryCategory;
 import com.kapsomoita.church.media.domain.MediaAsset;
@@ -72,12 +71,11 @@ public class MediaAssetWriter {
         asset.setChecksumSha256(stored.checksumSha256());
         asset.setUploadedAt(stored.uploadedAt());
 
-        // A lazy reference rather than the detached entity the caller holds: this
-        // sets the FK without a SELECT and without attaching a foreign instance to
-        // this session.
+        // Eagerly fetch the uploader so DTO mapping outside this transaction can
+        // safely call getFullName() on the returned entity. getReferenceById returns a
+        // Hibernate proxy that becomes unusable once the session closes.
         if (actorId != null) {
-            User uploader = userRepository.getReferenceById(actorId);
-            asset.setUploadedBy(uploader);
+            userRepository.findById(actorId).ifPresent(asset::setUploadedBy);
         }
 
         asset.setFeatured(metadata.featuredOrDefault());

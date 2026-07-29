@@ -319,7 +319,6 @@ public class CloudinaryStorageService {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private static List<String> extractTags(Object value) {
         if (value instanceof List<?> list) {
             List<String> tags = new ArrayList<>(list.size());

@@ -18,8 +18,8 @@ public interface AuditLogRepository extends JpaRepository<AuditLog, UUID> {
             SELECT a FROM AuditLog a
             WHERE (:action IS NULL OR :action = '' OR a.action LIKE CONCAT(:action, '%'))
               AND (:actorId IS NULL OR a.actor.id = :actorId)
-              AND (:from IS NULL OR a.createdAt >= :from)
-              AND (:to IS NULL OR a.createdAt <= :to)
+              AND a.createdAt >= COALESCE(:from, a.createdAt)
+              AND a.createdAt <= COALESCE(:to, a.createdAt)
             ORDER BY a.createdAt DESC
             """)
     Page<AuditLog> search(@Param("action") String actionPrefix,

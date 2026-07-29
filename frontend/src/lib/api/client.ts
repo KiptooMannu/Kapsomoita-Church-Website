@@ -32,6 +32,17 @@ api.interceptors.request.use((config) => {
   if (token && !AUTH_FREE_PATHS.some((authPath) => path.includes(authPath))) {
     config.headers.Authorization = `Bearer ${token}`
   }
+  // Let the browser set the Content-Type (with boundary) for FormData bodies.
+  if (config.data instanceof FormData) {
+    // Some environments set a default Content-Type; ensure it's unset so the
+    // browser can populate it correctly for multipart/form-data.
+    if (config.headers) {
+      // Header typing is loose here, so clear both casing variants safely.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      delete (config.headers as any)['Content-Type']
+      delete (config.headers as any)['content-type']
+    }
+  }
   return config
 })
 
@@ -188,7 +199,14 @@ export async function apiPost<T>(
   body?: unknown,
   config?: AxiosRequestConfig,
 ): Promise<T> {
-  const { data } = await api.post<T>(url, body, config)
+  // If the body is FormData, ensure we don't force a Content-Type so the
+  // browser can add the correct multipart boundary header.
+  const finalConfig = { ...(config ?? {}) }
+  if (body instanceof FormData) {
+    finalConfig.headers = { ...(finalConfig.headers ?? {}), 'Content-Type': undefined }
+  }
+
+  const { data } = await api.post<T>(url, body, finalConfig)
   return data
 }
 
@@ -197,7 +215,12 @@ export async function apiPut<T>(
   body?: unknown,
   config?: AxiosRequestConfig,
 ): Promise<T> {
-  const { data } = await api.put<T>(url, body, config)
+  const finalConfig = { ...(config ?? {}) }
+  if (body instanceof FormData) {
+    finalConfig.headers = { ...(finalConfig.headers ?? {}), 'Content-Type': undefined }
+  }
+
+  const { data } = await api.put<T>(url, body, finalConfig)
   return data
 }
 
@@ -206,7 +229,12 @@ export async function apiPatch<T>(
   body?: unknown,
   config?: AxiosRequestConfig,
 ): Promise<T> {
-  const { data } = await api.patch<T>(url, body, config)
+  const finalConfig = { ...(config ?? {}) }
+  if (body instanceof FormData) {
+    finalConfig.headers = { ...(finalConfig.headers ?? {}), 'Content-Type': undefined }
+  }
+
+  const { data } = await api.patch<T>(url, body, finalConfig)
   return data
 }
 

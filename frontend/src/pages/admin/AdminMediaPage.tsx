@@ -154,16 +154,31 @@ export default function AdminMediaPage() {
     onError: (error) => toast.error(normaliseApiError(error).message),
   })
 
-  const canSubmit =
-    selectedFiles.length > 0 &&
-    folder !== '' &&
-    title.trim() !== '' &&
-    (!selectedFolder?.requiresCategory || category !== '') &&
-    !uploadMutation.isPending
-
   const oversizedFile = selectedFolder
     ? selectedFiles.find((file) => file.size > selectedFolder.maxBytes)
     : undefined
+
+  /**
+   * Everything still required before the form can be submitted.
+   *
+   * Built as a list rather than a single boolean so the reason a disabled button is
+   * disabled can be shown. Previously it was one `&&` chain, which meant an empty
+   * Title silently disabled Upload — and because the Title field carries a realistic
+   * placeholder, it looked filled in. A disabled control with no explanation is a
+   * dead end for the user.
+   */
+  const missingRequirements: string[] = []
+  if (folder === '') missingRequirements.push('choose a destination')
+  if (selectedFolder?.requiresCategory && category === '') {
+    missingRequirements.push('choose a gallery category')
+  }
+  if (selectedFiles.length === 0) missingRequirements.push('select at least one file')
+  if (title.trim() === '') missingRequirements.push('enter a title')
+  // Blocking here as well as server-side, so an oversized file is caught before the
+  // user waits through a long upload that was always going to be rejected.
+  if (oversizedFile) missingRequirements.push('remove the file that is over the size limit')
+
+  const canSubmit = missingRequirements.length === 0 && !uploadMutation.isPending
 
   return (
     <>
@@ -314,18 +329,26 @@ export default function AdminMediaPage() {
                   </div>
 
                   <div className="flex flex-col gap-2">
-                    <Label htmlFor="title">Title</Label>
+                    <Label htmlFor="title">
+                      Title
+                      <span className="text-destructive" aria-hidden="true">
+                        *
+                      </span>
+                    </Label>
                     <Input
                       id="title"
                       required
                       maxLength={200}
                       value={title}
                       onChange={(event) => setTitle(event.target.value)}
-                      placeholder="Youth camp 2026"
+                      // Prefixed with "e.g." so the placeholder cannot be mistaken
+                      // for a value that has already been entered.
+                      placeholder="e.g. Youth camp 2026"
+                      aria-invalid={title.trim() === '' && selectedFiles.length > 0}
                     />
                     {selectedFiles.length > 1 && (
                       <p className="text-muted-foreground text-xs">
-                        Each file is numbered, e.g. “{title || 'Title'} (1)”.
+                        Each file is numbered, e.g. “{title.trim() || 'Your title'} (1)”.
                       </p>
                     )}
                   </div>
@@ -380,19 +403,33 @@ export default function AdminMediaPage() {
                     </div>
                   )}
 
-                  <Button type="submit" size="lg" block disabled={!canSubmit}>
-                    {uploadMutation.isPending ? (
-                      <>
-                        <Loader2Icon className="animate-spin" aria-hidden="true" />
-                        Uploading…
-                      </>
-                    ) : (
-                      <>
-                        <CloudUploadIcon aria-hidden="true" />
-                        Upload
-                      </>
+                  <div className="flex flex-col gap-2">
+                    <Button type="submit" size="lg" block disabled={!canSubmit}>
+                      {uploadMutation.isPending ? (
+                        <>
+                          <Loader2Icon className="animate-spin" aria-hidden="true" />
+                          Uploading…
+                        </>
+                      ) : (
+                        <>
+                          <CloudUploadIcon aria-hidden="true" />
+                          Upload
+                          {selectedFiles.length > 1 && ` ${selectedFiles.length} files`}
+                        </>
+                      )}
+                    </Button>
+
+                    {/*
+                      Says exactly what is still needed. A disabled submit button with
+                      no explanation is the single most frustrating state in a form —
+                      the user can see the button but not why it will not work.
+                    */}
+                    {missingRequirements.length > 0 && !uploadMutation.isPending && (
+                      <p role="status" className="text-muted-foreground text-xs">
+                        To upload, please {missingRequirements.join(', ')}.
+                      </p>
                     )}
-                  </Button>
+                  </div>
                 </form>
               </CardContent>
             </Card>
