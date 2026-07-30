@@ -1,6 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "//installCommand": "--no-frozen-lockfile is required until a lockfile matching the current package.json is committed. Regenerate it with `cd frontend && pnpm install`, commit pnpm-lock.yaml, then restore --frozen-lockfile so CI builds stay reproducible.",
   "installCommand": "cd frontend && corepack enable && pnpm install --no-frozen-lockfile",
   "buildCommand": "cd frontend && pnpm run build",
   "outputDirectory": "frontend/dist",
