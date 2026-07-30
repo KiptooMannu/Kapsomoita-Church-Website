@@ -9,8 +9,10 @@ import {
   YoutubeIcon,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import { ChurchLogo } from '@/components/brand/ChurchLogo'
-import { footerLinks, serviceTimes, site } from '@/config/site'
+import { footerLinks, serviceTimes as fallbackServiceTimes, site } from '@/config/site'
+import { contentApi } from '@/features/content/content-api'
 import { cn } from '@/lib/utils'
 
 const SOCIAL_LINKS = [
@@ -33,6 +35,16 @@ const SOCIAL_LINKS = [
  * was never a route, so it silently fell through to the homepage.
  */
 export function SiteFooter() {
+  const { data: liveServiceTimes } = useQuery({
+    queryKey: ['public', 'service-times'],
+    queryFn: contentApi.publicServiceTimes,
+    staleTime: 5 * 60_000,
+  })
+
+  const footerServiceTimes = (liveServiceTimes && liveServiceTimes.length > 0)
+    ? liveServiceTimes.map((st) => ({ name: st.name, day: st.dayLabel, time: st.timeLabel }))
+    : fallbackServiceTimes.map((st) => ({ name: st.name, day: st.day, time: st.time }))
+
   return (
     <footer className="bg-brand-950 text-white">
       {/* --- Vision & mission -------------------------------------------- */}
@@ -171,9 +183,9 @@ export function SiteFooter() {
             <ul className="flex flex-col gap-1.5 text-sm">
               {/* The three weekly gatherings; the fellowships are listed on the
                   homepage rather than crowding the footer. */}
-              {serviceTimes.slice(0, 3).map((service) => (
+              {footerServiceTimes.slice(0, 4).map((service) => (
                 <li key={service.name} className="flex flex-col text-white/70">
-                  <span className="font-medium text-white/90">{service.day}</span>
+                  <span className="font-medium text-white/90">{service.day} — {service.name}</span>
                   <span className="text-xs">{service.time}</span>
                 </li>
               ))}

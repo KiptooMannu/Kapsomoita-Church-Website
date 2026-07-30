@@ -8,6 +8,9 @@ on:
 permissions:
   contents: write
 
+permissions:
+  contents: write
+
 defaults:
   run:
     working-directory: frontend
@@ -17,6 +20,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Repository 🛎️
       - name: Checkout Repository 🛎️
         uses: actions/checkout@v4
 
@@ -34,7 +38,22 @@ jobs:
         run: corepack prepare pnpm@latest --activate
 
       - name: Verify Versions
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Enable pnpm
+        run: corepack prepare pnpm@latest --activate
+
+      - name: Verify Versions
         run: |
+          node -v
+          pnpm -v
+
+      - name: Install Dependencies
+        run: pnpm install --no-frozen-lockfile
           node -v
           pnpm -v
 
@@ -42,6 +61,7 @@ jobs:
         run: pnpm install --no-frozen-lockfile
 
       - name: Build Vite App
+        env:
         env:
           GITHUB_PAGES: true
           VITE_GITHUB_PAGES: true
@@ -56,10 +76,20 @@ jobs:
           echo "Contents of dist:"
           ls -la dist
 
+      - name: Create 404.html
+        run: cp dist/index.html dist/404.html
+
+      - name: Verify Build Output
+        run: |
+          echo "Contents of dist:"
+          ls -la dist
+
       - name: Deploy to GitHub Pages 🚀
         uses: JamesIves/github-pages-deploy-action@v4.6.8
         with:
           branch: gh-pages
+          folder: frontend/dist
+          clean: true
           folder: frontend/dist
           clean: true
           token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,29 +1,34 @@
+import { useQuery } from '@tanstack/react-query'
 import { ChevronLeftIcon, ChevronRightIcon, QuoteIcon } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Section, SectionHeading } from '@/components/public/Section'
-import { testimonials } from '@/config/content'
+import { testimonials as fallbackTestimonials } from '@/config/content'
+import { contentApi } from '@/features/content/content-api'
 import { cn } from '@/lib/utils'
 
 const AUTOPLAY_MS = 7000
 
-/**
- * Testimonial carousel.
- *
- * Accessibility decisions that matter more than the animation:
- *
- * - Autoplay pauses on hover *and* on keyboard focus, so a keyboard user reading a
- *   quote does not have it slide away mid-sentence.
- * - Autoplay is disabled entirely under `prefers-reduced-motion`.
- * - The slide container is a labelled group with `aria-live="off"`, so changing
- *   slides does not interrupt a screen reader; the previous/next buttons and dots
- *   provide explicit control instead.
- */
 export function TestimonialsSection() {
   const [index, setIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
 
-  const count = testimonials.length
+  const { data: liveTestimonials } = useQuery({
+    queryKey: ['public', 'testimonials'],
+    queryFn: contentApi.publicTestimonials,
+    staleTime: 5 * 60_000,
+  })
+
+  const items = (liveTestimonials !== undefined)
+    ? liveTestimonials.map((t) => ({
+        id: t.id,
+        quote: t.quote,
+        name: t.displayAuthor,
+        role: t.authorRole || 'Church Member',
+      }))
+    : fallbackTestimonials
+
+  const count = items.length
 
   const goTo = useCallback(
     (next: number) => {
@@ -73,7 +78,7 @@ export function TestimonialsSection() {
             className="flex transition-transform duration-500 ease-out"
             style={{ transform: `translateX(-${index * 100}%)` }}
           >
-            {testimonials.map((testimonial, slideIndex) => (
+            {items.map((testimonial, slideIndex) => (
               <li
                 key={testimonial.id}
                 className="w-full shrink-0 px-1"
@@ -135,7 +140,7 @@ export function TestimonialsSection() {
             </button>
 
             <div className="mt-6 flex justify-center gap-1">
-              {testimonials.map((testimonial, dotIndex) => (
+              {items.map((testimonial, dotIndex) => (
                 <button
                   key={testimonial.id}
                   type="button"

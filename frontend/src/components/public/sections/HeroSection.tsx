@@ -34,6 +34,8 @@ const ROTATING_WORDS = ['Welcome home.', 'Come as you are.', 'Grow in faith.'] a
  *    and clears toward the top, so the headline holds contrast on every slide
  *    without washing the photograph out.
  */
+import { AnnouncementsSideWidget } from '@/components/public/sections/AnnouncementsSideWidget'
+
 export function HeroSection() {
   const [slideIndex, setSlideIndex] = useState(0)
   const [wordIndex, setWordIndex] = useState(0)
@@ -62,8 +64,6 @@ export function HeroSection() {
     <section
       id="home"
       aria-label="Welcome"
-      // dvh rather than vh: on mobile Safari, vh includes the collapsing URL bar,
-      // which makes the hero taller than the visible viewport.
       className="relative flex min-h-[100dvh] items-center overflow-hidden"
     >
       {/* --- Rotating backdrop ------------------------------------------- */}
@@ -97,101 +97,106 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-r from-brand-950/50 to-transparent" />
       </div>
 
-      {/* --- Content ------------------------------------------------------ */}
-      <div className="container-page relative z-10 pt-[var(--header-height)] pb-16">
-        <div className="flex max-w-3xl flex-col gap-6">
-          <span
-            className={cn(
-              'w-fit rounded-full border border-white/25 bg-white/10 px-4 py-1.5',
-              'text-xs font-medium tracking-wider text-white/90 uppercase backdrop-blur-sm',
-              'animate-fade-in',
-            )}
-          >
-            {site.fullName}
-          </span>
-
-          <h1 className="text-4xl leading-[1.05] font-bold tracking-tight text-white sm:text-5xl lg:text-6xl xl:text-7xl">
-            <span className="block animate-fade-up">You belong here.</span>
-            {/* Fixed-height line so swapping the phrase does not reflow the page.
-                aria-live keeps the change announced without repeating the h1. */}
-            <span className="mt-2 block h-[1.15em] overflow-hidden">
-              <span
-                key={wordIndex}
-                aria-live="polite"
-                className="block animate-fade-up bg-gradient-to-r from-gold-300 to-gold-500 bg-clip-text text-transparent"
-              >
-                {ROTATING_WORDS[wordIndex]}
-              </span>
+      {/* --- Content Grid -------------------------------------------------- */}
+      <div className="container-page relative z-10 pt-[var(--header-height)] pb-16 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="flex max-w-3xl flex-col gap-6 lg:col-span-8">
+            <span
+              className={cn(
+                'w-fit rounded-full border border-white/25 bg-white/10 px-4 py-1.5',
+                'text-xs font-medium tracking-wider text-white/90 uppercase backdrop-blur-sm',
+                'animate-fade-in',
+              )}
+            >
+              {site.fullName}
             </span>
-          </h1>
 
-          <p className="max-w-xl animate-fade-up text-base leading-relaxed text-white/85 sm:text-lg">
-            {site.vision}
-          </p>
+            <h1 className="text-4xl leading-[1.05] font-bold tracking-tight text-white sm:text-5xl lg:text-6xl xl:text-7xl">
+              <span className="block animate-fade-up">You belong here.</span>
+              <span className="mt-2 block h-[1.15em] overflow-hidden">
+                <span
+                  key={wordIndex}
+                  aria-live="polite"
+                  className="block animate-fade-up bg-gradient-to-r from-gold-300 to-gold-500 bg-clip-text text-transparent"
+                >
+                  {ROTATING_WORDS[wordIndex]}
+                </span>
+              </span>
+            </h1>
 
-          {/* --- Calls to action ---------------------------------------- */}
-          <div className="flex animate-fade-up flex-col gap-3 pt-2 xs:flex-row xs:flex-wrap">
-            <Button asChild size="xl" variant="gold">
-              <Link to="/contact">
-                Join Us
-                <ArrowRightIcon aria-hidden="true" />
-              </Link>
-            </Button>
+            <p className="max-w-xl animate-fade-up text-base leading-relaxed text-white/85 sm:text-lg">
+              {site.vision}
+            </p>
 
-            <Button
-              asChild
-              size="xl"
-              variant="outline"
-              className="border-white/35 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20 hover:text-white"
-            >
-              <Link to="/sermons">
-                <PlayCircleIcon aria-hidden="true" />
-                Watch Sermons
-              </Link>
-            </Button>
+            {/* --- Calls to action ---------------------------------------- */}
+            <div className="flex animate-fade-up flex-col gap-3 pt-2 xs:flex-row xs:flex-wrap">
+              <Button asChild size="xl" variant="gold">
+                <Link to="/contact">
+                  Join Us
+                  <ArrowRightIcon aria-hidden="true" />
+                </Link>
+              </Button>
 
-            <Button
-              asChild
-              size="xl"
-              variant="ghost"
-              className="text-white hover:bg-white/15 hover:text-white"
-            >
-              <Link to="/give">
-                <HeartHandshakeIcon aria-hidden="true" />
-                Give Online
-              </Link>
-            </Button>
+              <Button
+                asChild
+                size="xl"
+                variant="outline"
+                className="border-white/35 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20 hover:text-white"
+              >
+                <Link to="/sermons">
+                  <PlayCircleIcon aria-hidden="true" />
+                  Watch Sermons
+                </Link>
+              </Button>
 
-            <Button
-              asChild
-              size="xl"
-              variant="ghost"
-              className="text-white hover:bg-white/15 hover:text-white"
-            >
-              <a href={`tel:${site.contact.phoneHref}`}>
-                <PhoneIcon aria-hidden="true" />
-                Contact Us
-              </a>
-            </Button>
+              <Button
+                asChild
+                size="xl"
+                variant="ghost"
+                className="text-white hover:bg-white/15 hover:text-white"
+              >
+                <Link to="/give">
+                  <HeartHandshakeIcon aria-hidden="true" />
+                  Give Online
+                </Link>
+              </Button>
+
+              <Button
+                asChild
+                size="xl"
+                variant="ghost"
+                className="text-white hover:bg-white/15 hover:text-white"
+              >
+                <a href={`tel:${site.contact.phoneHref}`}>
+                  <PhoneIcon aria-hidden="true" />
+                  Contact Us
+                </a>
+              </Button>
+            </div>
+
+            {/* --- Next service, at a glance ------------------------------ */}
+            <dl className="mt-6 flex animate-fade-up flex-wrap gap-x-8 gap-y-3 border-t border-white/20 pt-6">
+              <div>
+                <dt className="text-xs tracking-wider text-white/60 uppercase">Sunday Worship</dt>
+                <dd className="text-sm font-semibold text-white">8:00 AM – 12:00 PM</dd>
+              </div>
+              <div>
+                <dt className="text-xs tracking-wider text-white/60 uppercase">Where</dt>
+                <dd className="text-sm font-semibold text-white">
+                  {site.contact.addressLines[0]}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-xs tracking-wider text-white/60 uppercase">Call us</dt>
+                <dd className="text-sm font-semibold text-white">{site.contact.phone}</dd>
+              </div>
+            </dl>
           </div>
 
-          {/* --- Next service, at a glance ------------------------------ */}
-          <dl className="mt-6 flex animate-fade-up flex-wrap gap-x-8 gap-y-3 border-t border-white/20 pt-6">
-            <div>
-              <dt className="text-xs tracking-wider text-white/60 uppercase">Sunday Worship</dt>
-              <dd className="text-sm font-semibold text-white">8:00 AM – 12:00 PM</dd>
-            </div>
-            <div>
-              <dt className="text-xs tracking-wider text-white/60 uppercase">Where</dt>
-              <dd className="text-sm font-semibold text-white">
-                {site.contact.addressLines[0]}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-xs tracking-wider text-white/60 uppercase">Call us</dt>
-              <dd className="text-sm font-semibold text-white">{site.contact.phone}</dd>
-            </div>
-          </dl>
+          {/* Announcements Side Widget */}
+          <div className="lg:col-span-4 flex justify-center lg:justify-end animate-fade-up">
+            <AnnouncementsSideWidget />
+          </div>
         </div>
       </div>
 

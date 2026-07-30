@@ -1,17 +1,39 @@
 import { ClockIcon, MapPinIcon, UserIcon } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Section, SectionHeading } from '@/components/public/Section'
-import { serviceTimes } from '@/config/site'
+import { serviceTimes as fallbackServiceTimes } from '@/config/site'
+import { contentApi } from '@/features/content/content-api'
 import { cn } from '@/lib/utils'
 
 /**
  * Weekly gatherings.
  *
- * The first card is highlighted as the main service, since a first-time visitor
- * overwhelmingly wants to know when Sunday is and everything else is secondary.
+ * The first card or primary service is highlighted as the main service.
  */
 export function ServicesSection() {
+  const { data: liveServiceTimes } = useQuery({
+    queryKey: ['public', 'service-times'],
+    queryFn: contentApi.publicServiceTimes,
+    staleTime: 5 * 60_000,
+  })
+
+  const services = (liveServiceTimes && liveServiceTimes.length > 0)
+    ? liveServiceTimes.map((st) => ({
+        name: st.name,
+        day: st.dayLabel,
+        time: st.timeLabel,
+        location: st.location,
+        description: st.description || '',
+        leader: st.leader || undefined,
+        primary: st.primary,
+      }))
+    : fallbackServiceTimes.map((st, i) => ({
+        ...st,
+        primary: i === 0,
+      }))
+
   return (
     <Section id="services" tone="muted">
       <SectionHeading
@@ -21,8 +43,8 @@ export function ServicesSection() {
       />
 
       <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {serviceTimes.map((service, index) => {
-          const isPrimary = index === 0
+        {services.map((service, index) => {
+          const isPrimary = service.primary ?? index === 0
 
           return (
             <li key={service.name}>

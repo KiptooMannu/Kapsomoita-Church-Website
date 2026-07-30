@@ -14,6 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.kapsomoita.church.audit.dto.AuditLogResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 /**
  * Writes the audit trail.
  *
@@ -47,6 +51,13 @@ public class AuditService {
     public AuditService(AuditLogRepository auditLogRepository, ObjectMapper objectMapper) {
         this.auditLogRepository = auditLogRepository;
         this.objectMapper = objectMapper;
+    }
+
+    /** Queries paginated audit trail logs for administrative inspection. */
+    @Transactional(readOnly = true)
+    public Page<AuditLogResponse> listLogs(String search, String action, Pageable pageable) {
+        return auditLogRepository.searchLogs(action, search, pageable)
+                .map(AuditLogResponse::from);
     }
 
     /** Records an action attributed to a known account. */

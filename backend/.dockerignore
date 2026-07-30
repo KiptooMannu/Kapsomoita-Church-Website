@@ -1,0 +1,16 @@
+# Maven build output (regenerated inside Docker by the builder stage)
+target/
+
+# Local secrets — never bake into the image; inject via Render env vars
+.env
+*.env
+
+# IDE and OS noise
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Git metadata
+.git/
+.gitignore

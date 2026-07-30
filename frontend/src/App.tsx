@@ -45,6 +45,16 @@ const AdminMediaPage = lazy(() => import('./pages/admin/AdminMediaPage'))
 const AdminApplicationsPage = lazy(() => import('./pages/admin/AdminApplicationsPage'))
 const AdminAnnouncementsPage = lazy(() => import('./pages/admin/AdminAnnouncementsPage'))
 const AdminTestimonialsPage = lazy(() => import('./pages/admin/AdminTestimonialsPage'))
+const AdminAuditLogPage = lazy(() => import('./pages/admin/AdminAuditLogPage'))
+const AdminSermonsPage = lazy(() => import('./pages/admin/AdminSermonsPage'))
+const AdminEventsPage = lazy(() => import('./pages/admin/AdminEventsPage'))
+const AdminDownloadsPage = lazy(() => import('./pages/admin/AdminDownloadsPage'))
+const AdminMinistriesPage = lazy(() => import('./pages/admin/AdminMinistriesPage'))
+const AdminLeadersPage = lazy(() => import('./pages/admin/AdminLeadersPage'))
+const AdminContactMessagesPage = lazy(() => import('./pages/admin/AdminContactMessagesPage'))
+const AdminPrayerRequestsPage = lazy(() => import('./pages/admin/AdminPrayerRequestsPage'))
+const AdminDonationsPage = lazy(() => import('./pages/admin/AdminDonationsPage'))
+const AdminServiceTimesPage = lazy(() => import('./pages/admin/AdminServiceTimesPage'))
 const AdminGenericModulePage = lazy(() =>
   import('./pages/admin/AdminGenericModulePage').then((m) => ({
     default: m.AdminGenericModulePage,
@@ -117,12 +127,9 @@ export default function App() {
               <Route
                 path="/admin/audit-log"
                 element={
-                  <AdminGenericModulePage
-                    title="Audit Log"
-                    description="System audit history and administrative security logs."
-                    category="Overview"
-                    entityName="Audit Entry"
-                  />
+                  <ProtectedRoute permissions={['audit:read']}>
+                    <AdminAuditLogPage />
+                  </ProtectedRoute>
                 }
               />
               <Route
@@ -147,23 +154,17 @@ export default function App() {
               <Route
                 path="/admin/sermons"
                 element={
-                  <AdminGenericModulePage
-                    title="Sermons"
-                    description="Upload, organize and publish sermon recordings and series."
-                    category="Content"
-                    entityName="Sermon"
-                  />
+                  <ProtectedRoute permissions={['sermon:read']}>
+                    <AdminSermonsPage />
+                  </ProtectedRoute>
                 }
               />
               <Route
                 path="/admin/events"
                 element={
-                  <AdminGenericModulePage
-                    title="Events Calendar"
-                    description="Schedule and publish upcoming church services and community events."
-                    category="Content"
-                    entityName="Event"
-                  />
+                  <ProtectedRoute permissions={['event:read']}>
+                    <AdminEventsPage />
+                  </ProtectedRoute>
                 }
               />
 
@@ -189,12 +190,9 @@ export default function App() {
               <Route
                 path="/admin/downloads"
                 element={
-                  <AdminGenericModulePage
-                    title="Downloads & Bulletins"
-                    description="Upload weekly bulletins, ministry guides and church documents."
-                    category="Content"
-                    entityName="Document"
-                  />
+                  <ProtectedRoute permissions={['download:read']}>
+                    <AdminDownloadsPage />
+                  </ProtectedRoute>
                 }
               />
               <Route
@@ -212,12 +210,9 @@ export default function App() {
               <Route
                 path="/admin/ministries"
                 element={
-                  <AdminGenericModulePage
-                    title="Ministries Directory"
-                    description="Manage church ministry pages, leaders, and meeting times."
-                    category="Church Life"
-                    entityName="Ministry"
-                  />
+                  <ProtectedRoute permissions={['ministry:read']}>
+                    <AdminMinistriesPage />
+                  </ProtectedRoute>
                 }
               />
 
@@ -233,60 +228,45 @@ export default function App() {
               <Route
                 path="/admin/leaders"
                 element={
-                  <AdminGenericModulePage
-                    title="Leadership Directory"
-                    description="Manage pastoral team profiles, board members and department heads."
-                    category="Church Life"
-                    entityName="Leader Profile"
-                  />
+                  <ProtectedRoute permissions={['leader:read']}>
+                    <AdminLeadersPage />
+                  </ProtectedRoute>
                 }
               />
 
               <Route
                 path="/admin/service-times"
                 element={
-                  <AdminGenericModulePage
-                    title="Service Times"
-                    description="Manage weekly service schedules and location details."
-                    category="Church Life"
-                    entityName="Service Time"
-                  />
+                  <ProtectedRoute permissions={['service_time:read']}>
+                    <AdminServiceTimesPage />
+                  </ProtectedRoute>
                 }
               />
 
               <Route
                 path="/admin/contact-messages"
                 element={
-                  <AdminGenericModulePage
-                    title="Contact Messages"
-                    description="View and respond to inquiries submitted through the contact page."
-                    category="People"
-                    entityName="Response"
-                  />
+                  <ProtectedRoute permissions={['contact_message:read']}>
+                    <AdminContactMessagesPage />
+                  </ProtectedRoute>
                 }
               />
 
               <Route
                 path="/admin/prayer-requests"
                 element={
-                  <AdminGenericModulePage
-                    title="Prayer Requests"
-                    description="Review prayer requests submitted by members and visitors."
-                    category="People"
-                    entityName="Prayer Request"
-                  />
+                  <ProtectedRoute permissions={['prayer_request:read']}>
+                    <AdminPrayerRequestsPage />
+                  </ProtectedRoute>
                 }
               />
 
               <Route
                 path="/admin/donations"
                 element={
-                  <AdminGenericModulePage
-                    title="Donations & Giving"
-                    description="Track M-Pesa transactions, tithes, and project contributions."
-                    category="People"
-                    entityName="Record"
-                  />
+                  <ProtectedRoute permissions={['donation:read']}>
+                    <AdminDonationsPage />
+                  </ProtectedRoute>
                 }
               />
 

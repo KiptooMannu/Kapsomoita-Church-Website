@@ -15,26 +15,48 @@ import {
 } from '@/config/leadership'
 import { env } from '@/lib/env'
 import { cn } from '@/lib/utils'
+import { useQuery } from '@tanstack/react-query'
+import { contentApi } from '@/features/content/content-api'
 
 export interface LeadershipSectionProps {
   /** Show every leader (About page) rather than a trimmed set (landing page). */
   full?: boolean
 }
 
-/**
- * Church leadership.
- *
- * Each card falls back to the role as its heading while a name is unconfirmed, so
- * the section is presentable before the church has supplied its details and needs no
- * change once it has. A development-only notice points that out to whoever is
- * building the site, without showing anything to visitors.
- */
 export function LeadershipSection({ full = false }: LeadershipSectionProps) {
-  // The landing page shows the pastoral team plus the four leaders who have
-  // photographs; the About page shows everyone.
-  const leaders = full
-    ? ministryLeaders
-    : ministryLeaders.filter((member) => member.imageLocalPath !== undefined)
+  const { data: liveLeaders } = useQuery({
+    queryKey: ['public', 'leaders'],
+    queryFn: contentApi.publicLeaders,
+    staleTime: 5 * 60_000,
+  })
+
+  // Live leaders split into pastoral team vs ministry leaders
+  const livePastoral = liveLeaders?.filter((l) => l.team === 'PASTORAL') ?? []
+  const liveMinistry = liveLeaders?.filter((l) => l.team !== 'PASTORAL') ?? []
+
+  const activePastoralTeam: LeadershipMember[] = livePastoral.length > 0
+    ? livePastoral.map((l) => ({
+        id: l.id,
+        name: l.fullName || '',
+        role: l.roleTitle,
+        bio: l.bio || '',
+        email: l.email || undefined,
+        phone: l.phone || undefined,
+      }))
+    : pastoralTeam
+
+  const leaders: LeadershipMember[] = (liveMinistry.length > 0)
+    ? liveMinistry.map((l) => ({
+        id: l.id,
+        name: l.fullName || '',
+        role: l.roleTitle,
+        bio: l.bio || '',
+        email: l.email || undefined,
+        phone: l.phone || undefined,
+      }))
+    : (full
+      ? ministryLeaders
+      : ministryLeaders.filter((member) => member.imageLocalPath !== undefined))
 
   return (
     <Section id="leadership" tone="muted">
@@ -48,14 +70,13 @@ export function LeadershipSection({ full = false }: LeadershipSectionProps) {
         Shown only in development. It reminds whoever is building the site to fill in
         the real names, and never appears to a visitor in production.
       */}
-      {env.isDevelopment && !hasNamedLeaders && (
+      {env.isDevelopment && !hasNamedLeaders && liveLeaders?.length === 0 && (
         <Alert variant="info" className="mx-auto mt-8 max-w-2xl">
           <InfoIcon aria-hidden="true" />
           <AlertTitle>Leadership names are not filled in</AlertTitle>
           <AlertDescription>
-            Add the real names, biographies and photographs in{' '}
-            <code className="font-mono text-xs">src/config/leadership.ts</code>. Until then
-            each card shows only the role. This notice is hidden in production.
+            Add real names in the Admin panel under Leaders, or in{' '}
+            <code className="font-mono text-xs">src/config/leadership.ts</code>.
           </AlertDescription>
         </Alert>
       )}
@@ -67,7 +88,7 @@ export function LeadershipSection({ full = false }: LeadershipSectionProps) {
         </h3>
 
         <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {pastoralTeam.map((member) => (
+          {activePastoralTeam.map((member) => (
             <li key={member.id}>
               <LeaderCard member={member} />
             </li>

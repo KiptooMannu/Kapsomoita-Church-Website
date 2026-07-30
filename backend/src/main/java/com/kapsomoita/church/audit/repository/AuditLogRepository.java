@@ -28,5 +28,19 @@ public interface AuditLogRepository extends JpaRepository<AuditLog, UUID> {
                           @Param("to") Instant to,
                           Pageable pageable);
 
+    @Query("""
+            SELECT a FROM AuditLog a
+            WHERE (:action IS NULL OR :action = '' OR lower(a.action) LIKE lower(CONCAT('%', :action, '%')))
+              AND (:search IS NULL OR :search = ''
+                   OR lower(a.action) LIKE lower(CONCAT('%', :search, '%'))
+                   OR lower(a.actorEmail) LIKE lower(CONCAT('%', :search, '%'))
+                   OR lower(a.resourceType) LIKE lower(CONCAT('%', :search, '%'))
+                   OR lower(a.ipAddress) LIKE lower(CONCAT('%', :search, '%')))
+            ORDER BY a.createdAt DESC
+            """)
+    Page<AuditLog> searchLogs(@Param("action") String action,
+                              @Param("search") String search,
+                              Pageable pageable);
+
     long countByCreatedAtAfter(Instant since);
 }

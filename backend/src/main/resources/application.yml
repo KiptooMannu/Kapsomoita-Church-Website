@@ -42,7 +42,7 @@ spring:
       minimum-idle: 2
       idle-timeout: 120000      # 2 min
       max-lifetime: 900000      # 15 min
-      connection-timeout: 30000 # 30 s
+      connection-timeout: 60000 # 60 s — long enough for Neon cold-start
       keepalive-time: 60000     # 1 min
 
   jpa:
