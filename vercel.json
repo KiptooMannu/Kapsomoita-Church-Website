@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "cd frontend && corepack enable && pnpm install",
+  "installCommand": "npm install -g pnpm@10.19.0 && cd frontend && pnpm install --no-frozen-lockfile",
   "buildCommand": "cd frontend && pnpm run build",
   "outputDirectory": "frontend/dist",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
