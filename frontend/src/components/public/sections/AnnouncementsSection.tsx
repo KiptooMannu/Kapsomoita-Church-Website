@@ -11,13 +11,14 @@ import { Link } from 'react-router-dom'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import { Section, SectionHeading } from '@/components/public/Section'
+import { queryKeys } from '@/lib/query-client'
 import { announcements as fallbackAnnouncements } from '@/config/content'
 import { contentApi } from '@/features/content/content-api'
 import { cn } from '@/lib/utils'
 
 export function AnnouncementsSection() {
   const { data: liveAnnouncements, isPending } = useQuery({
-    queryKey: ['public', 'announcements'],
+    queryKey: queryKeys.public.announcements,
     queryFn: contentApi.publicAnnouncements,
     staleTime: 2 * 60_000,
   })

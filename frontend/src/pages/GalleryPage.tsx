@@ -13,6 +13,7 @@ import { SeoHead } from '@/components/seo/SeoHead'
 import { publicGalleryApi } from '@/features/media/public-gallery-api'
 import type { MediaAsset } from '@/features/media/media-api'
 import { cn } from '@/lib/utils'
+import { queryKeys } from '@/lib/query-client'
 
 const PAGE_SIZE = 24
 
@@ -38,7 +39,7 @@ export default function GalleryPage() {
   const [lightboxAsset, setLightboxAsset] = useState<MediaAsset | null>(null)
 
   const categoriesQuery = useQuery({
-    queryKey: ['public', 'gallery', 'categories'],
+    queryKey: queryKeys.public.galleryCategories,
     queryFn: publicGalleryApi.categories,
     staleTime: 10 * 60_000,
   })
@@ -51,7 +52,7 @@ export default function GalleryPage() {
   )
 
   const imagesQuery = useQuery({
-    queryKey: ['public', 'gallery', 'images', activeCategory],
+    queryKey: queryKeys.public.galleryImages(activeCategory),
     queryFn: async () => {
       if (activeCategory !== ALL) {
         const page = await publicGalleryApi.byCategory(activeCategory, 0, PAGE_SIZE)

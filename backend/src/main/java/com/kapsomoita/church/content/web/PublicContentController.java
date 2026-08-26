@@ -1,6 +1,7 @@
 package com.kapsomoita.church.content.web;
 
 import com.kapsomoita.church.content.dto.ContentDtos.AnnouncementResponse;
+import com.kapsomoita.church.content.dto.ContentDtos.HomepageItemResponse;
 import com.kapsomoita.church.content.dto.ContentDtos.LeaderResponse;
 import com.kapsomoita.church.content.dto.ContentDtos.ServiceTimeResponse;
 import com.kapsomoita.church.content.dto.ContentDtos.TestimonialResponse;
@@ -39,5 +40,15 @@ public class PublicContentController {
     @GetMapping("/testimonials")
     public List<TestimonialResponse> getTestimonials() {
         return contentService.publicTestimonials(6);
+    }
+
+    @GetMapping("/homepage-items")
+    public List<HomepageItemResponse> getHomepageItems() {
+        return contentService.publicHomepageItems();
+    }
+
+    @GetMapping("/homepage-items/featured")
+    public List<HomepageItemResponse> getFeaturedHomepageItems() {
+        return contentService.publicFeaturedHomepageItems();
     }
 }

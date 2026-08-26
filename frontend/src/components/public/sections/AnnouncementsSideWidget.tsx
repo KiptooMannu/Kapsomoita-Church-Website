@@ -3,10 +3,11 @@ import { ArrowRightIcon, MegaphoneIcon, PinIcon } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Badge } from '@/components/ui/badge'
 import { contentApi } from '@/features/content/content-api'
+import { queryKeys } from '@/lib/query-client'
 
 export function AnnouncementsSideWidget() {
   const { data: liveAnnouncements } = useQuery({
-    queryKey: ['public', 'announcements'],
+    queryKey: queryKeys.public.announcements,
     queryFn: contentApi.publicAnnouncements,
     staleTime: 2 * 60_000,
   })

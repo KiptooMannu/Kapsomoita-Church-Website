@@ -29,6 +29,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { SeoHead } from '@/components/seo/SeoHead'
 import { contentApi, type Testimonial } from '@/features/content/content-api'
 import { normaliseApiError } from '@/lib/api/client'
+import { queryKeys } from '@/lib/query-client'
 
 export default function AdminTestimonialsPage() {
   const queryClient = useQueryClient()
@@ -43,7 +44,7 @@ export default function AdminTestimonialsPage() {
   const [featured, setFeatured] = useState(false)
 
   const testimonialsQuery = useQuery({
-    queryKey: ['admin', 'testimonials'],
+    queryKey: queryKeys.admin.testimonials({}),
     queryFn: () => contentApi.adminListTestimonials({}),
   })
 
@@ -63,8 +64,8 @@ export default function AdminTestimonialsPage() {
     },
     onSuccess: () => {
       toast.success(editingTestimonial ? 'Testimonial updated' : 'Testimonial created')
-      void queryClient.invalidateQueries({ queryKey: ['admin', 'testimonials'] })
-      void queryClient.invalidateQueries({ queryKey: ['public', 'testimonials'] })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.admin.testimonials({}) })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.public.testimonials })
       handleCloseDialog()
     },
     onError: (error) => toast.error(normaliseApiError(error).message),
@@ -74,7 +75,8 @@ export default function AdminTestimonialsPage() {
     mutationFn: (id: string) => contentApi.adminDeleteTestimonial(id),
     onSuccess: () => {
       toast.success('Testimonial deleted')
-      void queryClient.invalidateQueries({ queryKey: ['admin', 'testimonials'] })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.admin.testimonials({}) })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.public.testimonials })
     },
     onError: (error) => toast.error(normaliseApiError(error).message),
   })

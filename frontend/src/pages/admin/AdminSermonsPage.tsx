@@ -1,3 +1,4 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import {
   PlusIcon,
@@ -5,6 +6,7 @@ import {
   Trash2Icon,
   PlayIcon,
   CalendarIcon,
+  Loader2Icon,
   UserIcon,
 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -26,44 +28,14 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SeoHead } from '@/components/seo/SeoHead'
+import { sermonsApi, type SermonResponse } from '@/features/content/sermons-api'
+import { normaliseApiError } from '@/lib/api/client'
+import { queryKeys } from '@/lib/query-client'
 
-interface SermonItem {
-  id: string
-  title: string
-  speaker: string
-  series?: string
-  scripture?: string
-  date: string
-  videoUrl?: string
-  audioUrl?: string
-  published: boolean
-}
-
-const INITIAL_SERMONS: SermonItem[] = [
-  {
-    id: '1',
-    title: 'Walking in Grace and Faith',
-    speaker: 'Pastor John Tanui',
-    series: 'Faith in Action',
-    scripture: 'Ephesians 2:8-10',
-    date: '2026-07-26',
-    videoUrl: 'https://youtube.com/watch?v=example1',
-    published: true,
-  },
-  {
-    id: '2',
-    title: 'The Power of Prayer in Trials',
-    speaker: 'Rev. Emmanuel Kiptoo',
-    series: 'Kingdom Living',
-    scripture: 'James 5:13-18',
-    date: '2026-07-19',
-    videoUrl: 'https://youtube.com/watch?v=example2',
-    published: true,
-  },
-]
+const slugify = (value: string) => value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 
 export default function AdminSermonsPage() {
-  const [sermons, setSermons] = useState<SermonItem[]>(INITIAL_SERMONS)
+  const queryClient = useQueryClient()
   const [search, setSearch] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -77,14 +49,43 @@ export default function AdminSermonsPage() {
   const [videoUrl, setVideoUrl] = useState('')
   const [published, setPublished] = useState(true)
 
-  const handleOpenDialog = (item?: SermonItem) => {
+  const sermonsQuery = useQuery({
+    queryKey: queryKeys.admin.sermons({ search }),
+    queryFn: () => sermonsApi.adminList({ search: search.trim() || undefined }),
+  })
+
+  const saveMutation = useMutation({
+    mutationFn: () => {
+      const payload = { title, slug: slugify(title), speaker, preachedOn: date, series: series || undefined, bibleReference: scripture || undefined, videoUrl: videoUrl || undefined, published, featured: false }
+      return editingId ? sermonsApi.adminUpdate(editingId, payload) : sermonsApi.adminCreate(payload)
+    },
+    onSuccess: () => {
+      toast.success(editingId ? 'Sermon updated successfully' : 'Sermon published successfully')
+      void queryClient.invalidateQueries({ queryKey: queryKeys.admin.sermons({}) })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.public.sermons })
+      setIsDialogOpen(false)
+    },
+    onError: (error) => toast.error(normaliseApiError(error).message),
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => sermonsApi.adminDelete(id),
+    onSuccess: () => {
+      toast.success('Sermon removed')
+      void queryClient.invalidateQueries({ queryKey: queryKeys.admin.sermons({}) })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.public.sermons })
+    },
+    onError: (error) => toast.error(normaliseApiError(error).message),
+  })
+
+  const handleOpenDialog = (item?: SermonResponse) => {
     if (item) {
       setEditingId(item.id)
       setTitle(item.title)
       setSpeaker(item.speaker)
       setSeries(item.series ?? '')
-      setScripture(item.scripture ?? '')
-      setDate(item.date)
+      setScripture(item.bibleReference ?? '')
+      setDate(item.preachedOn)
       setVideoUrl(item.videoUrl ?? '')
       setPublished(item.published)
     } else {
@@ -106,43 +107,14 @@ export default function AdminSermonsPage() {
       return
     }
 
-    if (editingId) {
-      setSermons((prev) =>
-        prev.map((s) =>
-          s.id === editingId
-            ? { ...s, title, speaker, series, scripture, date, videoUrl, published }
-            : s,
-        ),
-      )
-      toast.success('Sermon updated successfully')
-    } else {
-      const newSermon: SermonItem = {
-        id: String(Date.now()),
-        title,
-        speaker,
-        series,
-        scripture,
-        date,
-        videoUrl,
-        published,
-      }
-      setSermons((prev) => [newSermon, ...prev])
-      toast.success('Sermon published successfully')
-    }
-    setIsDialogOpen(false)
+    saveMutation.mutate()
   }
 
   const handleDelete = (id: string) => {
-    setSermons((prev) => prev.filter((s) => s.id !== id))
-    toast.success('Sermon removed')
+    deleteMutation.mutate(id)
   }
 
-  const filteredSermons = sermons.filter(
-    (s) =>
-      s.title.toLowerCase().includes(search.toLowerCase()) ||
-      s.speaker.toLowerCase().includes(search.toLowerCase()) ||
-      (s.series ?? '').toLowerCase().includes(search.toLowerCase()),
-  )
+  const sermons = sermonsQuery.data?.content ?? []
 
   return (
     <>
@@ -187,8 +159,15 @@ export default function AdminSermonsPage() {
           </CardHeader>
 
           <CardContent>
+            {sermonsQuery.isPending ? (
+              <div className="flex items-center justify-center py-12 text-muted-foreground"><Loader2Icon className="mr-2 size-5 animate-spin" />Loading sermons...</div>
+            ) : sermonsQuery.isError ? (
+              <div className="py-12 text-center text-destructive">{normaliseApiError(sermonsQuery.error).message}</div>
+            ) : sermons.length === 0 ? (
+              <div className="py-12 text-center text-muted-foreground">No sermons found</div>
+            ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {filteredSermons.map((item) => (
+              {sermons.map((item) => (
                 <div
                   key={item.id}
                   className="flex flex-col justify-between p-4 rounded-lg border border-border bg-card hover:border-primary/50 transition-colors"
@@ -214,13 +193,13 @@ export default function AdminSermonsPage() {
                       </span>
                       <span className="flex items-center gap-1">
                         <CalendarIcon className="size-3.5" />
-                        {item.date}
+                        {item.preachedOn}
                       </span>
                     </div>
 
-                    {item.scripture && (
+                    {item.bibleReference && (
                       <p className="text-xs text-muted-foreground font-mono mt-2 bg-muted/40 px-2 py-1 rounded w-fit">
-                        📖 {item.scripture}
+                        📖 {item.bibleReference}
                       </p>
                     )}
                   </div>
@@ -257,6 +236,7 @@ export default function AdminSermonsPage() {
                 </div>
               ))}
             </div>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -356,7 +336,7 @@ export default function AdminSermonsPage() {
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSave}>
+            <Button onClick={handleSave} disabled={saveMutation.isPending}>
               {editingId ? 'Save Changes' : 'Publish Sermon'}
             </Button>
           </DialogFooter>

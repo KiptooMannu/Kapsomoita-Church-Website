@@ -6,6 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { CloudinaryImage } from '@/components/media/CloudinaryImage'
 import { Section, SectionHeading } from '@/components/public/Section'
 import { publicGalleryApi } from '@/features/media/public-gallery-api'
+import { queryKeys } from '@/lib/query-client'
 import { cn } from '@/lib/utils'
 
 const PREVIEW_LIMIT = 8
@@ -23,7 +24,7 @@ const PREVIEW_LIMIT = 8
  */
 export function GalleryPreviewSection() {
   const galleryQuery = useQuery({
-    queryKey: ['public', 'gallery', 'featured', PREVIEW_LIMIT],
+    queryKey: queryKeys.public.galleryFeatured(PREVIEW_LIMIT),
     queryFn: () => publicGalleryApi.featured(PREVIEW_LIMIT),
     // Photos change rarely; avoid refetching on every homepage visit.
     staleTime: 10 * 60_000,

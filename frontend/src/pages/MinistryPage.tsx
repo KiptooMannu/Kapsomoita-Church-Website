@@ -21,6 +21,7 @@ import { publicGalleryApi } from '@/features/media/public-gallery-api'
 import { findMinistry, ministryDetails } from '@/config/ministries'
 import { mediaPublicId } from '@/config/media-manifest'
 import { cn } from '@/lib/utils'
+import { queryKeys } from '@/lib/query-client'
 
 const GALLERY_LIMIT = 8
 
@@ -44,7 +45,7 @@ export default function MinistryPage() {
   // and crash. The query is disabled instead when there is nothing to fetch.
   const galleryCategory = ministry?.galleryCategory
   const galleryQuery = useQuery({
-    queryKey: ['public', 'gallery', 'ministry', galleryCategory ?? 'none'],
+    queryKey: queryKeys.public.galleryImages(`ministry:${galleryCategory ?? 'none'}`),
     queryFn: () => publicGalleryApi.byCategory(galleryCategory!, 0, GALLERY_LIMIT),
     enabled: Boolean(galleryCategory),
     staleTime: 10 * 60_000,

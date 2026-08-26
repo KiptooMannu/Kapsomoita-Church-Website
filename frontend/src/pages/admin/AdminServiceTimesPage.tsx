@@ -27,6 +27,7 @@ import { Label } from '@/components/ui/label'
 import { SeoHead } from '@/components/seo/SeoHead'
 import { contentApi, type ServiceTime } from '@/features/content/content-api'
 import { normaliseApiError } from '@/lib/api/client'
+import { queryKeys } from '@/lib/query-client'
 
 export default function AdminServiceTimesPage() {
   const queryClient = useQueryClient()
@@ -44,7 +45,7 @@ export default function AdminServiceTimesPage() {
   const [published, setPublished] = useState(true)
 
   const serviceTimesQuery = useQuery({
-    queryKey: ['admin', 'service-times'],
+    queryKey: queryKeys.admin.serviceTimes,
     queryFn: () => contentApi.adminListServiceTimes(),
   })
 
@@ -66,8 +67,8 @@ export default function AdminServiceTimesPage() {
       return contentApi.adminCreateServiceTime(payload)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'service-times'] })
-      queryClient.invalidateQueries({ queryKey: ['public', 'service-times'] })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.admin.serviceTimes })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.public.serviceTimes })
       toast.success(editingService ? 'Service schedule updated' : 'Service schedule created')
       closeDialog()
     },
@@ -81,8 +82,8 @@ export default function AdminServiceTimesPage() {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => contentApi.adminDeleteServiceTime(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'service-times'] })
-      queryClient.invalidateQueries({ queryKey: ['public', 'service-times'] })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.admin.serviceTimes })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.public.serviceTimes })
       toast.success('Service time deleted')
     },
     onError: (err) => {
@@ -95,8 +96,8 @@ export default function AdminServiceTimesPage() {
   const setPrimaryMutation = useMutation({
     mutationFn: (id: string) => contentApi.adminSetPrimaryServiceTime(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'service-times'] })
-      queryClient.invalidateQueries({ queryKey: ['public', 'service-times'] })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.admin.serviceTimes })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.public.serviceTimes })
       toast.success('Primary main service updated')
     },
     onError: (err) => {

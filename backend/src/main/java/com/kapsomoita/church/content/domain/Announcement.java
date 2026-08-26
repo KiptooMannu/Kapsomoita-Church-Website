@@ -46,6 +46,36 @@ public class Announcement extends BaseEntity {
     @Column(name = "display_date", length = 120)
     private String displayDate;
 
+    /**
+     * Event date for calendar-style display.
+     */
+    @Column(name = "event_date")
+    private Instant eventDate;
+
+    /**
+     * Event end date for multi-day events.
+     */
+    @Column(name = "event_end_date")
+    private Instant eventEndDate;
+
+    /**
+     * Event location.
+     */
+    @Column(name = "event_location", length = 200)
+    private String eventLocation;
+
+    /**
+     * Image URL for calendar-style display.
+     */
+    @Column(name = "image_url", length = 512)
+    private String imageUrl;
+
+    /**
+     * Media asset ID for the announcement image.
+     */
+    @Column(name = "image_id")
+    private java.util.UUID imageId;
+
     @Column(name = "link_label", length = 80)
     private String linkLabel;
 

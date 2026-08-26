@@ -9,11 +9,14 @@ import com.kapsomoita.church.content.domain.Announcement;
 import com.kapsomoita.church.content.domain.ContentEnums.AnnouncementTone;
 import com.kapsomoita.church.content.domain.ContentEnums.LeaderTeam;
 import com.kapsomoita.church.content.domain.ContentEnums.ServiceDay;
+import com.kapsomoita.church.content.domain.HomepageItem;
 import com.kapsomoita.church.content.domain.Leader;
 import com.kapsomoita.church.content.domain.ServiceTime;
 import com.kapsomoita.church.content.domain.Testimonial;
 import com.kapsomoita.church.content.dto.ContentDtos.AnnouncementRequest;
 import com.kapsomoita.church.content.dto.ContentDtos.AnnouncementResponse;
+import com.kapsomoita.church.content.dto.ContentDtos.HomepageItemRequest;
+import com.kapsomoita.church.content.dto.ContentDtos.HomepageItemResponse;
 import com.kapsomoita.church.content.dto.ContentDtos.LeaderRequest;
 import com.kapsomoita.church.content.dto.ContentDtos.LeaderResponse;
 import com.kapsomoita.church.content.dto.ContentDtos.ServiceTimeRequest;
@@ -21,6 +24,7 @@ import com.kapsomoita.church.content.dto.ContentDtos.ServiceTimeResponse;
 import com.kapsomoita.church.content.dto.ContentDtos.TestimonialRequest;
 import com.kapsomoita.church.content.dto.ContentDtos.TestimonialResponse;
 import com.kapsomoita.church.content.repository.AnnouncementRepository;
+import com.kapsomoita.church.content.repository.HomepageItemRepository;
 import com.kapsomoita.church.content.repository.LeaderRepository;
 import com.kapsomoita.church.content.repository.ServiceTimeRepository;
 import com.kapsomoita.church.content.repository.TestimonialRepository;
@@ -57,6 +61,7 @@ public class ContentService {
     private final ServiceTimeRepository serviceTimes;
     private final LeaderRepository leaders;
     private final TestimonialRepository testimonials;
+    private final HomepageItemRepository homepageItems;
     private final MediaAssetRepository mediaAssets;
     private final AuditService auditService;
 
@@ -64,12 +69,14 @@ public class ContentService {
                          ServiceTimeRepository serviceTimes,
                          LeaderRepository leaders,
                          TestimonialRepository testimonials,
+                         HomepageItemRepository homepageItems,
                          MediaAssetRepository mediaAssets,
                          AuditService auditService) {
         this.announcements = announcements;
         this.serviceTimes = serviceTimes;
         this.leaders = leaders;
         this.testimonials = testimonials;
+        this.homepageItems = homepageItems;
         this.mediaAssets = mediaAssets;
         this.auditService = auditService;
     }
@@ -143,6 +150,17 @@ public class ContentService {
                         () -> new BadRequestException(
                                 "Unknown tone. Use INFO, SUCCESS or WARNING.")));
         announcement.setDisplayDate(blankToNull(request.displayDate()));
+        
+        // Calendar fields
+        announcement.setEventDate(request.eventDate());
+        announcement.setEventEndDate(request.eventEndDate());
+        announcement.setEventLocation(blankToNull(request.eventLocation()));
+        announcement.setImageUrl(blankToNull(request.imageUrl()));
+        
+        // Handle image asset
+        if (request.imageId() != null) {
+            announcement.setImageId(request.imageId());
+        }
 
         // The database requires both halves of a link or neither, so a label without a
         // URL is normalised away rather than rejected.
@@ -165,6 +183,12 @@ public class ContentService {
         if (announcement.getStartsAt() != null && announcement.getEndsAt() != null
                 && !announcement.getEndsAt().isAfter(announcement.getStartsAt())) {
             throw new BadRequestException("The end date must be after the start date.");
+        }
+        
+        // Validate event dates
+        if (announcement.getEventDate() != null && announcement.getEventEndDate() != null
+                && !announcement.getEventEndDate().isAfter(announcement.getEventDate())) {
+            throw new BadRequestException("The event end date must be after the event start date.");
         }
     }
 
@@ -389,6 +413,97 @@ public class ContentService {
         if (request.published() != null) testimonial.setPublished(request.published());
         if (request.featured() != null) testimonial.setFeatured(request.featured());
         if (request.sortOrder() != null) testimonial.setSortOrder(request.sortOrder());
+    }
+
+    // =======================================================================
+    // Homepage Items
+    // =======================================================================
+
+    /** Published homepage items for the public landing page. */
+    @Transactional(readOnly = true)
+    public List<HomepageItemResponse> publicHomepageItems() {
+        return homepageItems.findPublishedItems().stream()
+                .map(HomepageItemResponse::from).toList();
+    }
+
+    /** Featured published homepage items. */
+    @Transactional(readOnly = true)
+    public List<HomepageItemResponse> publicFeaturedHomepageItems() {
+        return homepageItems.findFeaturedPublishedItems().stream()
+                .map(HomepageItemResponse::from).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<HomepageItemResponse> listHomepageItems() {
+        return homepageItems.findAll().stream()
+                .map(HomepageItemResponse::from).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public HomepageItemResponse getHomepageItem(UUID id) {
+        return homepageItems.findById(id).map(HomepageItemResponse::from)
+                .orElseThrow(() -> NotFoundException.of("Homepage item", id));
+    }
+
+    @Transactional
+    public HomepageItemResponse createHomepageItem(HomepageItemRequest request, User actor,
+                                                   RequestMetadata metadata) {
+        HomepageItem item = new HomepageItem();
+        applyHomepageItem(item, request);
+
+        HomepageItem saved = homepageItems.save(item);
+        auditService.recordResourceChange("homepage_item.created", actor, "homepage_item",
+                saved.getId(), metadata, Map.of("title", saved.getTitle()));
+        return HomepageItemResponse.from(saved);
+    }
+
+    @Transactional
+    public HomepageItemResponse updateHomepageItem(UUID id, HomepageItemRequest request,
+                                                   User actor, RequestMetadata metadata) {
+        HomepageItem item = homepageItems.findById(id)
+                .orElseThrow(() -> NotFoundException.of("Homepage item", id));
+        applyHomepageItem(item, request);
+
+        // Auto-publish if status changes to PUBLISHED
+        if (item.getStatus() == HomepageItem.Status.PUBLISHED && item.getPublishedAt() == null) {
+            item.setPublishedAt(Instant.now());
+        }
+
+        HomepageItem saved = homepageItems.save(item);
+        auditService.recordResourceChange("homepage_item.updated", actor, "homepage_item", id,
+                metadata, Map.of("title", saved.getTitle(), "status", saved.getStatus()));
+        return HomepageItemResponse.from(saved);
+    }
+
+    @Transactional
+    public void deleteHomepageItem(UUID id, User actor, RequestMetadata metadata) {
+        HomepageItem item = homepageItems.findById(id)
+                .orElseThrow(() -> NotFoundException.of("Homepage item", id));
+        String title = item.getTitle();
+        homepageItems.delete(item);
+
+        auditService.recordResourceChange("homepage_item.deleted", actor, "homepage_item", id,
+                metadata, Map.of("title", title));
+    }
+
+    private void applyHomepageItem(HomepageItem item, HomepageItemRequest request) {
+        item.setTitle(request.title().trim());
+        item.setDescription(blankToNull(request.description()));
+        
+        if (request.category() != null && !request.category().isBlank()) {
+            item.setCategory(HomepageItem.Category.valueOf(request.category().toUpperCase()));
+        }
+        
+        if (request.status() != null && !request.status().isBlank()) {
+            item.setStatus(HomepageItem.Status.valueOf(request.status().toUpperCase()));
+        }
+        
+        item.setImageUrl(blankToNull(request.imageUrl()));
+        item.setLinkUrl(blankToNull(request.linkUrl()));
+        
+        if (request.displayOrder() != null) item.setDisplayOrder(request.displayOrder());
+        if (request.featured() != null) item.setFeatured(request.featured());
+        item.setScheduledFor(request.scheduledFor());
     }
 
     // =======================================================================

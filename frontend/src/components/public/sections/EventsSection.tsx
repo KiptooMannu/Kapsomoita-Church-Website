@@ -6,9 +6,11 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { CloudinaryImage } from '@/components/media/CloudinaryImage'
 import { Section, SectionHeading } from '@/components/public/Section'
-import { upcomingEvents, type ChurchEvent } from '@/config/content'
-import { mediaPublicId } from '@/config/media-manifest'
+import { eventsApi, type EventResponse } from '@/features/content/events-api'
+import { normaliseApiError } from '@/lib/api/client'
+import { queryKeys } from '@/lib/query-client'
 import { useCountdown } from '@/hooks/useCountdown'
+import { useQuery } from '@tanstack/react-query'
 
 /**
  * Upcoming events with live countdowns.
@@ -18,13 +20,22 @@ import { useCountdown } from '@/hooks/useCountdown'
  * abandoned.
  */
 export function EventsSection() {
-  const futureEvents = upcomingEvents.filter(
+  const eventsQuery = useQuery({
+    queryKey: queryKeys.public.events,
+    queryFn: () => eventsApi.upcoming({ size: 6 }),
+  })
+
+  if (eventsQuery.isPending) {
+    return <Section id="events"><p className="py-12 text-center text-muted-foreground">Loading upcoming events...</p></Section>
+  }
+
+  if (eventsQuery.isError) {
+    return <Section id="events"><p className="py-12 text-center text-destructive">{normaliseApiError(eventsQuery.error).message}</p></Section>
+  }
+
+  const futureEvents = eventsQuery.data.filter(
     (event) => new Date(event.startsAt).getTime() > Date.now(),
   )
-
-  if (futureEvents.length === 0) {
-    return null
-  }
 
   return (
     <Section id="events">
@@ -34,29 +45,32 @@ export function EventsSection() {
         description="Mark your calendar and bring someone with you."
       />
 
-      <ul className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {futureEvents.map((event) => (
-          <li key={event.id}>
-            <EventCard event={event} />
-          </li>
-        ))}
-      </ul>
+      {futureEvents.length === 0 ? (
+        <p className="mt-12 text-center text-muted-foreground">
+          No upcoming events at the moment. Please check back soon.
+        </p>
+      ) : (
+        <ul className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {futureEvents.map((event) => (
+            <li key={event.id}>
+              <EventCard event={event} />
+            </li>
+          ))}
+        </ul>
+      )}
     </Section>
   )
 }
 
-function EventCard({ event }: { event: ChurchEvent }) {
+function EventCard({ event }: { event: EventResponse }) {
   const countdown = useCountdown(event.startsAt)
   const startDate = new Date(event.startsAt)
-
-  const slotsRemaining =
-    event.capacity === null ? null : Math.max(0, event.capacity - event.registered)
-  const isFull = slotsRemaining === 0
 
   return (
     <Card className="h-full overflow-hidden py-0 transition-all duration-300 hover:-translate-y-1 hover:shadow-lifted">
       <CloudinaryImage
-        publicId={mediaPublicId(event.imageLocalPath) ?? ''}
+        publicId={event.bannerId ?? ''}
+        fallbackSrc={event.bannerUrl ?? undefined}
         alt={event.title}
         width={768}
         sizes="(min-width: 1280px) 24rem, (min-width: 768px) 50vw, 100vw"
@@ -89,15 +103,11 @@ function EventCard({ event }: { event: ChurchEvent }) {
             <dd className="text-muted-foreground">{event.venue}</dd>
           </div>
 
-          {slotsRemaining !== null && (
+          {event.capacity !== null && (
             <div className="flex items-center gap-2.5">
               <UsersIcon className="text-primary size-4 shrink-0" aria-hidden="true" />
               <dt className="sr-only">Availability</dt>
-              <dd className="text-muted-foreground">
-                {isFull
-                  ? 'Fully booked'
-                  : `${slotsRemaining} of ${event.capacity} places left`}
-              </dd>
+              <dd className="text-muted-foreground">Capacity: {event.capacity}</dd>
             </div>
           )}
         </dl>
@@ -136,15 +146,9 @@ function EventCard({ event }: { event: ChurchEvent }) {
             `asChild` would land on the <a> and be ignored by the browser while
             React warns about it.
           */}
-          {isFull ? (
-            <Button block disabled>
-              Fully booked
-            </Button>
-          ) : (
-            <Button asChild block>
-              <Link to="/contact">Register</Link>
-            </Button>
-          )}
+          <Button asChild block>
+            <Link to="/contact">Register</Link>
+          </Button>
 
           {countdown.days <= 7 && (
             <Badge variant="gold" className="shrink-0">

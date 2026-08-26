@@ -5,6 +5,8 @@ import com.kapsomoita.church.auth.security.CurrentUser;
 import com.kapsomoita.church.common.web.RequestMetadata;
 import com.kapsomoita.church.content.dto.ContentDtos.AnnouncementRequest;
 import com.kapsomoita.church.content.dto.ContentDtos.AnnouncementResponse;
+import com.kapsomoita.church.content.dto.ContentDtos.HomepageItemRequest;
+import com.kapsomoita.church.content.dto.ContentDtos.HomepageItemResponse;
 import com.kapsomoita.church.content.dto.ContentDtos.LeaderRequest;
 import com.kapsomoita.church.content.dto.ContentDtos.LeaderResponse;
 import com.kapsomoita.church.content.dto.ContentDtos.ServiceTimeRequest;
@@ -219,5 +221,51 @@ public class AdminContentController {
             @CurrentUser User actor,
             RequestMetadata metadata) {
         contentService.deleteTestimonial(id, actor, metadata);
+    }
+
+    // -----------------------------------------------------------------------
+    // Homepage Items
+    // -----------------------------------------------------------------------
+
+    @GetMapping("/homepage-items")
+    @PreAuthorize("hasAuthority('homepage:read')")
+    public List<HomepageItemResponse> listHomepageItems() {
+        return contentService.listHomepageItems();
+    }
+
+    @GetMapping("/homepage-items/{id}")
+    @PreAuthorize("hasAuthority('homepage:read')")
+    public HomepageItemResponse getHomepageItem(@PathVariable UUID id) {
+        return contentService.getHomepageItem(id);
+    }
+
+    @PostMapping("/homepage-items")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAuthority('homepage:create')")
+    public HomepageItemResponse createHomepageItem(
+            @Valid @RequestBody HomepageItemRequest request,
+            @CurrentUser User actor,
+            RequestMetadata metadata) {
+        return contentService.createHomepageItem(request, actor, metadata);
+    }
+
+    @PutMapping("/homepage-items/{id}")
+    @PreAuthorize("hasAuthority('homepage:update')")
+    public HomepageItemResponse updateHomepageItem(
+            @PathVariable UUID id,
+            @Valid @RequestBody HomepageItemRequest request,
+            @CurrentUser User actor,
+            RequestMetadata metadata) {
+        return contentService.updateHomepageItem(id, request, actor, metadata);
+    }
+
+    @DeleteMapping("/homepage-items/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAuthority('homepage:delete')")
+    public void deleteHomepageItem(
+            @PathVariable UUID id,
+            @CurrentUser User actor,
+            RequestMetadata metadata) {
+        contentService.deleteHomepageItem(id, actor, metadata);
     }
 }

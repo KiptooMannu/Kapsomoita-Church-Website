@@ -1,7 +1,9 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import {
   DownloadIcon,
   FileTextIcon,
+  Loader2Icon,
   SearchIcon,
   Trash2Icon,
   UploadIcon,
@@ -22,43 +24,12 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { SeoHead } from '@/components/seo/SeoHead'
-
-interface DownloadItem {
-  id: string
-  title: string
-  description?: string
-  category: string
-  fileUrl: string
-  fileSize?: string
-  downloadCount: number
-  published: boolean
-}
-
-const INITIAL_DOWNLOADS: DownloadItem[] = [
-  {
-    id: '1',
-    title: 'Weekly Sunday Bulletin - July 2026',
-    description: 'Order of service, announcements, and prayer intentions for Sunday worship.',
-    category: 'Bulletin',
-    fileUrl: '/documents/bulletin-july-2026.pdf',
-    fileSize: '1.2 MB',
-    downloadCount: 142,
-    published: true,
-  },
-  {
-    id: '2',
-    title: 'Church Constitution & Leadership Charter',
-    description: 'Official governing document and statement of faith for Kapsomoita Church.',
-    category: 'Governance',
-    fileUrl: '/documents/church-constitution.pdf',
-    fileSize: '3.5 MB',
-    downloadCount: 89,
-    published: true,
-  },
-]
+import { downloadsApi, type DownloadResponse } from '@/features/content/downloads-api'
+import { normaliseApiError } from '@/lib/api/client'
+import { queryKeys } from '@/lib/query-client'
 
 export default function AdminDownloadsPage() {
-  const [downloads, setDownloads] = useState<DownloadItem[]>(INITIAL_DOWNLOADS)
+  const queryClient = useQueryClient()
   const [search, setSearch] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -67,17 +38,48 @@ export default function AdminDownloadsPage() {
   const [description, setDescription] = useState('')
   const [category, setCategory] = useState('Bulletin')
   const [fileUrl, setFileUrl] = useState('')
+  const [assetId, setAssetId] = useState('')
   const [fileSize, setFileSize] = useState('1.0 MB')
   const [published, setPublished] = useState(true)
 
-  const handleOpenDialog = (item?: DownloadItem) => {
+  const downloadsQuery = useQuery({
+    queryKey: queryKeys.admin.downloads({ search }),
+    queryFn: () => downloadsApi.adminList(),
+  })
+
+  const saveMutation = useMutation({
+    mutationFn: () => {
+      const payload = { title, description: description || undefined, category: category || undefined, assetId: assetId || fileUrl.trim(), published }
+      return editingId ? downloadsApi.adminUpdate(editingId, payload) : downloadsApi.adminCreate(payload)
+    },
+    onSuccess: () => {
+      toast.success(editingId ? 'Document updated successfully' : 'Document uploaded successfully')
+      void queryClient.invalidateQueries({ queryKey: queryKeys.admin.downloads({}) })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.public.downloads })
+      setIsDialogOpen(false)
+    },
+    onError: (error) => toast.error(normaliseApiError(error).message),
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => downloadsApi.adminDelete(id),
+    onSuccess: () => {
+      toast.success('Document deleted')
+      void queryClient.invalidateQueries({ queryKey: queryKeys.admin.downloads({}) })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.public.downloads })
+    },
+    onError: (error) => toast.error(normaliseApiError(error).message),
+  })
+
+  const handleOpenDialog = (item?: DownloadResponse) => {
     if (item) {
       setEditingId(item.id)
       setTitle(item.title)
       setDescription(item.description ?? '')
-      setCategory(item.category)
-      setFileUrl(item.fileUrl)
-      setFileSize(item.fileSize ?? '1.0 MB')
+      setCategory(item.category ?? 'Bulletin')
+      setAssetId(item.assetId)
+      setFileUrl(item.assetUrl ?? '')
+      setFileSize('1.0 MB')
       setPublished(item.published)
     } else {
       setEditingId(null)
@@ -85,6 +87,7 @@ export default function AdminDownloadsPage() {
       setDescription('')
       setCategory('Bulletin')
       setFileUrl('')
+      setAssetId('')
       setFileSize('1.0 MB')
       setPublished(true)
     }
@@ -97,41 +100,21 @@ export default function AdminDownloadsPage() {
       return
     }
 
-    if (editingId) {
-      setDownloads((prev) =>
-        prev.map((d) =>
-          d.id === editingId
-            ? { ...d, title, description, category, fileUrl, fileSize, published }
-            : d,
-        ),
-      )
-      toast.success('Document updated successfully')
-    } else {
-      const newDoc: DownloadItem = {
-        id: String(Date.now()),
-        title,
-        description,
-        category,
-        fileUrl: fileUrl || '/documents/sample-file.pdf',
-        fileSize,
-        downloadCount: 0,
-        published,
-      }
-      setDownloads((prev) => [newDoc, ...prev])
-      toast.success('Document uploaded successfully')
+    if (!editingId && !fileUrl.trim()) {
+      toast.error('Document URL / PDF Path is required')
+      return
     }
-    setIsDialogOpen(false)
+    saveMutation.mutate()
   }
 
   const handleDelete = (id: string) => {
-    setDownloads((prev) => prev.filter((d) => d.id !== id))
-    toast.success('Document deleted')
+    deleteMutation.mutate(id)
   }
 
-  const filtered = downloads.filter(
+  const filtered = (downloadsQuery.data ?? []).filter(
     (d) =>
       d.title.toLowerCase().includes(search.toLowerCase()) ||
-      d.category.toLowerCase().includes(search.toLowerCase()),
+      (d.category ?? '').toLowerCase().includes(search.toLowerCase()),
   )
 
   return (
@@ -176,7 +159,11 @@ export default function AdminDownloadsPage() {
           </CardHeader>
 
           <CardContent>
-            {filtered.length === 0 ? (
+            {downloadsQuery.isPending ? (
+              <div className="flex items-center justify-center py-12 text-muted-foreground"><Loader2Icon className="mr-2 size-5 animate-spin" />Loading documents...</div>
+            ) : downloadsQuery.isError ? (
+              <div className="py-12 text-center text-destructive">{normaliseApiError(downloadsQuery.error).message}</div>
+            ) : filtered.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground">
                 <FileTextIcon className="size-10 mb-3 opacity-40" />
                 <p className="font-medium text-foreground">No documents uploaded</p>
@@ -207,7 +194,7 @@ export default function AdminDownloadsPage() {
                       )}
 
                       <div className="flex items-center gap-4 text-xs text-muted-foreground mt-3 pt-2 border-t border-border/40 font-mono">
-                        <span>Size: {item.fileSize || 'N/A'}</span>
+                        <span>Size: N/A</span>
                         <span className="flex items-center gap-1">
                           <DownloadIcon className="size-3 text-primary" />
                           {item.downloadCount} downloads
@@ -320,7 +307,7 @@ export default function AdminDownloadsPage() {
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSave}>
+            <Button onClick={handleSave} disabled={saveMutation.isPending}>
               {editingId ? 'Save Changes' : 'Publish Document'}
             </Button>
           </DialogFooter>

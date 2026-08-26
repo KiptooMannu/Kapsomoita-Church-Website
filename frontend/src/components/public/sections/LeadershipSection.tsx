@@ -17,6 +17,7 @@ import { env } from '@/lib/env'
 import { cn } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { contentApi } from '@/features/content/content-api'
+import { queryKeys } from '@/lib/query-client'
 
 export interface LeadershipSectionProps {
   /** Show every leader (About page) rather than a trimmed set (landing page). */
@@ -25,7 +26,7 @@ export interface LeadershipSectionProps {
 
 export function LeadershipSection({ full = false }: LeadershipSectionProps) {
   const { data: liveLeaders } = useQuery({
-    queryKey: ['public', 'leaders'],
+    queryKey: queryKeys.public.leaders,
     queryFn: contentApi.publicLeaders,
     staleTime: 5 * 60_000,
   })

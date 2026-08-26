@@ -226,6 +226,7 @@ export function SiteHeader() {
           {/* --- Actions -------------------------------------------------- */}
           <div className="ml-auto flex items-center gap-1 lg:ml-3">
             <ThemeToggle
+              compact
               className={cn(isTransparent && 'text-white hover:bg-white/10 hover:text-white')}
             />
 

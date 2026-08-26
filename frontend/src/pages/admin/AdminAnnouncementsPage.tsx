@@ -29,6 +29,7 @@ import { Label } from '@/components/ui/label'
 import { SeoHead } from '@/components/seo/SeoHead'
 import { contentApi, type Announcement } from '@/features/content/content-api'
 import { normaliseApiError } from '@/lib/api/client'
+import { queryKeys } from '@/lib/query-client'
 
 export default function AdminAnnouncementsPage() {
   const queryClient = useQueryClient()
@@ -47,7 +48,7 @@ export default function AdminAnnouncementsPage() {
   const [pinned, setPinned] = useState(false)
 
   const announcementsQuery = useQuery({
-    queryKey: ['admin', 'announcements', search],
+    queryKey: queryKeys.admin.announcements({ search }),
     queryFn: () => contentApi.adminListAnnouncements({ search }),
   })
 
@@ -70,8 +71,8 @@ export default function AdminAnnouncementsPage() {
     },
     onSuccess: () => {
       toast.success(editingAnnouncement ? 'Announcement updated' : 'Announcement created')
-      void queryClient.invalidateQueries({ queryKey: ['admin', 'announcements'] })
-      void queryClient.invalidateQueries({ queryKey: ['public', 'announcements'] })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.admin.announcements({}) })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.public.announcements })
       handleCloseDialog()
     },
     onError: (error) => toast.error(normaliseApiError(error).message),
@@ -81,7 +82,8 @@ export default function AdminAnnouncementsPage() {
     mutationFn: (id: string) => contentApi.adminDeleteAnnouncement(id),
     onSuccess: () => {
       toast.success('Announcement deleted')
-      void queryClient.invalidateQueries({ queryKey: ['admin', 'announcements'] })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.admin.announcements({}) })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.public.announcements })
     },
     onError: (error) => toast.error(normaliseApiError(error).message),
   })
@@ -97,7 +99,8 @@ export default function AdminAnnouncementsPage() {
       }),
     onSuccess: () => {
       toast.success('Pinned status updated')
-      void queryClient.invalidateQueries({ queryKey: ['admin', 'announcements'] })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.admin.announcements({}) })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.public.announcements })
     },
     onError: (error) => toast.error(normaliseApiError(error).message),
   })
@@ -113,7 +116,8 @@ export default function AdminAnnouncementsPage() {
       }),
     onSuccess: () => {
       toast.success('Publication status updated')
-      void queryClient.invalidateQueries({ queryKey: ['admin', 'announcements'] })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.admin.announcements({}) })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.public.announcements })
     },
     onError: (error) => toast.error(normaliseApiError(error).message),
   })

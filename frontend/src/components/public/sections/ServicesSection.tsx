@@ -6,6 +6,7 @@ import { Section, SectionHeading } from '@/components/public/Section'
 import { serviceTimes as fallbackServiceTimes } from '@/config/site'
 import { contentApi } from '@/features/content/content-api'
 import { cn } from '@/lib/utils'
+import { queryKeys } from '@/lib/query-client'
 
 /**
  * Weekly gatherings.
@@ -14,7 +15,7 @@ import { cn } from '@/lib/utils'
  */
 export function ServicesSection() {
   const { data: liveServiceTimes } = useQuery({
-    queryKey: ['public', 'service-times'],
+    queryKey: queryKeys.public.serviceTimes,
     queryFn: contentApi.publicServiceTimes,
     staleTime: 5 * 60_000,
   })

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   PlusIcon,
   SearchIcon,
@@ -7,6 +7,7 @@ import {
   CheckCircle2Icon,
   ClockIcon,
   FileTextIcon,
+  Loader2Icon,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -18,6 +19,12 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { SeoHead } from '@/components/seo/SeoHead'
+import { HomepageItemForm } from '@/components/admin/HomepageItemForm'
+import {
+  getAdminHomepageItems,
+  type HomepageItem,
+} from '@/lib/api/homepage'
+import { normaliseApiError } from '@/lib/api/client'
 
 interface AdminGenericModulePageProps {
   title: string
@@ -34,6 +41,44 @@ export function AdminGenericModulePage({
 }: AdminGenericModulePageProps) {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'published' | 'draft'>('all')
+  const [items, setItems] = useState<HomepageItem[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [formOpen, setFormOpen] = useState(false)
+  const [editingItem, setEditingItem] = useState<HomepageItem | null>(null)
+
+  useEffect(() => {
+    loadHomepageItems()
+  }, [])
+
+  const loadHomepageItems = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const data = await getAdminHomepageItems()
+      setItems(data)
+    } catch (err) {
+      const apiError = normaliseApiError(err)
+      setError(apiError.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const filteredItems = items.filter((item) => {
+    const matchesSearch = item.title.toLowerCase().includes(search.toLowerCase())
+    const matchesStatus =
+      statusFilter === 'all' ||
+      (statusFilter === 'published' && item.status === 'PUBLISHED') ||
+      (statusFilter === 'draft' && item.status === 'DRAFT')
+    return matchesSearch && matchesStatus
+  })
+
+  const stats = {
+    total: items.length,
+    published: items.filter((i) => i.status === 'PUBLISHED').length,
+    drafts: items.filter((i) => i.status === 'DRAFT').length,
+  }
 
   return (
     <>
@@ -57,16 +102,36 @@ export function AdminGenericModulePage({
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            <Button variant="outline" size="sm" onClick={() => window.location.reload()}>
-              <RefreshCwIcon className="mr-2 size-4" />
+            <Button variant="outline" size="sm" onClick={loadHomepageItems} disabled={loading}>
+              {loading ? (
+                <Loader2Icon className="mr-2 size-4 animate-spin" />
+              ) : (
+                <RefreshCwIcon className="mr-2 size-4" />
+              )}
               Refresh
             </Button>
-            <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button
+              size="sm"
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
+              onClick={() => {
+                setEditingItem(null)
+                setFormOpen(true)
+              }}
+            >
               <PlusIcon className="mr-2 size-4" />
               Add {entityName}
             </Button>
           </div>
         </div>
+
+        {/* Error State */}
+        {error && (
+          <Card className="border-destructive bg-destructive/10">
+            <CardContent className="pt-6">
+              <p className="text-sm text-destructive">{error}</p>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Stats Summary */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -78,7 +143,7 @@ export function AdminGenericModulePage({
               <FileTextIcon className="size-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">12</div>
+              <div className="text-2xl font-bold">{loading ? '...' : stats.total}</div>
               <p className="text-xs text-muted-foreground mt-1">Active in platform database</p>
             </CardContent>
           </Card>
@@ -91,7 +156,7 @@ export function AdminGenericModulePage({
               <CheckCircle2Icon className="size-4 text-emerald-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-emerald-600">10</div>
+              <div className="text-2xl font-bold text-emerald-600">{loading ? '...' : stats.published}</div>
               <p className="text-xs text-muted-foreground mt-1">Live on public website</p>
             </CardContent>
           </Card>
@@ -104,7 +169,7 @@ export function AdminGenericModulePage({
               <ClockIcon className="size-4 text-amber-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-amber-600">2</div>
+              <div className="text-2xl font-bold text-amber-600">{loading ? '...' : stats.drafts}</div>
               <p className="text-xs text-muted-foreground mt-1">Pending review or release</p>
             </CardContent>
           </Card>
@@ -177,69 +242,72 @@ export function AdminGenericModulePage({
               </div>
 
               <div className="divide-y divide-border bg-card">
-                <div className="px-4 py-3 text-sm grid grid-cols-12 gap-4 items-center hover:bg-muted/30 transition-colors">
-                  <div className="col-span-5 font-medium text-foreground">
-                    Sunday Service & Fellowship
-                    <div className="text-xs text-muted-foreground font-normal">Updated 2 hours ago</div>
+                {loading ? (
+                  <div className="px-4 py-8 text-center text-sm text-muted-foreground">
+                    <Loader2Icon className="mx-auto size-6 animate-spin mb-2" />
+                    Loading homepage items...
                   </div>
-                  <div className="col-span-3 text-xs text-muted-foreground">
-                    <Badge variant="secondary" className="font-normal">Main Service</Badge>
+                ) : filteredItems.length === 0 ? (
+                  <div className="px-4 py-8 text-center text-sm text-muted-foreground">
+                    No homepage items found. Create your first item to get started.
                   </div>
-                  <div className="col-span-2">
-                    <Badge variant="success" className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/20">
-                      Published
-                    </Badge>
-                  </div>
-                  <div className="col-span-2 text-right">
-                    <Button variant="ghost" size="sm" className="h-8 px-2 text-xs">
-                      Manage
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="px-4 py-3 text-sm grid grid-cols-12 gap-4 items-center hover:bg-muted/30 transition-colors">
-                  <div className="col-span-5 font-medium text-foreground">
-                    Youth Ministry Conference 2026
-                    <div className="text-xs text-muted-foreground font-normal">Updated yesterday</div>
-                  </div>
-                  <div className="col-span-3 text-xs text-muted-foreground">
-                    <Badge variant="secondary" className="font-normal">Youth</Badge>
-                  </div>
-                  <div className="col-span-2">
-                    <Badge variant="success" className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/20">
-                      Published
-                    </Badge>
-                  </div>
-                  <div className="col-span-2 text-right">
-                    <Button variant="ghost" size="sm" className="h-8 px-2 text-xs">
-                      Manage
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="px-4 py-3 text-sm grid grid-cols-12 gap-4 items-center hover:bg-muted/30 transition-colors">
-                  <div className="col-span-5 font-medium text-foreground">
-                    Community Outreach & Food Drive
-                    <div className="text-xs text-muted-foreground font-normal">Scheduled for next week</div>
-                  </div>
-                  <div className="col-span-3 text-xs text-muted-foreground">
-                    <Badge variant="secondary" className="font-normal">Missions</Badge>
-                  </div>
-                  <div className="col-span-2">
-                    <Badge variant="gold" className="bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/20">
-                      Draft
-                    </Badge>
-                  </div>
-                  <div className="col-span-2 text-right">
-                    <Button variant="ghost" size="sm" className="h-8 px-2 text-xs">
-                      Manage
-                    </Button>
-                  </div>
-                </div>
+                ) : (
+                  filteredItems.map((item) => (
+                    <div
+                      key={item.id}
+                      className="px-4 py-3 text-sm grid grid-cols-12 gap-4 items-center hover:bg-muted/30 transition-colors"
+                    >
+                      <div className="col-span-5 font-medium text-foreground">
+                        {item.title}
+                        <div className="text-xs text-muted-foreground font-normal">
+                          Updated {new Date(item.updatedAt).toLocaleDateString()}
+                        </div>
+                      </div>
+                      <div className="col-span-3 text-xs text-muted-foreground">
+                        <Badge variant="secondary" className="font-normal">
+                          {item.categoryLabel}
+                        </Badge>
+                      </div>
+                      <div className="col-span-2">
+                        <Badge
+                          variant={item.status === 'PUBLISHED' ? 'success' : 'gold'}
+                          className={
+                            item.status === 'PUBLISHED'
+                              ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/20'
+                              : 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/20'
+                          }
+                        >
+                          {item.statusLabel}
+                        </Badge>
+                      </div>
+                      <div className="col-span-2 text-right">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2 text-xs"
+                          onClick={() => {
+                            setEditingItem(item)
+                            setFormOpen(true)
+                          }}
+                        >
+                          Manage
+                        </Button>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </CardContent>
         </Card>
+
+        {/* Homepage Item Form Dialog */}
+        <HomepageItemForm
+          open={formOpen}
+          onOpenChange={setFormOpen}
+          item={editingItem}
+          onSuccess={loadHomepageItems}
+        />
       </div>
     </>
   )

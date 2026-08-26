@@ -55,6 +55,8 @@ const AdminContactMessagesPage = lazy(() => import('./pages/admin/AdminContactMe
 const AdminPrayerRequestsPage = lazy(() => import('./pages/admin/AdminPrayerRequestsPage'))
 const AdminDonationsPage = lazy(() => import('./pages/admin/AdminDonationsPage'))
 const AdminServiceTimesPage = lazy(() => import('./pages/admin/AdminServiceTimesPage'))
+const AdminLivestreamPage = lazy(() => import('./pages/admin/AdminLivestreamPage'))
+const AdminSettingsPage = lazy(() => import('./pages/admin/AdminSettingsPage'))
 const AdminGenericModulePage = lazy(() =>
   import('./pages/admin/AdminGenericModulePage').then((m) => ({
     default: m.AdminGenericModulePage,
@@ -198,12 +200,9 @@ export default function App() {
               <Route
                 path="/admin/livestream"
                 element={
-                  <AdminGenericModulePage
-                    title="Livestream Settings"
-                    description="Configure YouTube/Facebook Sunday service stream links and schedules."
-                    category="Content"
-                    entityName="Stream Link"
-                  />
+                  <ProtectedRoute>
+                    <AdminLivestreamPage />
+                  </ProtectedRoute>
                 }
               />
 
@@ -292,12 +291,9 @@ export default function App() {
               <Route
                 path="/admin/settings"
                 element={
-                  <AdminGenericModulePage
-                    title="Church Settings"
-                    description="Configure organization details, social links, and system preferences."
-                    category="Administration"
-                    entityName="Setting"
-                  />
+                  <ProtectedRoute permissions={['church_setting:read']}>
+                    <AdminSettingsPage />
+                  </ProtectedRoute>
                 }
               />
 

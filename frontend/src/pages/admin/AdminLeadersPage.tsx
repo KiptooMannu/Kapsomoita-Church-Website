@@ -27,6 +27,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { SeoHead } from '@/components/seo/SeoHead'
 import { contentApi, type Leader } from '@/features/content/content-api'
 import { normaliseApiError } from '@/lib/api/client'
+import { queryKeys } from '@/lib/query-client'
 
 export default function AdminLeadersPage() {
   const queryClient = useQueryClient()
@@ -45,7 +46,7 @@ export default function AdminLeadersPage() {
   const [published, setPublished] = useState(true)
 
   const leadersQuery = useQuery({
-    queryKey: ['admin', 'leaders'],
+    queryKey: queryKeys.admin.leaders,
     queryFn: () => contentApi.adminListLeaders(),
   })
 
@@ -68,8 +69,8 @@ export default function AdminLeadersPage() {
     },
     onSuccess: () => {
       toast.success(editingLeader ? 'Leader profile updated' : 'Leader profile added')
-      void queryClient.invalidateQueries({ queryKey: ['admin', 'leaders'] })
-      void queryClient.invalidateQueries({ queryKey: ['public', 'leaders'] })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.admin.leaders })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.public.leaders })
       handleCloseDialog()
     },
     onError: (error) => toast.error(normaliseApiError(error).message),
@@ -79,8 +80,8 @@ export default function AdminLeadersPage() {
     mutationFn: (id: string) => contentApi.adminDeleteLeader(id),
     onSuccess: () => {
       toast.success('Leader profile deleted')
-      void queryClient.invalidateQueries({ queryKey: ['admin', 'leaders'] })
-      void queryClient.invalidateQueries({ queryKey: ['public', 'leaders'] })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.admin.leaders })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.public.leaders })
     },
     onError: (error) => toast.error(normaliseApiError(error).message),
   })

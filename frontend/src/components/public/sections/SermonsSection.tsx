@@ -5,7 +5,10 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Section, SectionHeading } from '@/components/public/Section'
-import { latestSermons } from '@/config/content'
+import { sermonsApi } from '@/features/content/sermons-api'
+import { normaliseApiError } from '@/lib/api/client'
+import { queryKeys } from '@/lib/query-client'
+import { useQuery } from '@tanstack/react-query'
 
 /**
  * Latest sermons.
@@ -15,7 +18,20 @@ import { latestSermons } from '@/config/content'
  * rather than as not-yet-available, which is why the fallback is explicit text.
  */
 export function SermonsSection() {
-  if (latestSermons.length === 0) {
+  const sermonsQuery = useQuery({
+    queryKey: queryKeys.public.sermons,
+    queryFn: () => sermonsApi.list({ size: 6 }),
+  })
+
+  if (sermonsQuery.isPending) {
+    return <Section id="sermons"><p className="py-12 text-center text-muted-foreground">Loading latest sermons...</p></Section>
+  }
+
+  if (sermonsQuery.isError) {
+    return <Section id="sermons"><p className="py-12 text-center text-destructive">{normaliseApiError(sermonsQuery.error).message}</p></Section>
+  }
+
+  if (sermonsQuery.data.length === 0) {
     return null
   }
 
@@ -28,7 +44,7 @@ export function SermonsSection() {
       />
 
       <ul className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {latestSermons.map((sermon) => (
+        {sermonsQuery.data.map((sermon) => (
           <li key={sermon.id}>
             <Card className="h-full py-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lifted">
               <CardContent className="flex h-full flex-col gap-4">
@@ -64,10 +80,10 @@ export function SermonsSection() {
 
                 <div className="mt-auto flex items-center justify-between gap-3 pt-2">
                   <time
-                    dateTime={sermon.date}
+                    dateTime={sermon.preachedOn}
                     className="text-muted-foreground text-xs"
                   >
-                    {format(new Date(sermon.date), 'd MMMM yyyy')}
+                    {format(new Date(sermon.preachedOn), 'd MMMM yyyy')}
                   </time>
 
                   {sermon.videoUrl ? (

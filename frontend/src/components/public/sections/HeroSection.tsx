@@ -99,8 +99,8 @@ export function HeroSection() {
 
       {/* --- Content Grid -------------------------------------------------- */}
       <div className="container-page relative z-10 pt-[var(--header-height)] pb-16 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          <div className="flex max-w-3xl flex-col gap-6 lg:col-span-8">
+        <div className="flex flex-col items-center justify-center">
+          <div className="flex max-w-3xl flex-col items-center gap-6 text-center">
             <span
               className={cn(
                 'w-fit rounded-full border border-white/25 bg-white/10 px-4 py-1.5',
@@ -129,7 +129,7 @@ export function HeroSection() {
             </p>
 
             {/* --- Calls to action ---------------------------------------- */}
-            <div className="flex animate-fade-up flex-col gap-3 pt-2 xs:flex-row xs:flex-wrap">
+            <div className="flex animate-fade-up flex-col items-center justify-center gap-3 pt-2 xs:flex-row xs:flex-wrap">
               <Button asChild size="xl" variant="gold">
                 <Link to="/contact">
                   Join Us
@@ -175,7 +175,7 @@ export function HeroSection() {
             </div>
 
             {/* --- Next service, at a glance ------------------------------ */}
-            <dl className="mt-6 flex animate-fade-up flex-wrap gap-x-8 gap-y-3 border-t border-white/20 pt-6">
+            <dl className="mt-6 flex w-full animate-fade-up flex-wrap justify-center gap-x-8 gap-y-3 border-t border-white/20 pt-6">
               <div>
                 <dt className="text-xs tracking-wider text-white/60 uppercase">Sunday Worship</dt>
                 <dd className="text-sm font-semibold text-white">8:00 AM – 12:00 PM</dd>
@@ -194,7 +194,7 @@ export function HeroSection() {
           </div>
 
           {/* Announcements Side Widget */}
-          <div className="lg:col-span-4 flex justify-center lg:justify-end animate-fade-up">
+          <div className="mt-8 animate-fade-up">
             <AnnouncementsSideWidget />
           </div>
         </div>

@@ -1,6 +1,7 @@
 package com.kapsomoita.church.content.dto;
 
 import com.kapsomoita.church.content.domain.Announcement;
+import com.kapsomoita.church.content.domain.HomepageItem;
 import com.kapsomoita.church.content.domain.Leader;
 import com.kapsomoita.church.content.domain.ServiceTime;
 import com.kapsomoita.church.content.domain.Testimonial;
@@ -41,6 +42,20 @@ public final class ContentDtos {
             @Size(max = 120, message = "That date label is too long.")
             String displayDate,
 
+            /** Event date for calendar-style display */
+            Instant eventDate,
+
+            /** End date for multi-day events */
+            Instant eventEndDate,
+
+            @Size(max = 200, message = "That location is too long.")
+            String eventLocation,
+
+            @Size(max = 512)
+            String imageUrl,
+
+            UUID imageId,
+
             @Size(max = 80, message = "That link label is too long.")
             String linkLabel,
 
@@ -61,6 +76,11 @@ public final class ContentDtos {
             String tone,
             String toneLabel,
             String displayDate,
+            Instant eventDate,
+            Instant eventEndDate,
+            String eventLocation,
+            String imageUrl,
+            UUID imageId,
             String linkLabel,
             String linkUrl,
             boolean published,
@@ -77,7 +97,9 @@ public final class ContentDtos {
             return new AnnouncementResponse(
                     a.getId(), a.getTitle(), a.getBody(),
                     a.getTone().name(), a.getTone().label(),
-                    a.getDisplayDate(), a.getLinkLabel(), a.getLinkUrl(),
+                    a.getDisplayDate(), a.getEventDate(), a.getEventEndDate(),
+                    a.getEventLocation(), a.getImageUrl(), a.getImageId(),
+                    a.getLinkLabel(), a.getLinkUrl(),
                     a.isPublished(), a.isPinned(), a.isCurrentlyVisible(),
                     a.getStartsAt(), a.getEndsAt(), a.getSortOrder(),
                     a.getCreatedBy() == null ? null : a.getCreatedBy().getFullName(),
@@ -246,6 +268,93 @@ public final class ContentDtos {
                     t.getPhoto() == null ? null : t.getPhoto().getSecureUrl(),
                     t.getPhoto() == null ? null : t.getPhoto().getPublicId(),
                     t.isPublished(), t.isFeatured(), t.getSortOrder(), t.getCreatedAt());
+        }
+    }
+
+    // =======================================================================
+    // Homepage Items
+    // =======================================================================
+
+    public record HomepageItemRequest(
+            @NotBlank(message = "A title is required.")
+            @Size(max = 200, message = "That title is too long.")
+            String title,
+
+            @Size(max = 5000, message = "Please keep the description under 5000 characters.")
+            String description,
+
+            @NotBlank(message = "A category is required.")
+            String category,
+
+            String status,
+
+            @Size(max = 512)
+            String imageUrl,
+
+            @Size(max = 512)
+            String linkUrl,
+
+            Integer displayOrder,
+
+            Boolean featured,
+
+            Instant scheduledFor) {
+    }
+
+    public record HomepageItemResponse(
+            UUID id,
+            String title,
+            String description,
+            String category,
+            String categoryLabel,
+            String status,
+            String statusLabel,
+            String imageUrl,
+            String linkUrl,
+            int displayOrder,
+            boolean featured,
+            Instant publishedAt,
+            Instant scheduledFor,
+            Instant createdAt,
+            Instant updatedAt) {
+
+        public static HomepageItemResponse from(HomepageItem h) {
+            return new HomepageItemResponse(
+                    h.getId(),
+                    h.getTitle(),
+                    h.getDescription(),
+                    h.getCategory().name(),
+                    formatCategoryLabel(h.getCategory()),
+                    h.getStatus().name(),
+                    formatStatusLabel(h.getStatus()),
+                    h.getImageUrl(),
+                    h.getLinkUrl(),
+                    h.getDisplayOrder(),
+                    h.isFeatured(),
+                    h.getPublishedAt(),
+                    h.getScheduledFor(),
+                    h.getCreatedAt(),
+                    h.getUpdatedAt());
+        }
+
+        private static String formatCategoryLabel(HomepageItem.Category category) {
+            return switch (category) {
+                case HERO_BANNER -> "Hero Banner";
+                case ANNOUNCEMENT -> "Announcement";
+                case EVENT -> "Event";
+                case MINISTRY -> "Ministry";
+                case SERMON -> "Sermon";
+                case TESTIMONIAL -> "Testimonial";
+                case FEATURE -> "Feature";
+            };
+        }
+
+        private static String formatStatusLabel(HomepageItem.Status status) {
+            return switch (status) {
+                case DRAFT -> "Draft";
+                case PUBLISHED -> "Published";
+                case ARCHIVED -> "Archived";
+            };
         }
     }
 }

@@ -3,6 +3,7 @@ import { ChevronLeftIcon, ChevronRightIcon, QuoteIcon } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Section, SectionHeading } from '@/components/public/Section'
+import { queryKeys } from '@/lib/query-client'
 import { testimonials as fallbackTestimonials } from '@/config/content'
 import { contentApi } from '@/features/content/content-api'
 import { cn } from '@/lib/utils'
@@ -14,7 +15,7 @@ export function TestimonialsSection() {
   const [isPaused, setIsPaused] = useState(false)
 
   const { data: liveTestimonials } = useQuery({
-    queryKey: ['public', 'testimonials'],
+    queryKey: queryKeys.public.testimonials,
     queryFn: contentApi.publicTestimonials,
     staleTime: 5 * 60_000,
   })

@@ -1,7 +1,9 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import {
   CalendarDaysIcon,
   ClockIcon,
+  Loader2Icon,
   MapPinIcon,
   PlusIcon,
   SearchIcon,
@@ -24,46 +26,37 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { SeoHead } from '@/components/seo/SeoHead'
+import { eventsApi, type EventResponse } from '@/features/content/events-api'
+import { mediaApi } from '@/features/media/media-api'
+import { normaliseApiError } from '@/lib/api/client'
+import { queryKeys } from '@/lib/query-client'
 
-interface EventItem {
-  id: string
-  title: string
-  description: string
-  date: string
-  time: string
-  location: string
-  category: string
-  published: boolean
+const slugify = (value: string) => value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+const displayDate = (value: string) => value.slice(0, 10)
+const displayTime = (value: string) => new Date(value).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+const eventStart = (date: string, time: string) => {
+  const match = time.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?/i)
+  if (!match) return new Date(`${date}T09:00:00`).toISOString()
+  let hour = Number(match[1])
+  if (match[3]?.toUpperCase() === 'PM' && hour < 12) hour += 12
+  if (match[3]?.toUpperCase() === 'AM' && hour === 12) hour = 0
+  const [year = 0, month = 1, day = 1] = date.split('-').map(Number)
+  return new Date(year, month - 1, day, hour, Number(match[2])).toISOString()
 }
 
-const INITIAL_EVENTS: EventItem[] = [
-  {
-    id: '1',
-    title: 'Annual Youth Conference 2026',
-    description: 'Empowering the next generation with divine purpose and leadership skills.',
-    date: '2026-08-15',
-    time: '09:00 AM - 04:00 PM',
-    location: 'Main Sanctuary',
-    category: 'Youth',
-    published: true,
-  },
-  {
-    id: '2',
-    title: 'Community Outreach & Free Medical Camp',
-    description: 'Serving our neighbors with compassionate healthcare and prayer support.',
-    date: '2026-08-22',
-    time: '08:00 AM - 02:00 PM',
-    location: 'Kapsomoita Church Grounds',
-    category: 'Outreach',
-    published: true,
-  },
-]
+const tomorrow = () => {
+  const date = new Date()
+  date.setDate(date.getDate() + 1)
+  return date.toISOString().split('T')[0] ?? ''
+}
 
 export default function AdminEventsPage() {
-  const [events, setEvents] = useState<EventItem[]>(INITIAL_EVENTS)
+  const queryClient = useQueryClient()
   const [search, setSearch] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
+  const [bannerId, setBannerId] = useState<string | null>(null)
+  const [bannerFile, setBannerFile] = useState<File | null>(null)
 
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -73,21 +66,74 @@ export default function AdminEventsPage() {
   const [category, setCategory] = useState('Service')
   const [published, setPublished] = useState(true)
 
-  const handleOpenDialog = (item?: EventItem) => {
+  const eventsQuery = useQuery({
+    queryKey: queryKeys.admin.events({ search }),
+    queryFn: () => eventsApi.adminList({ search: search.trim() || undefined }),
+  })
+
+  const saveMutation = useMutation({
+    mutationFn: async () => {
+      let nextBannerId = bannerId ?? undefined
+      if (bannerFile) {
+        const uploadedBanner = await mediaApi.upload(bannerFile, {
+          title: `${title.trim()} banner`,
+          folder: 'EVENT_BANNER',
+          description: description.trim() || undefined,
+        })
+        nextBannerId = uploadedBanner.id
+      }
+
+      const payload = {
+        title,
+        slug: slugify(title),
+        description: description || undefined,
+        startsAt: eventStart(date, time),
+        venue: location,
+        bannerId: nextBannerId,
+        registrationOpen: false,
+        published,
+        featured: false,
+      }
+      return editingId ? eventsApi.adminUpdate(editingId, payload) : eventsApi.adminCreate(payload)
+    },
+    onSuccess: () => {
+      toast.success(editingId ? 'Event updated successfully' : 'Event created successfully')
+      void queryClient.invalidateQueries({ queryKey: queryKeys.admin.events({}) })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.public.events })
+      setIsDialogOpen(false)
+    },
+    onError: (error) => toast.error(normaliseApiError(error).message),
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => eventsApi.adminDelete(id),
+    onSuccess: () => {
+      toast.success('Event deleted')
+      void queryClient.invalidateQueries({ queryKey: queryKeys.admin.events({}) })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.public.events })
+    },
+    onError: (error) => toast.error(normaliseApiError(error).message),
+  })
+
+  const handleOpenDialog = (item?: EventResponse) => {
     if (item) {
       setEditingId(item.id)
+      setBannerId(item.bannerId)
+      setBannerFile(null)
       setTitle(item.title)
-      setDescription(item.description)
-      setDate(item.date)
-      setTime(item.time)
-      setLocation(item.location)
-      setCategory(item.category)
+      setDescription(item.description ?? '')
+      setDate(displayDate(item.startsAt))
+      setTime(displayTime(item.startsAt))
+      setLocation(item.venue)
+      setCategory('Service')
       setPublished(item.published)
     } else {
       setEditingId(null)
+      setBannerId(null)
+      setBannerFile(null)
       setTitle('')
       setDescription('')
-      setDate(new Date().toISOString().split('T')[0] ?? '')
+      setDate(tomorrow())
       setTime('09:00 AM')
       setLocation('Main Sanctuary')
       setCategory('Service')
@@ -102,43 +148,14 @@ export default function AdminEventsPage() {
       return
     }
 
-    if (editingId) {
-      setEvents((prev) =>
-        prev.map((e) =>
-          e.id === editingId
-            ? { ...e, title, description, date, time, location, category, published }
-            : e,
-        ),
-      )
-      toast.success('Event updated successfully')
-    } else {
-      const newEvent: EventItem = {
-        id: String(Date.now()),
-        title,
-        description,
-        date,
-        time,
-        location,
-        category,
-        published,
-      }
-      setEvents((prev) => [newEvent, ...prev])
-      toast.success('Event created successfully')
-    }
-    setIsDialogOpen(false)
+    saveMutation.mutate()
   }
 
   const handleDelete = (id: string) => {
-    setEvents((prev) => prev.filter((e) => e.id !== id))
-    toast.success('Event deleted')
+    deleteMutation.mutate(id)
   }
 
-  const filtered = events.filter(
-    (e) =>
-      e.title.toLowerCase().includes(search.toLowerCase()) ||
-      e.category.toLowerCase().includes(search.toLowerCase()) ||
-      e.location.toLowerCase().includes(search.toLowerCase()),
-  )
+  const events = eventsQuery.data?.content ?? []
 
   return (
     <>
@@ -182,7 +199,11 @@ export default function AdminEventsPage() {
           </CardHeader>
 
           <CardContent>
-            {filtered.length === 0 ? (
+            {eventsQuery.isPending ? (
+              <div className="flex items-center justify-center py-12 text-muted-foreground"><Loader2Icon className="mr-2 size-5 animate-spin" />Loading events...</div>
+            ) : eventsQuery.isError ? (
+              <div className="py-12 text-center text-destructive">{normaliseApiError(eventsQuery.error).message}</div>
+            ) : events.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground">
                 <CalendarDaysIcon className="size-10 mb-3 opacity-40" />
                 <p className="font-medium text-foreground">No events found</p>
@@ -192,7 +213,7 @@ export default function AdminEventsPage() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {filtered.map((item) => (
+                {events.map((item) => (
                   <div
                     key={item.id}
                     className="flex flex-col justify-between p-4 rounded-lg border border-border bg-card hover:border-primary/50 transition-colors"
@@ -204,7 +225,7 @@ export default function AdminEventsPage() {
                         </Badge>
                         <Badge variant="secondary" className="font-normal flex items-center gap-1">
                           <TagIcon className="size-3" />
-                          {item.category}
+                          Service
                         </Badge>
                       </div>
 
@@ -214,15 +235,15 @@ export default function AdminEventsPage() {
                       <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground mt-3 pt-2 border-t border-border/40">
                         <span className="flex items-center gap-1 font-medium">
                           <CalendarDaysIcon className="size-3.5 text-primary" />
-                          {item.date}
+                          {displayDate(item.startsAt)}
                         </span>
                         <span className="flex items-center gap-1">
                           <ClockIcon className="size-3.5 text-muted-foreground" />
-                          {item.time}
+                          {displayTime(item.startsAt)}
                         </span>
                         <span className="flex items-center gap-1">
                           <MapPinIcon className="size-3.5 text-muted-foreground" />
-                          {item.location}
+                          {item.venue}
                         </span>
                       </div>
                     </div>
@@ -280,6 +301,24 @@ export default function AdminEventsPage() {
                 onChange={(e) => setDescription(e.target.value)}
                 className="mt-1"
               />
+            </div>
+
+            <div>
+              <Label htmlFor="evt-banner">Event image</Label>
+              <Input
+                id="evt-banner"
+                type="file"
+                accept="image/*"
+                onChange={(e) => setBannerFile(e.target.files?.[0] ?? null)}
+                className="mt-1"
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                {bannerFile
+                  ? `Selected: ${bannerFile.name}`
+                  : bannerId
+                    ? 'Current event image will be kept unless you select a new one.'
+                    : 'Choose an image to display on the landing page.'}
+              </p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -345,7 +384,7 @@ export default function AdminEventsPage() {
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSave}>
+            <Button onClick={handleSave} disabled={saveMutation.isPending}>
               {editingId ? 'Save Changes' : 'Schedule Event'}
             </Button>
           </DialogFooter>

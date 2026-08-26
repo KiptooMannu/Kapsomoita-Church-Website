@@ -13,6 +13,7 @@ import { useQuery } from '@tanstack/react-query'
 import { ChurchLogo } from '@/components/brand/ChurchLogo'
 import { footerLinks, serviceTimes as fallbackServiceTimes, site } from '@/config/site'
 import { contentApi } from '@/features/content/content-api'
+import { queryKeys } from '@/lib/query-client'
 import { cn } from '@/lib/utils'
 
 const SOCIAL_LINKS = [
@@ -36,7 +37,7 @@ const SOCIAL_LINKS = [
  */
 export function SiteFooter() {
   const { data: liveServiceTimes } = useQuery({
-    queryKey: ['public', 'service-times'],
+    queryKey: queryKeys.public.serviceTimes,
     queryFn: contentApi.publicServiceTimes,
     staleTime: 5 * 60_000,
   })
