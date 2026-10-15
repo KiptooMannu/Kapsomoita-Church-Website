@@ -1,60 +1,95 @@
-import { QuoteIcon } from 'lucide-react'
+import { QuoteIcon, UserRoundIcon } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
-import { CloudinaryImage } from '@/components/media/CloudinaryImage'
 import { Section } from '@/components/public/Section'
 import { pastorsMessage } from '@/config/content'
-import { mediaPublicId } from '@/config/media-manifest'
+import { contentApi } from '@/features/content/content-api'
+import { queryKeys } from '@/lib/query-client'
 
 /**
  * A welcome from the pastor.
  *
- * Two columns on desktop, stacked on mobile with the portrait first — a face at the
- * top of the section does more to make the page feel personal than the text does.
+ * The first published pastoral leader supplies the portrait, name and bio.
+ * The static message remains only until that leader exists.
  */
 export function PastorMessageSection() {
+  const leadersQuery = useQuery({
+    queryKey: queryKeys.public.leaders,
+    queryFn: contentApi.publicLeaders,
+    staleTime: 5 * 60_000,
+  })
+
+  const pastor = leadersQuery.data?.find((leader) => leader.team === 'PASTORAL')
+  const name = pastor?.fullName || pastor?.roleTitle || pastorsMessage.name
+  const role = pastor
+    ? [pastor.roleTitle, pastor.ministry].filter(Boolean).join(', ')
+    : pastorsMessage.role
+  const greeting = pastorsMessage.greeting
+  const paragraphs = pastor?.bio
+    ? pastor.bio.split(/\n+/).map((paragraph) => paragraph.trim()).filter(Boolean)
+    : [...pastorsMessage.body]
+  const photoUrl = pastor?.photoUrl
+  const [photoFailed, setPhotoFailed] = useState(false)
+  const initials = name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join('')
+
+  useEffect(() => {
+    setPhotoFailed(false)
+  }, [photoUrl])
+
   return (
     <Section id="pastors-message">
       <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,24rem)_1fr] lg:gap-16">
-        {/* --- Portrait --------------------------------------------------- */}
         <div className="relative mx-auto w-full max-w-sm lg:mx-0">
-          <CloudinaryImage
-            publicId={mediaPublicId(pastorsMessage.imageLocalPath) ?? ''}
-            alt={`${pastorsMessage.name}, ${pastorsMessage.role}`}
-            width={640}
-            sizes="(min-width: 1024px) 24rem, 100vw"
-            aspectRatio="4 / 5"
-            gravity="face"
-            containerClassName="rounded-2xl shadow-lifted"
-          />
+          {photoUrl && !photoFailed ? (
+            <img
+              src={photoUrl}
+              alt={`${name}, ${role}`}
+              referrerPolicy="no-referrer"
+              className="bg-muted aspect-[4/5] w-full rounded-2xl object-cover shadow-lifted"
+              onError={() => setPhotoFailed(true)}
+            />
+          ) : (
+            <div className="bg-secondary text-primary flex aspect-[4/5] w-full flex-col items-center justify-center gap-3 rounded-2xl shadow-lifted">
+              {initials ? (
+                <span className="text-5xl font-semibold tracking-tight">{initials}</span>
+              ) : (
+                <UserRoundIcon className="size-16" aria-hidden="true" />
+              )}
+              <span className="text-muted-foreground px-6 text-center text-sm">{role}</span>
+            </div>
+          )}
 
-          {/* Decorative accent block behind the portrait. */}
           <div
             aria-hidden="true"
             className="bg-gold-400/25 absolute -bottom-4 -left-4 -z-10 size-32 rounded-2xl"
           />
         </div>
 
-        {/* --- Message --------------------------------------------------- */}
         <div className="flex flex-col gap-5">
           <span className="text-primary text-sm font-semibold tracking-wider uppercase">
-            {pastorsMessage.greeting}
+            {greeting}
           </span>
 
           <QuoteIcon className="text-gold-500 size-9" aria-hidden="true" />
 
-          {/* A blockquote, because this genuinely is quoted speech. */}
           <blockquote className="flex flex-col gap-4">
-            {pastorsMessage.body.map((paragraph) => (
-              <p key={paragraph.slice(0, 32)} className="text-base leading-relaxed sm:text-lg">
+            {paragraphs.map((paragraph) => (
+              <p key={paragraph.slice(0, 48)} className="text-base leading-relaxed sm:text-lg">
                 {paragraph}
               </p>
             ))}
           </blockquote>
 
           <footer className="border-border mt-2 flex flex-col gap-1 border-l-2 pl-4">
-            <cite className="text-base font-semibold not-italic">{pastorsMessage.name}</cite>
-            <span className="text-muted-foreground text-sm">{pastorsMessage.role}</span>
+            <cite className="text-base font-semibold not-italic">{name}</cite>
+            <span className="text-muted-foreground text-sm">{role}</span>
           </footer>
 
           <div className="flex flex-col gap-3 pt-2 xs:flex-row">

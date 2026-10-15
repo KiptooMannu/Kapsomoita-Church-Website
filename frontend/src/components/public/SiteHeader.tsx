@@ -5,7 +5,8 @@ import { ChurchLogo, ChurchWordmark } from '@/components/brand/ChurchLogo'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/features/theme/ThemeToggle'
 import { useIsScrolled, useScrollProgressVar } from '@/hooks/useScrollPosition'
-import { navigation, site } from '@/config/site'
+import { navigation } from '@/config/site'
+import { usePublicSite } from '@/features/content/use-public-site'
 import { cn } from '@/lib/utils'
 import { HamburgerButton } from './HamburgerButton'
 import { MobileNavDrawer } from './MobileNavDrawer'
@@ -24,6 +25,7 @@ import { MobileNavDrawer } from './MobileNavDrawer'
  */
 export function SiteHeader() {
   const location = useLocation()
+  const publicSite = usePublicSite()
 
   // Two separate concerns, deliberately. `isScrolled` re-renders only when it
   // flips; the progress bar is driven by a CSS variable so it never re-renders
@@ -99,12 +101,12 @@ export function SiteHeader() {
               className={cn(isTransparent && 'text-white')}
             />
             <ChurchWordmark
-              name={site.name}
-              tagline={site.tagline}
+              name={publicSite.name}
+              tagline={publicSite.tagline}
               onDark={isTransparent}
             />
             {/* The link's accessible name; the mark and wordmark are presentational. */}
-            <span className="sr-only">{site.fullName} — home</span>
+            <span className="sr-only">{publicSite.fullName} — home</span>
           </Link>
 
           {/* --- Desktop navigation --------------------------------------- */}

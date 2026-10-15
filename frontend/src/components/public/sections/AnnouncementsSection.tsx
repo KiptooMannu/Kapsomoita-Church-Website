@@ -84,9 +84,9 @@ export function AnnouncementsSection() {
                     className={cn(
                       'flex size-10 shrink-0 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110',
                       isSuccess
-                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                        ? 'bg-success/10 text-success'
                         : isWarning
-                          ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                          ? 'bg-warning/15 text-warning-foreground'
                           : 'bg-primary/10 text-primary',
                     )}
                   >

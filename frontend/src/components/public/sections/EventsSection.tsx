@@ -69,7 +69,7 @@ function EventCard({ event }: { event: EventResponse }) {
   return (
     <Card className="h-full overflow-hidden py-0 transition-all duration-300 hover:-translate-y-1 hover:shadow-lifted">
       <CloudinaryImage
-        publicId={event.bannerId ?? ''}
+        publicId=""
         fallbackSrc={event.bannerUrl ?? undefined}
         alt={event.title}
         width={768}

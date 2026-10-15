@@ -55,8 +55,8 @@ export function AdminGenericModulePage({
     try {
       setLoading(true)
       setError(null)
-      const data = await getAdminHomepageItems()
-      setItems(data)
+
+      setItems(await getAdminHomepageItems())
     } catch (err) {
       const apiError = normaliseApiError(err)
       setError(apiError.message)
@@ -153,10 +153,10 @@ export function AdminGenericModulePage({
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Published & Public
               </CardTitle>
-              <CheckCircle2Icon className="size-4 text-emerald-500" />
+              <CheckCircle2Icon className="size-4 text-success" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-emerald-600">{loading ? '...' : stats.published}</div>
+              <div className="text-2xl font-bold text-success">{loading ? '...' : stats.published}</div>
               <p className="text-xs text-muted-foreground mt-1">Live on public website</p>
             </CardContent>
           </Card>
@@ -166,10 +166,10 @@ export function AdminGenericModulePage({
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Drafts & Scheduled
               </CardTitle>
-              <ClockIcon className="size-4 text-amber-500" />
+              <ClockIcon className="size-4 text-warning-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-amber-600">{loading ? '...' : stats.drafts}</div>
+              <div className="text-2xl font-bold text-warning-foreground">{loading ? '...' : stats.drafts}</div>
               <p className="text-xs text-muted-foreground mt-1">Pending review or release</p>
             </CardContent>
           </Card>
@@ -269,14 +269,7 @@ export function AdminGenericModulePage({
                         </Badge>
                       </div>
                       <div className="col-span-2">
-                        <Badge
-                          variant={item.status === 'PUBLISHED' ? 'success' : 'gold'}
-                          className={
-                            item.status === 'PUBLISHED'
-                              ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/20'
-                              : 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/20'
-                          }
-                        >
+                        <Badge variant={item.status === 'PUBLISHED' ? 'success' : 'gold'}>
                           {item.statusLabel}
                         </Badge>
                       </div>

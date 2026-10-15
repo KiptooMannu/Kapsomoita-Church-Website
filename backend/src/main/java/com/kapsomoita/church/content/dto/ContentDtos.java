@@ -288,7 +288,7 @@ public final class ContentDtos {
 
             String status,
 
-            @Size(max = 512)
+            @Size(max = 1024)
             String imageUrl,
 
             @Size(max = 512)

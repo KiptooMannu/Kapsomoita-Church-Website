@@ -32,7 +32,7 @@ export interface ContactMessageListParams { search?: string; page?: number; size
 
 export const contactMessagesApi = {
   create: (data: ContactMessageRequest) =>
-    apiPost<ContactMessageResponse>('/contact', data),
+    apiPost<ContactMessageResponse>('/contact-messages', data),
   adminList: (params?: ContactMessageListParams) =>
     apiGet<PageResponse<ContactMessageResponse>>('/admin/outreach/contact-messages', { params }),
   adminUpdateStatus: (id: string, status: string) =>

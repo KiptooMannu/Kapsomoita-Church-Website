@@ -20,17 +20,18 @@ public record AppProperties(
         Jwt jwt,
         Bootstrap bootstrap) {
 
-    public AppProperties {
-        if (apiPrefix == null || apiPrefix.isBlank()) {
-            apiPrefix = "/api";
-        }
+    public AppProperties(String apiPrefix, Cors cors, Jwt jwt, Bootstrap bootstrap) {
+        this.apiPrefix = (apiPrefix == null || apiPrefix.isBlank()) ? "/api" : apiPrefix;
+        this.cors = cors;
+        this.jwt = jwt;
+        this.bootstrap = bootstrap;
     }
 
     /** Origins permitted to call the API from a browser. */
     public record Cors(List<String> allowedOrigins) {
 
-        public Cors {
-            allowedOrigins = allowedOrigins == null ? List.of() : List.copyOf(allowedOrigins);
+        public Cors(List<String> allowedOrigins) {
+            this.allowedOrigins = allowedOrigins == null ? List.of() : List.copyOf(allowedOrigins);
         }
     }
 
@@ -51,7 +52,17 @@ public record AppProperties(
          * Base64 in the environment; anything shorter is a misconfiguration we
          * refuse to boot with.
          */
-        public Jwt {
+        public Jwt(
+                String issuer,
+                String accessSecret,
+                String refreshSecret,
+                long accessTtlSeconds,
+                long refreshTtlSeconds) {
+            this.issuer = issuer;
+            this.accessSecret = accessSecret;
+            this.refreshSecret = refreshSecret;
+            this.accessTtlSeconds = accessTtlSeconds;
+            this.refreshTtlSeconds = refreshTtlSeconds;
             requireStrongSecret(accessSecret, "app.jwt.access-secret");
             requireStrongSecret(refreshSecret, "app.jwt.refresh-secret");
             if (accessSecret.equals(refreshSecret)) {

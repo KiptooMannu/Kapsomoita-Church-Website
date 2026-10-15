@@ -36,6 +36,10 @@ public class DonationService {
         
         Donation donation = new Donation();
         applyDonation(donation, request);
+        // Public submissions are notices, not confirmed receipts. Only staff can
+        // mark a gift completed from the admin donations screen.
+        donation.setStatus(Donation.DonationStatus.PENDING);
+        donation.setCompletedAt(null);
         donation.setCreatedAt(Instant.now());
         donation.setUpdatedAt(Instant.now());
         

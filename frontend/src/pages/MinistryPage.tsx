@@ -18,8 +18,9 @@ import { Section, SectionHeading } from '@/components/public/Section'
 import { SeoHead } from '@/components/seo/SeoHead'
 import { JoinMinistryForm } from '@/features/ministries/JoinMinistryForm'
 import { publicGalleryApi } from '@/features/media/public-gallery-api'
+import { contentApi } from '@/features/content/content-api'
 import { findMinistry, ministryDetails } from '@/config/ministries'
-import { mediaPublicId } from '@/config/media-manifest'
+import { resolveImagePath } from '@/config/images'
 import { cn } from '@/lib/utils'
 import { queryKeys } from '@/lib/query-client'
 
@@ -44,6 +45,12 @@ export default function MinistryPage() {
   // order, so returning above a useQuery would change that order between renders
   // and crash. The query is disabled instead when there is nothing to fetch.
   const galleryCategory = ministry?.galleryCategory
+  const leadersQuery = useQuery({
+    queryKey: queryKeys.public.leaders,
+    queryFn: contentApi.publicLeaders,
+    staleTime: 5 * 60_000,
+  })
+
   const galleryQuery = useQuery({
     queryKey: queryKeys.public.galleryImages(`ministry:${galleryCategory ?? 'none'}`),
     queryFn: () => publicGalleryApi.byCategory(galleryCategory!, 0, GALLERY_LIMIT),
@@ -59,9 +66,12 @@ export default function MinistryPage() {
   }
 
   const photos = galleryQuery.data?.content ?? []
-  const heroPublicId = ministry.imageLocalPath
-    ? (mediaPublicId(ministry.imageLocalPath) ?? '')
-    : ''
+  const heroImage = resolveImagePath(ministry.imageLocalPath)
+  const ministryLeaders = (leadersQuery.data ?? []).filter((leader) => {
+    const assigned = (leader.ministry ?? '').trim().toLowerCase()
+    const role = leader.roleTitle.trim().toLowerCase()
+    return assigned === ministry.name.toLowerCase() || role === ministry.leaderRole.toLowerCase()
+  })
 
   return (
     <>
@@ -72,10 +82,11 @@ export default function MinistryPage() {
 
       {/* --- Hero --------------------------------------------------------- */}
       <header className="relative isolate overflow-hidden">
-        {heroPublicId || ministry.imageLocalPath ? (
+        {heroImage ? (
           <>
             <CloudinaryImage
-              publicId={heroPublicId}
+              publicId={heroImage.publicId}
+              fallbackSrc={heroImage.fallbackSrc}
               alt=""
               width={2560}
               sizes="100vw"
@@ -169,9 +180,42 @@ export default function MinistryPage() {
                 <dl className="flex flex-col gap-3 text-sm">
                   <div className="flex items-start gap-2.5">
                     <UserIcon className="text-primary mt-0.5 size-4 shrink-0" aria-hidden="true" />
-                    <div>
+                    <div className="min-w-0 flex-1">
                       <dt className="font-medium">Led by</dt>
                       <dd className="text-muted-foreground">{ministry.leaderRole}</dd>
+                      {ministryLeaders.length > 0 && (
+                        <ul className="mt-3 flex flex-col gap-3">
+                          {ministryLeaders.map((leader) => (
+                            <li key={leader.id} className="flex items-center gap-3">
+                              {leader.photoUrl ? (
+                                <img
+                                  src={leader.photoUrl}
+                                  alt=""
+                                  referrerPolicy="no-referrer"
+                                  className="bg-muted size-16 shrink-0 rounded-full object-cover"
+                                />
+                              ) : (
+                                <span className="bg-secondary text-primary flex size-16 shrink-0 items-center justify-center rounded-full text-sm font-semibold">
+                                  {(leader.displayHeading || leader.roleTitle)
+                                    .split(/\s+/)
+                                    .filter(Boolean)
+                                    .slice(0, 2)
+                                    .map((part) => part[0]?.toUpperCase())
+                                    .join('') || <UserIcon className="size-5" aria-hidden="true" />}
+                                </span>
+                              )}
+                              <span className="min-w-0">
+                                <span className="block truncate font-medium text-foreground">
+                                  {leader.displayHeading}
+                                </span>
+                                <span className="text-muted-foreground block truncate text-xs">
+                                  {leader.roleTitle}
+                                </span>
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
                   </div>
 

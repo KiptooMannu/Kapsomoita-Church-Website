@@ -109,7 +109,7 @@ export default function AdminDonationsPage() {
                 <span className="text-xs font-medium text-muted-foreground uppercase">Primary Channel</span>
                 <h3 className="text-2xl font-bold text-foreground mt-0.5">M-PESA / Paybill</h3>
               </div>
-              <TagIcon className="size-8 text-emerald-600 opacity-80" />
+              <TagIcon className="size-8 text-success opacity-80" />
             </CardContent>
           </Card>
         </div>
@@ -150,7 +150,7 @@ export default function AdminDonationsPage() {
                     className="py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-muted/30 px-3 rounded-lg transition-colors"
                   >
                     <div className="flex items-start gap-3 min-w-0 flex-1">
-                      <div className="p-2.5 rounded-full bg-emerald-500/10 text-emerald-600 shrink-0 mt-0.5">
+                      <div className="p-2.5 rounded-full bg-success/10 text-success shrink-0 mt-0.5">
                         <CreditCardIcon className="size-4" />
                       </div>
 

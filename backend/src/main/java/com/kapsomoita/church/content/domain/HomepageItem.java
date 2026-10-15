@@ -45,7 +45,7 @@ public class HomepageItem extends BaseEntity {
     @Column(name = "status", nullable = false, length = 16)
     private Status status = Status.DRAFT;
 
-    @Column(name = "image_url", length = 512)
+    @Column(name = "image_url", length = 1024)
     private String imageUrl;
 
     @Column(name = "link_url", length = 512)

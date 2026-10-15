@@ -100,7 +100,7 @@ public class MediaAssetService {
 
         MediaFolder folder = resolveFolder(metadata.folder());
         GalleryCategory category = resolveCategory(metadata.category(), folder);
-        MediaVisibility visibility = resolveVisibility(metadata.visibility());
+        MediaVisibility visibility = resolveVisibility(metadata.visibility(), folder);
         List<String> tags = normaliseTags(metadata.tags());
 
         // 1. Store the file. Cloudinary creates the destination folder if needed.
@@ -151,7 +151,7 @@ public class MediaAssetService {
         // immediately rather than after uploading part of the batch.
         MediaFolder folder = resolveFolder(metadata.folder());
         resolveCategory(metadata.category(), folder);
-        resolveVisibility(metadata.visibility());
+        resolveVisibility(metadata.visibility(), folder);
 
         List<MediaAssetResponse> uploaded = new ArrayList<>();
         List<FailedUpload> failed = new ArrayList<>();
@@ -262,7 +262,7 @@ public class MediaAssetService {
                         () -> unknownCategory(categoryName));
         MediaVisibility visibility = visibilityName == null || visibilityName.isBlank()
                 ? null
-                : resolveVisibility(visibilityName);
+                : parseVisibility(visibilityName);
 
         return mediaAssetRepository
                 .search(folder, category, visibility, featured, search, pageable)
@@ -293,7 +293,8 @@ public class MediaAssetService {
     public List<MediaAssetResponse> featured(int limit) {
         int capped = Math.clamp(limit, 1, 48);
         return mediaAssetRepository
-                .findAllByFeaturedTrueAndVisibilityOrderByUploadedAtDesc(
+                .findAllByMediaFolderAndFeaturedTrueAndVisibilityOrderByUploadedAtDesc(
+                        MediaFolder.GALLERY,
                         MediaVisibility.PUBLIC,
                         org.springframework.data.domain.PageRequest.of(0, capped))
                 .stream()
@@ -387,7 +388,7 @@ public class MediaAssetService {
         }
 
         if (request.visibility() != null && !request.visibility().isBlank()) {
-            asset.setVisibility(resolveVisibility(request.visibility()));
+            asset.setVisibility(resolveVisibility(request.visibility(), asset.getMediaFolder()));
         }
         if (request.featured() != null) {
             asset.setFeatured(request.featured());
@@ -468,10 +469,25 @@ public class MediaAssetService {
         return GalleryCategory.from(raw).orElseThrow(() -> unknownCategory(raw));
     }
 
-    private MediaVisibility resolveVisibility(String raw) {
+    /**
+     * Gallery uploads are public by default. Every other destination — events,
+     * pastors, homepage banners — stays internal unless it is archived, so those
+     * files cannot appear in the public gallery.
+     */
+    private MediaVisibility resolveVisibility(String raw, MediaFolder folder) {
         if (raw == null || raw.isBlank()) {
-            return MediaVisibility.PUBLIC;
+            return folder == MediaFolder.GALLERY
+                    ? MediaVisibility.PUBLIC
+                    : MediaVisibility.INTERNAL;
         }
+        MediaVisibility visibility = parseVisibility(raw);
+        if (folder != MediaFolder.GALLERY && visibility == MediaVisibility.PUBLIC) {
+            return MediaVisibility.INTERNAL;
+        }
+        return visibility;
+    }
+
+    private MediaVisibility parseVisibility(String raw) {
         return MediaVisibility.from(raw).orElseThrow(() -> new BadRequestException(
                 "Unknown visibility '" + raw + "'. Valid values: PUBLIC, INTERNAL, ARCHIVED."));
     }

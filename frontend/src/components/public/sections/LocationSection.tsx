@@ -2,7 +2,7 @@ import { CarIcon, ExternalLinkIcon, LandmarkIcon, MapPinIcon, NavigationIcon } f
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Section, SectionHeading } from '@/components/public/Section'
-import { site } from '@/config/site'
+import { usePublicSite } from '@/features/content/use-public-site'
 import { env, features } from '@/lib/env'
 
 /**
@@ -18,7 +18,8 @@ import { env, features } from '@/lib/env'
  * to a visitor.
  */
 export function LocationSection() {
-  const query = encodeURIComponent(site.location.searchQuery)
+  const publicSite = usePublicSite()
+  const query = encodeURIComponent(publicSite.location.searchQuery)
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${query}`
   const viewUrl = `https://www.google.com/maps/search/?api=1&query=${query}`
   const embedUrl = `https://www.google.com/maps/embed/v1/place?key=${env.googleMapsApiKey}&q=${query}&zoom=15`
@@ -38,7 +39,7 @@ export function LocationSection() {
             <iframe
               // A descriptive title is the accessible name for an iframe; without
               // it a screen reader announces only "frame".
-              title={`Map showing the location of ${site.fullName}`}
+              title={`Map showing the location of ${publicSite.fullName}`}
               src={embedUrl}
               loading="lazy"
               // The map is well below the fold, so deferring it keeps it off the
@@ -53,8 +54,8 @@ export function LocationSection() {
                 <MapPinIcon className="size-7" aria-hidden="true" />
               </span>
               <div className="flex flex-col gap-1">
-                <p className="font-semibold">{site.fullName}</p>
-                {site.contact.addressLines.map((line) => (
+                <p className="font-semibold">{publicSite.fullName}</p>
+                {publicSite.contact.addressLines.map((line) => (
                   <p key={line} className="text-muted-foreground text-sm">
                     {line}
                   </p>
@@ -79,7 +80,7 @@ export function LocationSection() {
                 Our address
               </h3>
               <address className="text-muted-foreground flex flex-col gap-0.5 text-sm not-italic">
-                {site.contact.addressLines.map((line) => (
+                {publicSite.contact.addressLines.map((line) => (
                   <span key={line}>{line}</span>
                 ))}
               </address>
@@ -93,7 +94,7 @@ export function LocationSection() {
                 Parking
               </h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                {site.location.parkingNote}
+                {publicSite.location.parkingNote}
               </p>
             </CardContent>
           </Card>
@@ -105,7 +106,7 @@ export function LocationSection() {
                 Nearby landmarks
               </h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                {site.location.landmarkNote}
+                {publicSite.location.landmarkNote}
               </p>
             </CardContent>
           </Card>

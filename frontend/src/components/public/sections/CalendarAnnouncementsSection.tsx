@@ -28,11 +28,11 @@ export function CalendarAnnouncementsSection({
   const getToneColor = (tone: string) => {
     switch (tone) {
       case 'SUCCESS':
-        return 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/20'
+        return 'bg-success/15 text-success border-success/20'
       case 'WARNING':
-        return 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/20'
+        return 'bg-warning/20 text-warning-foreground border-warning/30'
       default:
-        return 'bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/20'
+        return 'bg-primary/10 text-primary border-primary/20'
     }
   }
 

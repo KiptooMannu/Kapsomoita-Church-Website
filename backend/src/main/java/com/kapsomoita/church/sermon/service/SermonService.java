@@ -11,18 +11,21 @@ import com.kapsomoita.church.sermon.dto.SermonDtos.SermonResponse;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 public class SermonService {
 
     private final SermonRepository sermonRepository;
     private final MediaAssetRepository mediaAssetRepository;
+
+    public SermonService(SermonRepository sermonRepository, MediaAssetRepository mediaAssetRepository) {
+        this.sermonRepository = sermonRepository;
+        this.mediaAssetRepository = mediaAssetRepository;
+    }
 
     @Transactional(readOnly = true)
     public List<SermonResponse> getPublicSermons(Pageable pageable) {

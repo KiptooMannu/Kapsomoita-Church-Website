@@ -77,7 +77,15 @@ export default function AdminLivestreamPage() {
               <div><Label htmlFor="stream-url">Stream URL</Label><Input id="stream-url" type="url" value={streamUrl} onChange={(e) => setStreamUrl(e.target.value)} disabled={disabled} /></div>
               <div><Label htmlFor="embed-url">Embed URL</Label><Input id="embed-url" type="url" value={embedUrl} onChange={(e) => setEmbedUrl(e.target.value)} disabled={disabled} /></div>
               <div><Label htmlFor="scheduled-for">Scheduled for</Label><Input id="scheduled-for" type="datetime-local" value={scheduledFor} onChange={(e) => setScheduledFor(e.target.value)} disabled={disabled} /></div>
-              <label className="flex items-center gap-2 pt-7 text-sm"><input type="checkbox" checked={isLive} onChange={(e) => setIsLive(e.target.checked)} disabled={disabled} /> Mark stream as live</label>
+              <div className="flex flex-col justify-end gap-1">
+                <label className="flex items-center gap-2 text-sm font-medium">
+                  <input type="checkbox" checked={isLive} onChange={(e) => setIsLive(e.target.checked)} disabled={disabled} />
+                  We are live now
+                </label>
+                <p className="text-muted-foreground text-xs">
+                  The homepage plays the video only while this is on, with a LIVE badge. When it is off, visitors see a camera-off notice instead of a still picture.
+                </p>
+              </div>
               <div className="sm:col-span-2"><Label htmlFor="offline-message">Offline message</Label><Textarea id="offline-message" value={offlineMessage} onChange={(e) => setOfflineMessage(e.target.value)} disabled={disabled} /></div>
               <div className="sm:col-span-2 flex justify-end"><Button onClick={() => updateMutation.mutate()} disabled={disabled}>{updateMutation.isPending && <Loader2Icon className="size-4 animate-spin" />}Save livestream settings</Button></div>
             </CardContent>

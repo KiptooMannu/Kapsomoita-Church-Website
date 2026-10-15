@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from 'react'
 import { SeoHead } from '@/components/seo/SeoHead'
 import { AnnouncementsSection } from '@/components/public/sections/AnnouncementsSection'
 import { EventsSection } from '@/components/public/sections/EventsSection'
@@ -6,13 +7,14 @@ import { HeroSection } from '@/components/public/sections/HeroSection'
 import { LeadershipSection } from '@/components/public/sections/LeadershipSection'
 import { LocationSection } from '@/components/public/sections/LocationSection'
 import { MinistriesSection } from '@/components/public/sections/MinistriesSection'
-import { NewsletterSection } from '@/components/public/sections/NewsletterSection'
 import { PastorMessageSection } from '@/components/public/sections/PastorMessageSection'
 import { SermonsSection } from '@/components/public/sections/SermonsSection'
 import { ServicesSection } from '@/components/public/sections/ServicesSection'
 import { TestimonialsSection } from '@/components/public/sections/TestimonialsSection'
 import { VerseOfTheDaySection } from '@/components/public/sections/VerseOfTheDaySection'
-import { site } from '@/config/site'
+import { LivestreamBanner } from '@/components/public/sections/LivestreamBanner'
+import { usePublicSite } from '@/features/content/use-public-site'
+import { getPublicHomepageItems, type HomepageItem } from '@/lib/api/homepage'
 
 /**
  * Homepage.
@@ -26,43 +28,84 @@ import { site } from '@/config/site'
  * needing divider rules.
  */
 export default function HomePage() {
+  const publicSite = usePublicSite()
+  const [homepageItems, setHomepageItems] = useState<HomepageItem[]>([])
+
+  useEffect(() => {
+    void getPublicHomepageItems()
+      .then((items) => {
+        setHomepageItems(items.filter((item) => item.status === 'PUBLISHED'))
+      })
+      .catch(() => setHomepageItems([]))
+  }, [])
+
+  const heroItems = useMemo(
+    () => homepageItems.filter((item) => item.category === 'HERO_BANNER').slice(0, 8),
+    [homepageItems],
+  )
+
+  const featureItems = useMemo(
+    () => homepageItems.filter((item) => item.category === 'FEATURE').slice(0, 6),
+    [homepageItems],
+  )
+
   return (
     <>
       <SeoHead
-        title={site.tagline}
+        title={publicSite.tagline}
         absoluteTitle={false}
-        description={`${site.fullName} — join us for worship in Kapsomoita. Sunday services, ministries for every age, sermons and community outreach.`}
+        description={`${publicSite.fullName} — join us for worship in Kapsomoita. Sunday services, ministries for every age, sermons and community outreach.`}
         // Structured data so search engines can show service times and location
         // directly in results.
         jsonLd={{
           '@context': 'https://schema.org',
           '@type': 'Church',
-          name: site.fullName,
-          alternateName: site.name,
-          description: site.vision,
-          telephone: site.contact.phone,
-          email: site.contact.email,
+          name: publicSite.fullName,
+          alternateName: publicSite.name,
+          description: publicSite.vision,
+          telephone: publicSite.contact.phone,
+          email: publicSite.contact.email,
           address: {
             '@type': 'PostalAddress',
-            streetAddress: site.contact.addressLines[0],
-            addressLocality: 'Nairobi',
+            streetAddress: publicSite.contact.addressLines[0],
+            addressLocality: 'Kapsomoita',
             addressCountry: 'KE',
           },
-          geo: {
-            '@type': 'GeoCoordinates',
-            latitude: site.location.latitude,
-            longitude: site.location.longitude,
-          },
           sameAs: [
-            site.social.facebook,
-            site.social.instagram,
-            site.social.twitter,
-            site.social.youtube,
-          ],
+            publicSite.social.facebook,
+            publicSite.social.instagram,
+            publicSite.social.twitter,
+            publicSite.social.youtube,
+          ].filter(Boolean),
         }}
       />
 
-      <HeroSection />
+      <HeroSection slides={heroItems} />
+      <LivestreamBanner />
+      {featureItems.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {featureItems.map((item) => (
+              <article key={item.id} className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+                {item.imageUrl && (
+                  <img src={item.imageUrl} alt="" className="h-44 w-full object-cover" />
+                )}
+                <div className="space-y-2 p-5">
+                  <h2 className="text-lg font-semibold text-foreground">{item.title}</h2>
+                  {item.description && (
+                    <p className="text-sm text-muted-foreground">{item.description}</p>
+                  )}
+                  {item.linkUrl && (
+                    <a href={item.linkUrl} className="inline-block text-sm font-medium text-primary hover:underline">
+                      Read more
+                    </a>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
       <ServicesSection />
       <AnnouncementsSection />
       <EventsSection />
@@ -75,7 +118,6 @@ export default function HomePage() {
       <VerseOfTheDaySection />
       <TestimonialsSection />
       <GalleryPreviewSection />
-      <NewsletterSection />
       <LocationSection />
     </>
   )

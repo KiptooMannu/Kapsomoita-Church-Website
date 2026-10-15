@@ -58,9 +58,9 @@ public interface MediaAssetRepository extends JpaRepository<MediaAsset, UUID> {
     Page<MediaAsset> findAllByGalleryCategoryAndVisibilityOrderBySortOrderAscUploadedAtDesc(
             GalleryCategory category, MediaVisibility visibility, Pageable pageable);
 
-    /** Featured images for the homepage gallery preview. */
-    List<MediaAsset> findAllByFeaturedTrueAndVisibilityOrderByUploadedAtDesc(
-            MediaVisibility visibility, Pageable pageable);
+    /** Featured gallery images. Other folders are excluded even when marked featured. */
+    List<MediaAsset> findAllByMediaFolderAndFeaturedTrueAndVisibilityOrderByUploadedAtDesc(
+            MediaFolder mediaFolder, MediaVisibility visibility, Pageable pageable);
 
     /** Assets for a non-gallery destination, e.g. every leadership photo. */
     List<MediaAsset> findAllByMediaFolderAndVisibilityOrderBySortOrderAscUploadedAtDesc(

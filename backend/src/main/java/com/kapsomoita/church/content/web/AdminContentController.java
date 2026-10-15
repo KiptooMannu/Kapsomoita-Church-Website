@@ -228,20 +228,20 @@ public class AdminContentController {
     // -----------------------------------------------------------------------
 
     @GetMapping("/homepage-items")
-    @PreAuthorize("hasAuthority('homepage:read')")
+    @PreAuthorize("hasAuthority('homepage:read') or hasRole('SUPER_ADMIN')")
     public List<HomepageItemResponse> listHomepageItems() {
         return contentService.listHomepageItems();
     }
 
     @GetMapping("/homepage-items/{id}")
-    @PreAuthorize("hasAuthority('homepage:read')")
+    @PreAuthorize("hasAuthority('homepage:read') or hasRole('SUPER_ADMIN')")
     public HomepageItemResponse getHomepageItem(@PathVariable UUID id) {
         return contentService.getHomepageItem(id);
     }
 
     @PostMapping("/homepage-items")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAuthority('homepage:create')")
+    @PreAuthorize("hasAuthority('homepage:create') or hasRole('SUPER_ADMIN')")
     public HomepageItemResponse createHomepageItem(
             @Valid @RequestBody HomepageItemRequest request,
             @CurrentUser User actor,
@@ -250,7 +250,7 @@ public class AdminContentController {
     }
 
     @PutMapping("/homepage-items/{id}")
-    @PreAuthorize("hasAuthority('homepage:update')")
+    @PreAuthorize("hasAuthority('homepage:update') or hasRole('SUPER_ADMIN')")
     public HomepageItemResponse updateHomepageItem(
             @PathVariable UUID id,
             @Valid @RequestBody HomepageItemRequest request,
@@ -261,7 +261,7 @@ public class AdminContentController {
 
     @DeleteMapping("/homepage-items/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasAuthority('homepage:delete')")
+    @PreAuthorize("hasAuthority('homepage:delete') or hasRole('SUPER_ADMIN')")
     public void deleteHomepageItem(
             @PathVariable UUID id,
             @CurrentUser User actor,

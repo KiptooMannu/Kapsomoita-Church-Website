@@ -13,10 +13,10 @@ export interface SermonRequest {
   summary?: string
   durationMinutes?: number
   videoUrl?: string
-  videoAssetId?: string
-  audioAssetId?: string
-  notesAssetId?: string
-  thumbnailId?: string
+  videoAssetId?: string | null
+  audioAssetId?: string | null
+  notesAssetId?: string | null
+  thumbnailId?: string | null
   published?: boolean
   featured?: boolean
 }
@@ -48,6 +48,18 @@ export interface SermonResponse {
   createdByName: string | null
   createdAt: string
   updatedAt: string
+}
+
+/** Uploaded thumbnail, or the YouTube poster when the sermon is a YouTube link. */
+export function sermonThumbnailUrl(
+  sermon: Pick<SermonResponse, 'thumbnailUrl' | 'videoUrl' | 'videoAssetUrl'>,
+): string | null {
+  if (sermon.thumbnailUrl) return sermon.thumbnailUrl
+  const source = sermon.videoUrl || sermon.videoAssetUrl || ''
+  const match = source.match(
+    /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|live\/)|v=)([\w-]{11})/,
+  )
+  return match?.[1] ? `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg` : null
 }
 
 export interface SermonListParams {

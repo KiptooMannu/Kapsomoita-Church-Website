@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,6 +18,7 @@ public interface SermonRepository extends JpaRepository<Sermon, UUID> {
 
     Optional<Sermon> findBySlug(String slug);
 
+    @EntityGraph(attributePaths = {"thumbnail", "videoAsset"})
     @Query("""
             SELECT s FROM Sermon s
             WHERE s.published = TRUE

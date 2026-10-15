@@ -114,7 +114,7 @@ export default function AdminPrayerRequestsPage() {
                         </Badge>
 
                         {item.confidential && (
-                          <Badge variant="outline" className="flex items-center gap-1 border-amber-500/40 text-amber-600">
+                          <Badge variant="gold" className="flex items-center gap-1">
                             <LockIcon className="size-3" />
                             Confidential
                           </Badge>
@@ -154,7 +154,7 @@ export default function AdminPrayerRequestsPage() {
                           size="sm"
                           onClick={() => updateMutation.mutate({ id: item.id, status: 'ANSWERED' })}
                           disabled={updateMutation.isPending}
-                          className="text-xs text-emerald-600 hover:bg-emerald-500/10"
+                          className="text-xs text-success hover:bg-success/10"
                         >
                           <CheckCircle2Icon className="mr-1 size-3.5" />
                           Answered

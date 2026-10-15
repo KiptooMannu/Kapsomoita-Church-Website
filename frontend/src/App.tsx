@@ -23,9 +23,9 @@ const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
 
 // Original pages, still JavaScript. Being migrated section by section; they work
 // unchanged in the meantime.
-const Sermons = lazy(() => import('./pages/Sermons'))
-const Contact = lazy(() => import('./pages/Contacts'))
-const ServeForm = lazy(() => import('./pages/ServeForm'))
+const SermonsPage = lazy(() => import('./pages/SermonsPage'))
+const ContactPage = lazy(() => import('./pages/ContactPage'))
+const ServePage = lazy(() => import('./pages/ServePage'))
 const Evangelizing = lazy(() => import('./pages/strategies/Evangelizing'))
 const Establishing = lazy(() => import('./pages/strategies/Establishing'))
 const Edifying = lazy(() => import('./pages/strategies/Edifying'))
@@ -137,12 +137,14 @@ export default function App() {
               <Route
                 path="/admin/homepage"
                 element={
-                  <AdminGenericModulePage
-                    title="Homepage Manager"
-                    description="Manage homepage hero banners, welcome messages, and featured content."
-                    category="Content"
-                    entityName="Hero Banner"
-                  />
+                  <ProtectedRoute permissions={['homepage:read']}>
+                    <AdminGenericModulePage
+                      title="Homepage Manager"
+                      description="Manage homepage hero banners, welcome messages, and featured content."
+                      category="Content"
+                      entityName="Hero Banner"
+                    />
+                  </ProtectedRoute>
                 }
               />
               <Route
@@ -313,11 +315,11 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
 
-          <Route path="/sermons" element={<Sermons />} />
+          <Route path="/sermons" element={<SermonsPage />} />
           <Route path="/gallery" element={<GalleryPage />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route path="/contact" element={<ContactPage />} />
           <Route path="/give" element={<GivePage />} />
-          <Route path="/serve" element={<ServeForm />} />
+          <Route path="/serve" element={<ServePage />} />
 
           {/* One template serves all eleven ministries, so the seven that
               previously had no page — Sunday School, Choir, Praise Team, Prayer,

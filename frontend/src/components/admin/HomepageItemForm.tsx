@@ -1,5 +1,6 @@
 import { Loader2Icon } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { mediaApi } from '@/features/media/media-api'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import {
@@ -43,6 +44,8 @@ export function HomepageItemForm({
 }: HomepageItemFormProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 
   const {
     register,
@@ -50,6 +53,7 @@ export function HomepageItemForm({
     formState: { errors },
     reset,
     setValue,
+    watch,
   } = useForm<HomepageItemRequest>({
     defaultValues: {
       title: '',
@@ -60,12 +64,38 @@ export function HomepageItemForm({
       linkUrl: '',
       displayOrder: 0,
       featured: false,
+      scheduledFor: '',
     },
   })
+
+  useEffect(() => {
+    if (!imageFile) {
+      setPreviewUrl(null)
+      return
+    }
+    const url = URL.createObjectURL(imageFile)
+    setPreviewUrl(url)
+    return () => URL.revokeObjectURL(url)
+  }, [imageFile])
+
+  const categoryValue = watch('category') ?? 'HERO_BANNER'
+  const statusValue = watch('status') ?? 'DRAFT'
+  const featuredValue = String(watch('featured') ?? false)
+  const scheduledForValue = watch('scheduledFor') ?? ''
 
   // Populate form when editing
   useEffect(() => {
     if (item) {
+      const localDateTime = item.scheduledFor
+        ? (() => {
+            const parsed = new Date(item.scheduledFor)
+            const offsetMinutes = parsed.getTimezoneOffset()
+            return new Date(parsed.getTime() - offsetMinutes * 60_000)
+              .toISOString()
+              .slice(0, 16)
+          })()
+        : ''
+
       setValue('title', item.title)
       setValue('description', item.description || '')
       setValue('category', item.category)
@@ -74,24 +104,64 @@ export function HomepageItemForm({
       setValue('linkUrl', item.linkUrl || '')
       setValue('displayOrder', item.displayOrder)
       setValue('featured', item.featured)
+      setValue('scheduledFor', localDateTime)
     } else {
-      reset()
+      reset({
+        title: '',
+        description: '',
+        category: 'HERO_BANNER',
+        status: 'DRAFT',
+        imageUrl: '',
+        linkUrl: '',
+        displayOrder: 0,
+        featured: false,
+        scheduledFor: '',
+      })
     }
+    setImageFile(null)
   }, [item, setValue, reset])
+
+  const savedImageUrl = watch('imageUrl')
 
   const onSubmit = async (data: HomepageItemRequest) => {
     try {
       setLoading(true)
       setError(null)
 
+      let imageUrl = data.imageUrl?.trim() || undefined
+      if (imageFile) {
+        const uploaded = await mediaApi.upload(imageFile, {
+          title: data.title.trim(),
+          folder: 'HOMEPAGE',
+          visibility: 'INTERNAL',
+          featured: false,
+          description: data.description?.trim() || undefined,
+        })
+        imageUrl = uploaded.secureUrl
+      }
+
+      if (data.category === 'HERO_BANNER' && !imageUrl) {
+        setError('Add an image for the hero banner.')
+        return
+      }
+
+      const request: HomepageItemRequest = {
+        ...data,
+        imageUrl,
+        scheduledFor: data.scheduledFor?.trim()
+          ? new Date(data.scheduledFor).toISOString()
+          : undefined,
+      }
+
       if (item) {
-        await updateHomepageItem(item.id, data)
+        await updateHomepageItem(item.id, request)
       } else {
-        await createHomepageItem(data)
+        await createHomepageItem(request)
       }
 
       onSuccess()
       onOpenChange(false)
+      setImageFile(null)
       reset()
     } catch (err) {
       const apiError = normaliseApiError(err)
@@ -103,7 +173,7 @@ export function HomepageItemForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{item ? 'Edit Homepage Item' : 'Add Homepage Item'}</DialogTitle>
           <DialogDescription>
@@ -136,7 +206,7 @@ export function HomepageItemForm({
             <div className="space-y-2">
               <Label htmlFor="category">Category *</Label>
               <Select
-                defaultValue="HERO_BANNER"
+                value={categoryValue}
                 onValueChange={(value) => setValue('category', value)}
               >
                 <SelectTrigger>
@@ -165,31 +235,42 @@ export function HomepageItemForm({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="imageUrl">Image URL</Label>
-              <Input
-                id="imageUrl"
-                placeholder="https://example.com/image.jpg"
-                {...register('imageUrl')}
+          <div className="space-y-2">
+            <Label htmlFor="homepage-image">
+              Image{categoryValue === 'HERO_BANNER' ? ' *' : ''}
+            </Label>
+            <Input
+              id="homepage-image"
+              type="file"
+              accept="image/*"
+              onChange={(event) => setImageFile(event.target.files?.[0] ?? null)}
+            />
+            <p className="text-muted-foreground text-xs">
+              The picture is uploaded to Cloudinary and used on the homepage only. It does not appear in the gallery.
+            </p>
+            {(previewUrl || savedImageUrl) && (
+              <img
+                src={previewUrl || savedImageUrl || undefined}
+                alt=""
+                className="h-40 w-full rounded-lg object-cover"
               />
-            </div>
+            )}
+          </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="linkUrl">Link URL</Label>
-              <Input
-                id="linkUrl"
-                placeholder="https://example.com/page"
-                {...register('linkUrl')}
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="linkUrl">Link URL</Label>
+            <Input
+              id="linkUrl"
+              placeholder="/sermons or https://example.com"
+              {...register('linkUrl')}
+            />
           </div>
 
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="status">Status</Label>
               <Select
-                defaultValue="DRAFT"
+                value={statusValue}
                 onValueChange={(value) => setValue('status', value)}
               >
                 <SelectTrigger>
@@ -216,7 +297,7 @@ export function HomepageItemForm({
             <div className="space-y-2">
               <Label htmlFor="featured">Featured</Label>
               <Select
-                defaultValue="false"
+                value={featuredValue}
                 onValueChange={(value) => setValue('featured', value === 'true')}
               >
                 <SelectTrigger>
@@ -228,6 +309,16 @@ export function HomepageItemForm({
                 </SelectContent>
               </Select>
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="scheduledFor">Scheduled for</Label>
+            <Input
+              id="scheduledFor"
+              type="datetime-local"
+              value={scheduledForValue}
+              onChange={(event) => setValue('scheduledFor', event.target.value || '')}
+            />
           </div>
 
           <DialogFooter>

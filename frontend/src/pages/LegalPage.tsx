@@ -3,7 +3,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { InfoIcon } from 'lucide-react'
 import { Section } from '@/components/public/Section'
 import { SeoHead } from '@/components/seo/SeoHead'
-import { site } from '@/config/site'
+import { usePublicSite } from '@/features/content/use-public-site'
 
 export interface LegalPageProps {
   variant: 'privacy' | 'terms'
@@ -26,6 +26,7 @@ interface LegalSection {
  * should review them before launch, and the banner says so to the reader too.
  */
 export default function LegalPage({ variant }: LegalPageProps) {
+  const publicSite = usePublicSite()
   const isPrivacy = variant === 'privacy'
 
   const title = isPrivacy ? 'Privacy Policy' : 'Terms of Use'
@@ -37,7 +38,7 @@ export default function LegalPage({ variant }: LegalPageProps) {
     <>
       <SeoHead
         title={title}
-        description={`${title} for the ${site.fullName} website.`}
+        description={`${title} for the ${publicSite.fullName} website.`}
         // Legal boilerplate has no search value and competes with real pages.
         noIndex
       />
@@ -90,12 +91,12 @@ export default function LegalPage({ variant }: LegalPageProps) {
               For any question about this document, or to ask us to correct or delete
               information we hold about you, contact us at{' '}
               <a
-                href={`mailto:${site.contact.email}`}
+                href={`mailto:${publicSite.contact.email}`}
                 className="text-primary font-medium hover:underline"
               >
-                {site.contact.email}
+                {publicSite.contact.email}
               </a>{' '}
-              or {site.contact.phone}.
+              or {publicSite.contact.phone}.
             </p>
           </section>
         </div>

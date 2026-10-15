@@ -67,8 +67,10 @@ export default function AdminMediaPage() {
     queryFn: () =>
       mediaApi.list({
         size: 24,
-        ...(folder ? { folder } : {}),
-        ...(category ? { category } : {}),
+        // An empty destination means the public gallery. Event, pastor and
+        // homepage uploads stay in their own folders and are not mixed in.
+        folder: folder || 'GALLERY',
+        ...(category && (folder === '' || folder === 'GALLERY') ? { category } : {}),
       }),
   })
 
@@ -107,7 +109,9 @@ export default function AdminMediaPage() {
         ...(description.trim() ? { description: description.trim() } : {}),
         ...(selectedFolder?.requiresCategory ? { category } : {}),
         ...(tags.length > 0 ? { tags } : {}),
-        featured,
+        ...(folder === 'GALLERY'
+          ? { featured, visibility: 'PUBLIC' }
+          : { featured: false, visibility: 'INTERNAL' }),
       }
 
       // A single file uses the single endpoint so a failure surfaces as a plain
@@ -375,15 +379,17 @@ export default function AdminMediaPage() {
                     <p className="text-muted-foreground text-xs">Separate with commas.</p>
                   </div>
 
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={featured}
-                      onChange={(event) => setFeatured(event.target.checked)}
-                      className="border-input text-primary focus-visible:ring-ring size-4 rounded"
-                    />
-                    Feature on the homepage
-                  </label>
+                  {folder === 'GALLERY' && (
+                    <label className="flex items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={featured}
+                        onChange={(event) => setFeatured(event.target.checked)}
+                        className="border-input text-primary focus-visible:ring-ring size-4 rounded"
+                      />
+                      Feature in the gallery
+                    </label>
+                  )}
 
                   {uploadMutation.isPending && progress > 0 && (
                     <div className="flex flex-col gap-1.5">
@@ -438,7 +444,7 @@ export default function AdminMediaPage() {
           {/* --- Library ------------------------------------------------- */}
           <section aria-labelledby="library-heading" className="flex flex-col gap-4">
             <h2 id="library-heading" className="text-base font-semibold">
-              Uploaded media
+              {folder && folder !== 'GALLERY' ? 'Files in this folder' : 'Gallery'}
               {listQuery.data && (
                 <span className="text-muted-foreground ml-2 text-sm font-normal">
                   {listQuery.data.totalElements.toLocaleString()} total
@@ -472,7 +478,7 @@ export default function AdminMediaPage() {
                     aria-hidden="true"
                   />
                   <p className="text-muted-foreground text-sm">
-                    Nothing uploaded yet. Your first upload will appear here.
+                    Nothing in the gallery yet. Photos uploaded for events, leaders or the homepage stay with those sections.
                   </p>
                 </CardContent>
               </Card>

@@ -12,13 +12,17 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { donationsApi } from '@/features/content/donations-api'
+import { usePublicSite } from '@/features/content/use-public-site'
+import { normaliseApiError } from '@/lib/api/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Section, SectionHeading } from '@/components/public/Section'
 import { SeoHead } from '@/components/seo/SeoHead'
-import { site } from '@/config/site'
 import { features } from '@/lib/env'
 import { cn } from '@/lib/utils'
 
@@ -58,11 +62,13 @@ const GIVING_SUPPORTS = [
  * astray, so copying it should not depend on selecting text accurately on a phone.
  */
 export default function GivePage() {
+  const publicSite = usePublicSite()
+
   return (
     <>
       <SeoHead
         title="Give"
-        description={`Support the work of ${site.fullName} through M-Pesa, bank transfer or in person. Every gift goes toward ministry, mission and compassion.`}
+        description={`Support the work of ${publicSite.fullName} through M-Pesa, bank transfer or in person. Every gift goes toward ministry, mission and compassion.`}
       />
 
       {/* --- Page header ------------------------------------------------- */}
@@ -125,8 +131,8 @@ export default function GivePage() {
               </div>
 
               <dl className="flex flex-col gap-3">
-                <CopyableDetail label="Paybill number" value={site.giving.mpesa.paybill} />
-                <CopyableDetail label="Account name" value={site.giving.mpesa.accountName} />
+                <CopyableDetail label="Paybill number" value={publicSite.giving.mpesa.paybill} />
+                <CopyableDetail label="Account name" value={publicSite.giving.mpesa.accountName} />
               </dl>
 
               <ol className="text-muted-foreground flex flex-col gap-1.5 text-sm">
@@ -155,9 +161,9 @@ export default function GivePage() {
               </div>
 
               <dl className="flex flex-col gap-3">
-                <CopyableDetail label="Bank" value={site.giving.bank.name} />
-                <CopyableDetail label="Account number" value={site.giving.bank.accountNumber} />
-                <CopyableDetail label="Branch" value={site.giving.bank.branch} />
+                <CopyableDetail label="Bank" value={publicSite.giving.bank.name} />
+                <CopyableDetail label="Account number" value={publicSite.giving.bank.accountNumber} />
+                <CopyableDetail label="Branch" value={publicSite.giving.bank.branch} />
               </dl>
 
               <p className="text-muted-foreground text-sm leading-relaxed">
@@ -221,6 +227,8 @@ export default function GivePage() {
         </ul>
       </Section>
 
+      <GiftNoticeSection />
+
       {/* --- Accountability ---------------------------------------------- */}
       <Section id="accountability" tone="muted" className="py-12 sm:py-16">
         <div className="mx-auto max-w-3xl">
@@ -232,10 +240,10 @@ export default function GivePage() {
               congregation. If you would like a receipt for your gift, or have a question
               about how funds are used, contact the church office at{' '}
               <a
-                href={`mailto:${site.contact.email}`}
+                href={`mailto:${publicSite.contact.email}`}
                 className="font-medium underline underline-offset-2"
               >
-                {site.contact.email}
+                {publicSite.contact.email}
               </a>
               .
             </AlertDescription>
@@ -243,6 +251,128 @@ export default function GivePage() {
         </div>
       </Section>
     </>
+  )
+}
+
+/**
+ * Lets a giver tell the office they have sent a gift. This does not move money;
+ * it creates a pending donation the finance team can confirm in admin.
+ */
+function GiftNoticeSection() {
+  const [donorName, setDonorName] = useState('')
+  const [donorPhone, setDonorPhone] = useState('')
+  const [amount, setAmount] = useState('')
+  const [method, setMethod] = useState('MPESA')
+  const [purpose, setPurpose] = useState('TITHE')
+  const [reference, setReference] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+
+  const submit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const parsedAmount = Number(amount)
+    if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
+      toast.error('Enter the amount you gave.')
+      return
+    }
+
+    setSubmitting(true)
+    try {
+      await donationsApi.create({
+        donorName: donorName.trim() || undefined,
+        donorPhone: donorPhone.trim() || undefined,
+        amount: parsedAmount,
+        currency: 'KES',
+        method,
+        purpose,
+        providerReference: reference.trim() || undefined,
+        status: 'PENDING',
+        notes: 'Recorded from the public giving page.',
+      })
+      toast.success('Thank you. The church office has your gift notice.')
+      setDonorName('')
+      setDonorPhone('')
+      setAmount('')
+      setReference('')
+    } catch (error) {
+      toast.error(normaliseApiError(error).message)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <Section id="record-gift">
+      <SectionHeading
+        eyebrow="After you give"
+        title="Tell the office"
+        description="Sending this does not take payment. It lets the church match your M-Pesa or bank gift and acknowledge it."
+      />
+
+      <form onSubmit={(event) => void submit(event)} className="mx-auto mt-10 grid max-w-2xl gap-4">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="gift-name">Your name</Label>
+            <Input id="gift-name" value={donorName} onChange={(event) => setDonorName(event.target.value)} />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="gift-phone">Phone</Label>
+            <Input id="gift-phone" value={donorPhone} onChange={(event) => setDonorPhone(event.target.value)} />
+          </div>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="gift-amount">Amount (KES)</Label>
+            <Input
+              id="gift-amount"
+              inputMode="decimal"
+              required
+              value={amount}
+              onChange={(event) => setAmount(event.target.value)}
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="gift-reference">M-Pesa or bank reference</Label>
+            <Input id="gift-reference" value={reference} onChange={(event) => setReference(event.target.value)} />
+          </div>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="gift-method">How you gave</Label>
+            <select
+              id="gift-method"
+              value={method}
+              onChange={(event) => setMethod(event.target.value)}
+              className="border-input bg-background h-10 rounded-lg border px-3 text-sm"
+            >
+              <option value="MPESA">M-Pesa</option>
+              <option value="BANK">Bank transfer</option>
+              <option value="CASH">Cash</option>
+            </select>
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="gift-purpose">Purpose</Label>
+            <select
+              id="gift-purpose"
+              value={purpose}
+              onChange={(event) => setPurpose(event.target.value)}
+              className="border-input bg-background h-10 rounded-lg border px-3 text-sm"
+            >
+              <option value="TITHE">Tithe</option>
+              <option value="OFFERING">Offering</option>
+              <option value="BUILDING">Building fund</option>
+              <option value="MISSIONS">Missions</option>
+              <option value="OTHER">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <Button type="submit" disabled={submitting} className="w-fit">
+          {submitting ? 'Sending…' : 'Send gift notice'}
+        </Button>
+      </form>
+    </Section>
   )
 }
 

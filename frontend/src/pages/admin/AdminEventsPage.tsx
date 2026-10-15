@@ -78,6 +78,7 @@ export default function AdminEventsPage() {
         const uploadedBanner = await mediaApi.upload(bannerFile, {
           title: `${title.trim()} banner`,
           folder: 'EVENT_BANNER',
+          visibility: 'INTERNAL',
           description: description.trim() || undefined,
         })
         nextBannerId = uploadedBanner.id

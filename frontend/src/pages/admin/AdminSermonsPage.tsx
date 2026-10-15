@@ -27,7 +27,9 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { ImageUploadField } from '@/components/admin/ImageUploadField'
 import { SeoHead } from '@/components/seo/SeoHead'
+import { mediaApi } from '@/features/media/media-api'
 import { sermonsApi, type SermonResponse } from '@/features/content/sermons-api'
 import { normaliseApiError } from '@/lib/api/client'
 import { queryKeys } from '@/lib/query-client'
@@ -48,6 +50,12 @@ export default function AdminSermonsPage() {
   const [date, setDate] = useState('')
   const [videoUrl, setVideoUrl] = useState('')
   const [published, setPublished] = useState(true)
+  const [thumbnailId, setThumbnailId] = useState<string | null>(null)
+  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null)
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null)
+  const [videoAssetId, setVideoAssetId] = useState<string | null>(null)
+  const [audioAssetId, setAudioAssetId] = useState<string | null>(null)
+  const [notesAssetId, setNotesAssetId] = useState<string | null>(null)
 
   const sermonsQuery = useQuery({
     queryKey: queryKeys.admin.sermons({ search }),
@@ -55,8 +63,32 @@ export default function AdminSermonsPage() {
   })
 
   const saveMutation = useMutation({
-    mutationFn: () => {
-      const payload = { title, slug: slugify(title), speaker, preachedOn: date, series: series || undefined, bibleReference: scripture || undefined, videoUrl: videoUrl || undefined, published, featured: false }
+    mutationFn: async () => {
+      let nextThumbnailId = thumbnailId
+      if (thumbnailFile) {
+        const uploaded = await mediaApi.upload(thumbnailFile, {
+          title: `${title.trim()} thumbnail`,
+          folder: 'SERMON_THUMBNAIL',
+          visibility: 'INTERNAL',
+          featured: false,
+        })
+        nextThumbnailId = uploaded.id
+      }
+      const payload = {
+        title,
+        slug: slugify(title),
+        speaker,
+        preachedOn: date,
+        series: series || undefined,
+        bibleReference: scripture || undefined,
+        videoUrl: videoUrl || undefined,
+        videoAssetId,
+        audioAssetId,
+        notesAssetId,
+        thumbnailId: nextThumbnailId,
+        published,
+        featured: false,
+      }
       return editingId ? sermonsApi.adminUpdate(editingId, payload) : sermonsApi.adminCreate(payload)
     },
     onSuccess: () => {
@@ -88,6 +120,11 @@ export default function AdminSermonsPage() {
       setDate(item.preachedOn)
       setVideoUrl(item.videoUrl ?? '')
       setPublished(item.published)
+      setThumbnailId(item.thumbnailId)
+      setThumbnailUrl(item.thumbnailUrl)
+      setVideoAssetId(item.videoAssetId)
+      setAudioAssetId(item.audioAssetId)
+      setNotesAssetId(item.notesAssetId)
     } else {
       setEditingId(null)
       setTitle('')
@@ -97,7 +134,13 @@ export default function AdminSermonsPage() {
       setDate(new Date().toISOString().split('T')[0] ?? '')
       setVideoUrl('')
       setPublished(true)
+      setThumbnailId(null)
+      setThumbnailUrl(null)
+      setVideoAssetId(null)
+      setAudioAssetId(null)
+      setNotesAssetId(null)
     }
+    setThumbnailFile(null)
     setIsDialogOpen(true)
   }
 
@@ -242,7 +285,7 @@ export default function AdminSermonsPage() {
       </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingId ? 'Edit Sermon' : 'Add New Sermon'}</DialogTitle>
             <DialogDescription>
@@ -309,6 +352,20 @@ export default function AdminSermonsPage() {
                 />
               </div>
             </div>
+
+            <ImageUploadField
+              id="sermon-thumbnail"
+              label="Thumbnail"
+              helper="Shown on the landing page and the sermons page. A YouTube link still supplies a poster when no thumbnail is uploaded. This picture stays with the sermon and does not appear in the gallery."
+              existingUrl={thumbnailFile ? null : thumbnailUrl}
+              file={thumbnailFile}
+              onFileChange={setThumbnailFile}
+              onClearExisting={() => {
+                setThumbnailId(null)
+                setThumbnailUrl(null)
+              }}
+              disabled={saveMutation.isPending}
+            />
 
             <div>
               <Label htmlFor="sermon-video">YouTube / Video Stream Link</Label>

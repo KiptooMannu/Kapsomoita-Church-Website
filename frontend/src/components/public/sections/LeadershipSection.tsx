@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { CloudinaryImage } from '@/components/media/CloudinaryImage'
 import { Section, SectionHeading } from '@/components/public/Section'
-import { mediaPublicId } from '@/config/media-manifest'
+import { resolveImagePath } from '@/config/images'
 import {
   hasNamedLeaders,
   ministryLeaders,
@@ -43,6 +43,7 @@ export function LeadershipSection({ full = false }: LeadershipSectionProps) {
         bio: l.bio || '',
         email: l.email || undefined,
         phone: l.phone || undefined,
+        photoUrl: l.photoUrl || undefined,
       }))
     : pastoralTeam
 
@@ -54,6 +55,8 @@ export function LeadershipSection({ full = false }: LeadershipSectionProps) {
         bio: l.bio || '',
         email: l.email || undefined,
         phone: l.phone || undefined,
+        ministry: l.ministry || undefined,
+        photoUrl: l.photoUrl || undefined,
       }))
     : (full
       ? ministryLeaders
@@ -136,13 +139,21 @@ function LeaderCard({
   const heading = member.name.trim() || member.role
   const showRoleAsSubtitle = member.name.trim().length > 0
 
-  const publicId = member.imageLocalPath ? (mediaPublicId(member.imageLocalPath) ?? '') : ''
+  const portrait = resolveImagePath(member.imageLocalPath)
 
   return (
     <Card className="h-full overflow-hidden py-0 transition-all duration-300 hover:-translate-y-1 hover:shadow-lifted">
-      {member.imageLocalPath ? (
+      {member.photoUrl ? (
+        <img
+          src={member.photoUrl}
+          alt={heading}
+          referrerPolicy="no-referrer"
+          className={cn('bg-muted w-full object-cover', compact ? 'aspect-square' : 'aspect-[4/5]')}
+        />
+      ) : portrait ? (
         <CloudinaryImage
-          publicId={publicId}
+          publicId={portrait.publicId}
+          fallbackSrc={portrait.fallbackSrc}
           alt={heading}
           width={512}
           sizes="(min-width: 1024px) 16rem, (min-width: 640px) 50vw, 100vw"

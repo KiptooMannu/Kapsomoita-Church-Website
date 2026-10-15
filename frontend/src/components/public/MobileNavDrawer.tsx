@@ -4,7 +4,8 @@ import { Link, NavLink } from 'react-router-dom'
 import { ChurchLogo } from '@/components/brand/ChurchLogo'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
-import { navigation, site } from '@/config/site'
+import { navigation } from '@/config/site'
+import { usePublicSite } from '@/features/content/use-public-site'
 import { cn } from '@/lib/utils'
 
 export interface MobileNavDrawerProps {
@@ -28,6 +29,7 @@ export function MobileNavDrawer({ open, onOpenChange }: MobileNavDrawerProps) {
   // short viewport.
   const [expandedGroup, setExpandedGroup] = useState<string | null>(null)
 
+  const publicSite = usePublicSite()
   const close = () => onOpenChange(false)
 
   return (
@@ -43,8 +45,8 @@ export function MobileNavDrawer({ open, onOpenChange }: MobileNavDrawerProps) {
           <Link to="/" onClick={close} className="flex items-center gap-2.5">
             <ChurchLogo size={32} variant="tile" />
             <span className="flex flex-col leading-tight">
-              <span className="text-base font-bold tracking-tight">{site.name}</span>
-              <span className="text-muted-foreground text-xs">{site.tagline}</span>
+              <span className="text-base font-bold tracking-tight">{publicSite.name}</span>
+              <span className="text-muted-foreground text-xs">{publicSite.tagline}</span>
             </span>
           </Link>
         </div>
@@ -157,9 +159,9 @@ export function MobileNavDrawer({ open, onOpenChange }: MobileNavDrawerProps) {
             </Link>
           </Button>
           <Button asChild variant="outline" size="lg" block>
-            <a href={`tel:${site.contact.phoneHref}`}>
+            <a href={`tel:${publicSite.contact.phoneHref}`}>
               <PhoneIcon aria-hidden="true" />
-              {site.contact.phone}
+              {publicSite.contact.phone}
             </a>
           </Button>
         </div>

@@ -167,8 +167,8 @@ export default function AdminTestimonialsPage() {
                           {item.published ? 'Published' : 'Draft'}
                         </Badge>
                         {item.featured && (
-                          <Badge variant="gold" className="flex items-center gap-1 bg-amber-500/15 text-amber-700">
-                            <StarIcon className="size-3 fill-amber-500 text-amber-500" />
+                          <Badge variant="gold" className="flex items-center gap-1">
+                            <StarIcon className="size-3 fill-current" />
                             Featured
                           </Badge>
                         )}

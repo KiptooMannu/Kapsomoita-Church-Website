@@ -308,7 +308,7 @@ export default function AdminAuditLogPage() {
 
               <div>
                 <span className="text-xs font-semibold text-foreground mb-1 block">Context Payload (JSON):</span>
-                <pre className="p-3 bg-zinc-950 text-zinc-100 rounded-lg text-xs font-mono overflow-x-auto max-h-64 border border-zinc-800">
+                <pre className="bg-foreground text-background max-h-64 overflow-x-auto rounded-lg border border-border p-3 font-mono text-xs">
                   {formatDetails(selectedEntry.details) || '// No additional payload'}
                 </pre>
               </div>

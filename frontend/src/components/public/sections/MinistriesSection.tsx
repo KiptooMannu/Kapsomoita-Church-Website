@@ -1,11 +1,13 @@
 import { ArrowRightIcon } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { CloudinaryImage } from '@/components/media/CloudinaryImage'
 import { Section, SectionHeading } from '@/components/public/Section'
 import { ministries } from '@/config/content'
-import { mediaPublicId } from '@/config/media-manifest'
+import { resolveImagePath } from '@/config/images'
+import { getPublicHomepageItems } from '@/lib/api/homepage'
 import { cn } from '@/lib/utils'
 
 /**
@@ -16,6 +18,15 @@ import { cn } from '@/lib/utils'
  * same prominent card would imply a page that does not exist.
  */
 export function MinistriesSection() {
+  const homepageQuery = useQuery({
+    queryKey: ['public', 'homepage-items'],
+    queryFn: getPublicHomepageItems,
+    staleTime: 5 * 60_000,
+  })
+
+  const highlighted = (homepageQuery.data ?? []).filter(
+    (item) => item.category === 'MINISTRY' && item.status === 'PUBLISHED',
+  )
   const featured = ministries.filter((ministry) => ministry.to !== undefined)
   const others = ministries.filter((ministry) => ministry.to === undefined)
 
@@ -27,8 +38,41 @@ export function MinistriesSection() {
         description="Every member has a place to serve and to be served. Find where you fit."
       />
 
+      {highlighted.length > 0 && (
+        <ul className="mt-12 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          {highlighted.map((item) => (
+            <li key={item.id}>
+              <Card className="h-full overflow-hidden py-0">
+                {item.imageUrl && (
+                  <img src={item.imageUrl} alt="" className="aspect-[4/3] w-full object-cover" />
+                )}
+                <CardContent className="flex flex-col gap-3 py-6">
+                  <h3 className="text-lg font-semibold">{item.title}</h3>
+                  {item.description && (
+                    <p className="text-muted-foreground text-sm leading-relaxed">{item.description}</p>
+                  )}
+                  {item.linkUrl && (
+                    item.linkUrl.startsWith('http') ? (
+                      <a href={item.linkUrl} className="text-primary inline-flex items-center gap-1 text-sm font-medium">
+                        Learn more
+                        <ArrowRightIcon className="size-3.5" aria-hidden="true" />
+                      </a>
+                    ) : (
+                      <Link to={item.linkUrl} className="text-primary inline-flex items-center gap-1 text-sm font-medium">
+                        Learn more
+                        <ArrowRightIcon className="size-3.5" aria-hidden="true" />
+                      </Link>
+                    )
+                  )}
+                </CardContent>
+              </Card>
+            </li>
+          ))}
+        </ul>
+      )}
+
       {/* --- Ministries with their own page ------------------------------- */}
-      <ul className="mt-12 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+      <ul className={cn('grid gap-6 sm:grid-cols-2 xl:grid-cols-4', highlighted.length > 0 ? 'mt-10' : 'mt-12')}>
         {featured.map((ministry) => (
           <li key={ministry.slug}>
             <Link
@@ -42,11 +86,8 @@ export function MinistriesSection() {
               <Card className="h-full overflow-hidden py-0 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-lifted">
                 <div className="relative">
                   <CloudinaryImage
-                    publicId={
-                      ministry.imageLocalPath
-                        ? (mediaPublicId(ministry.imageLocalPath) ?? '')
-                        : ''
-                    }
+                    publicId={resolveImagePath(ministry.imageLocalPath)?.publicId ?? ''}
+                    fallbackSrc={resolveImagePath(ministry.imageLocalPath)?.fallbackSrc}
                     alt={ministry.name}
                     width={640}
                     sizes="(min-width: 1280px) 20rem, (min-width: 640px) 50vw, 100vw"

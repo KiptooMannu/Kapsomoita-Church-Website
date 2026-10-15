@@ -35,22 +35,28 @@ public record CloudinaryProperties(
         boolean useFilenameAsPublicIdPrefix) {
 
     /** Fallbacks applied when a value is absent, so the record is never half-built. */
-    public CloudinaryProperties {
-        if (rootFolder == null || rootFolder.isBlank()) {
-            rootFolder = "church";
-        }
-        // Strip any leading/trailing slashes so folder paths compose predictably.
-        rootFolder = rootFolder.replaceAll("^/+|/+$", "");
+    public CloudinaryProperties(
+            String cloudName,
+            String apiKey,
+            String apiSecret,
+            String rootFolder,
+            long maxImageBytes,
+            long maxVideoBytes,
+            long maxRawBytes,
+            boolean useFilenameAsPublicIdPrefix) {
+        this.cloudName = cloudName;
+        this.apiKey = apiKey;
+        this.apiSecret = apiSecret;
+        this.rootFolder = normaliseRootFolder(rootFolder);
+        this.maxImageBytes = maxImageBytes <= 0 ? 10L * 1024 * 1024 : maxImageBytes;
+        this.maxVideoBytes = maxVideoBytes <= 0 ? 200L * 1024 * 1024 : maxVideoBytes;
+        this.maxRawBytes = maxRawBytes <= 0 ? 25L * 1024 * 1024 : maxRawBytes;
+        this.useFilenameAsPublicIdPrefix = useFilenameAsPublicIdPrefix;
+    }
 
-        if (maxImageBytes <= 0) {
-            maxImageBytes = 10L * 1024 * 1024; // 10 MB
-        }
-        if (maxVideoBytes <= 0) {
-            maxVideoBytes = 200L * 1024 * 1024; // 200 MB
-        }
-        if (maxRawBytes <= 0) {
-            maxRawBytes = 25L * 1024 * 1024; // 25 MB
-        }
+    private static String normaliseRootFolder(String rootFolder) {
+        String folder = (rootFolder == null || rootFolder.isBlank()) ? "church" : rootFolder;
+        return folder.replaceAll("^/+|/+$", "");
     }
 
     /** True when all three credentials are present, so uploads can be attempted. */

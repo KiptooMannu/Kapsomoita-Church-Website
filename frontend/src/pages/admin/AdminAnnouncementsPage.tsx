@@ -225,7 +225,7 @@ export default function AdminAnnouncementsPage() {
                         size="icon"
                         onClick={() => togglePinMutation.mutate(item)}
                         title={item.pinned ? 'Unpin from top' : 'Pin to top'}
-                        className={item.pinned ? 'text-amber-500 hover:text-amber-600' : 'text-muted-foreground'}
+                        className={item.pinned ? 'text-accent hover:text-accent' : 'text-muted-foreground'}
                       >
                         <PinIcon className="size-4" />
                       </Button>
@@ -246,7 +246,7 @@ export default function AdminAnnouncementsPage() {
                           </Badge>
 
                           {item.pinned && (
-                            <Badge variant="gold" className="bg-amber-500/15 text-amber-700 dark:text-amber-400">
+                            <Badge variant="gold">
                               Pinned
                             </Badge>
                           )}

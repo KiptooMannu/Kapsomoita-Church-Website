@@ -105,6 +105,9 @@ public class SecurityConfig {
                                 "/api/service-times/**",
                                 "/api/downloads/**",
                                 "/api/livestream/**",
+                                "/api/settings",
+                                "/api/homepage-items",
+                                "/api/homepage-items/**",
                                 "/api/church-settings",
                                 "/api/social-links",
                                 "/api/search").permitAll()
@@ -112,12 +115,16 @@ public class SecurityConfig {
                         // --- Public website submissions -------------------------------
                         // Visitors may create these; only staff may read them back.
                         .requestMatchers(HttpMethod.POST,
+                                "/api/contact",
                                 "/api/contact-messages",
                                 "/api/prayer-requests",
                                 "/api/ministry-applications",
                                 "/api/event-registrations",
                                 "/api/newsletter/subscribe",
-                                "/api/donations/initiate").permitAll()
+                                "/api/donations",
+                                "/api/donations/initiate",
+                                "/api/downloads/*/download",
+                                "/api/sermons/*/view").permitAll()
 
                         // Payment provider callbacks are unauthenticated by nature and
                         // are verified inside the handler instead.

@@ -20,6 +20,8 @@ export interface LeadershipMember {
   bio: string
   /** Repository path to a photograph, resolved through the media manifest. */
   imageLocalPath?: string
+  /** Uploaded portrait. Takes precedence over the repository photograph. */
+  photoUrl?: string
   /** Which ministry they lead, where applicable. */
   ministry?: string
   email?: string

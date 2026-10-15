@@ -11,17 +11,11 @@ import {
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { ChurchLogo } from '@/components/brand/ChurchLogo'
-import { footerLinks, serviceTimes as fallbackServiceTimes, site } from '@/config/site'
+import { footerLinks, serviceTimes as fallbackServiceTimes } from '@/config/site'
 import { contentApi } from '@/features/content/content-api'
+import { usePublicSite } from '@/features/content/use-public-site'
 import { queryKeys } from '@/lib/query-client'
 import { cn } from '@/lib/utils'
-
-const SOCIAL_LINKS = [
-  { href: site.social.facebook, label: 'Facebook', icon: FacebookIcon },
-  { href: site.social.instagram, label: 'Instagram', icon: InstagramIcon },
-  { href: site.social.twitter, label: 'X (Twitter)', icon: TwitterIcon },
-  { href: site.social.youtube, label: 'YouTube', icon: YoutubeIcon },
-] as const
 
 /**
  * Site footer.
@@ -36,6 +30,14 @@ const SOCIAL_LINKS = [
  * was never a route, so it silently fell through to the homepage.
  */
 export function SiteFooter() {
+  const publicSite = usePublicSite()
+  const socialLinks = [
+    { href: publicSite.social.facebook, label: 'Facebook', icon: FacebookIcon },
+    { href: publicSite.social.instagram, label: 'Instagram', icon: InstagramIcon },
+    { href: publicSite.social.twitter, label: 'X (Twitter)', icon: TwitterIcon },
+    { href: publicSite.social.youtube, label: 'YouTube', icon: YoutubeIcon },
+  ].filter((link) => link.href.length > 0)
+
   const { data: liveServiceTimes } = useQuery({
     queryKey: queryKeys.public.serviceTimes,
     queryFn: contentApi.publicServiceTimes,
@@ -55,13 +57,13 @@ export function SiteFooter() {
             <h2 className="text-gold-400 text-sm font-semibold tracking-wider uppercase">
               Our vision
             </h2>
-            <p className="text-sm leading-relaxed text-white/80">{site.vision}</p>
+            <p className="text-sm leading-relaxed text-white/80">{publicSite.vision}</p>
           </div>
           <div className="flex flex-col gap-3">
             <h2 className="text-gold-400 text-sm font-semibold tracking-wider uppercase">
               Our mission
             </h2>
-            <p className="text-sm leading-relaxed text-white/80">{site.mission}</p>
+            <p className="text-sm leading-relaxed text-white/80">{publicSite.mission}</p>
           </div>
         </div>
       </div>
@@ -73,10 +75,10 @@ export function SiteFooter() {
           <Link to="/" className="flex items-center gap-3">
             <ChurchLogo size={44} className="text-white" />
             <span className="flex flex-col leading-tight">
-              <span className="text-lg font-bold">{site.name}</span>
-              <span className="text-xs text-white/60">{site.tagline}</span>
+              <span className="text-lg font-bold">{publicSite.name}</span>
+              <span className="text-xs text-white/60">{publicSite.tagline}</span>
             </span>
-            <span className="sr-only">{site.fullName} — home</span>
+            <span className="sr-only">{publicSite.fullName} — home</span>
           </Link>
 
           <p className="max-w-sm text-sm leading-relaxed text-white/70">
@@ -85,7 +87,7 @@ export function SiteFooter() {
           </p>
 
           <ul className="flex gap-2 pt-1">
-            {SOCIAL_LINKS.map(({ href, label, icon: Icon }) => (
+            {socialLinks.map(({ href, label, icon: Icon }) => (
               <li key={label}>
                 <a
                   href={href}
@@ -93,7 +95,7 @@ export function SiteFooter() {
                   rel="noreferrer"
                   // The icon alone is meaningless to a screen reader, so the
                   // accessible name comes from aria-label.
-                  aria-label={`${site.name} on ${label}`}
+                  aria-label={`${publicSite.name} on ${label}`}
                   className={cn(
                     'flex size-10 items-center justify-center rounded-lg bg-white/10',
                     'transition-colors hover:bg-white/20',
@@ -152,26 +154,26 @@ export function SiteFooter() {
               <span className="flex items-start gap-2.5 text-white/70">
                 <MapPinIcon className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
                 <span className="flex flex-col">
-                  {site.contact.addressLines.map((line) => (
+                  {publicSite.contact.addressLines.map((line) => (
                     <span key={line}>{line}</span>
                   ))}
                 </span>
               </span>
 
               <a
-                href={`tel:${site.contact.phoneHref}`}
+                href={`tel:${publicSite.contact.phoneHref}`}
                 className="flex items-center gap-2.5 text-white/70 transition-colors hover:text-white"
               >
                 <PhoneIcon className="size-4 shrink-0" aria-hidden="true" />
-                {site.contact.phone}
+                {publicSite.contact.phone}
               </a>
 
               <a
-                href={`mailto:${site.contact.email}`}
+                href={`mailto:${publicSite.contact.email}`}
                 className="flex items-center gap-2.5 break-all text-white/70 transition-colors hover:text-white"
               >
                 <MailIcon className="size-4 shrink-0" aria-hidden="true" />
-                {site.contact.email}
+                {publicSite.contact.email}
               </a>
             </address>
           </div>
@@ -203,11 +205,11 @@ export function SiteFooter() {
               Give by M-Pesa
             </h2>
             <p className="text-sm text-white/75">
-              Paybill <span className="font-semibold text-white">{site.giving.mpesa.paybill}</span>
+              Paybill <span className="font-semibold text-white">{publicSite.giving.mpesa.paybill}</span>
             </p>
             <p className="text-sm text-white/75">
               Account{' '}
-              <span className="font-semibold text-white">{site.giving.mpesa.accountName}</span>
+              <span className="font-semibold text-white">{publicSite.giving.mpesa.accountName}</span>
             </p>
           </div>
 
@@ -216,10 +218,10 @@ export function SiteFooter() {
               Give by bank transfer
             </h2>
             <p className="text-sm text-white/75">
-              {site.giving.bank.name} ·{' '}
-              <span className="font-semibold text-white">{site.giving.bank.accountNumber}</span>
+              {publicSite.giving.bank.name} ·{' '}
+              <span className="font-semibold text-white">{publicSite.giving.bank.accountNumber}</span>
             </p>
-            <p className="text-sm text-white/75">{site.giving.bank.branch} branch</p>
+            <p className="text-sm text-white/75">{publicSite.giving.bank.branch} branch</p>
           </div>
 
           <div className="flex flex-col items-start gap-2">
@@ -235,7 +237,7 @@ export function SiteFooter() {
       <div className="border-t border-white/10">
         <div className="container-page flex flex-col items-center gap-3 py-6 text-center sm:flex-row sm:justify-between sm:text-left">
           <p className="text-xs text-white/55">
-            © {new Date().getFullYear()} {site.fullName}. All rights reserved.
+            © {new Date().getFullYear()} {publicSite.fullName}. All rights reserved.
           </p>
           <ul className="flex items-center gap-5">
             <li>

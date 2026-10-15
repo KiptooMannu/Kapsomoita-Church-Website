@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   cloudinaryPlaceholder,
   cloudinarySrcSet,
@@ -71,12 +71,21 @@ export function CloudinaryImage({
   aspectRatio,
 }: CloudinaryImageProps) {
   const [isLoaded, setIsLoaded] = useState(false)
-  const [hasFailed, setHasFailed] = useState(false)
+  const [useFallback, setUseFallback] = useState(false)
+  const [fallbackFailed, setFallbackFailed] = useState(false)
+
+  useEffect(() => {
+    setIsLoaded(false)
+    setUseFallback(false)
+    setFallbackFailed(false)
+  }, [publicId, fallbackSrc])
 
   const transform: CloudinaryTransform = { crop, gravity, ...(height ? { height } : {}) }
 
-  const usable = isCloudinaryConfigured && publicId && !hasFailed
-  const src = usable ? cloudinaryUrl(publicId, { ...transform, width }) : (fallbackSrc ?? '')
+  const usable = isCloudinaryConfigured && Boolean(publicId) && !useFallback
+  const src = usable
+    ? cloudinaryUrl(publicId, { ...transform, width })
+    : (fallbackSrc && !fallbackFailed ? fallbackSrc : '')
   const srcSet = usable ? cloudinarySrcSet(publicId, transform, width) : undefined
   const placeholder = usable ? cloudinaryPlaceholder(publicId) : undefined
 
@@ -118,12 +127,24 @@ export function CloudinaryImage({
         loading={priority ? 'eager' : 'lazy'}
         fetchPriority={priority ? 'high' : 'auto'}
         decoding={priority ? 'sync' : 'async'}
+        referrerPolicy="no-referrer"
         onLoad={() => setIsLoaded(true)}
-        // A failed Cloudinary fetch falls back to the bundled asset if given one.
-        onError={() => setHasFailed(true)}
+        // A failed Cloudinary fetch falls back to the remote URL. If that also
+        // fails, the reserved box stays in place instead of a broken icon.
+        onError={() => {
+          if (usable && fallbackSrc) {
+            setUseFallback(true)
+            setIsLoaded(false)
+            return
+          }
+          setFallbackFailed(true)
+        }}
         className={cn(
-          'relative size-full object-cover transition-opacity duration-500',
-          isLoaded ? 'opacity-100' : 'opacity-0',
+          'relative size-full object-cover',
+          // The blurred Cloudinary preview covers the wait. A remote fallback
+          // has no preview, so hiding it until onLoad leaves an empty box.
+          placeholder && 'transition-opacity duration-500',
+          placeholder && !isLoaded ? 'opacity-0' : 'opacity-100',
           className,
         )}
       />

@@ -16,7 +16,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { LeadershipSection } from '@/components/public/sections/LeadershipSection'
 import { Section, SectionHeading } from '@/components/public/Section'
 import { SeoHead } from '@/components/seo/SeoHead'
-import { site } from '@/config/site'
+import { usePublicSite } from '@/features/content/use-public-site'
 import { cn } from '@/lib/utils'
 
 /**
@@ -125,11 +125,13 @@ const TIMELINE = [
 ] as const
 
 export default function AboutPage() {
+  const publicSite = usePublicSite()
+
   return (
     <>
       <SeoHead
         title="About us"
-        description={`Learn about ${site.fullName} — our history, vision, mission, core values and statement of faith.`}
+        description={`Learn about ${publicSite.fullName} — our history, vision, mission, core values and statement of faith.`}
       />
 
       {/* --- Page header ------------------------------------------------- */}
@@ -153,7 +155,7 @@ export default function AboutPage() {
             <Badge variant="gold">About us</Badge>
             {/* The only h1 on this page. */}
             <h1 className="text-3xl font-bold tracking-tight text-balance sm:text-4xl lg:text-5xl">
-              {site.fullName}
+              {publicSite.fullName}
             </h1>
             <p className="max-w-2xl text-base leading-relaxed text-white/80 sm:text-lg">
               An ordinary family of believers in Kapsomoita, learning together what it means
@@ -173,7 +175,7 @@ export default function AboutPage() {
                 <TargetIcon className="size-6" aria-hidden="true" />
               </span>
               <h2 className="text-2xl font-bold tracking-tight">Our vision</h2>
-              <p className="text-muted-foreground leading-relaxed">{site.vision}</p>
+              <p className="text-muted-foreground leading-relaxed">{publicSite.vision}</p>
             </CardContent>
           </Card>
 
@@ -183,7 +185,7 @@ export default function AboutPage() {
                 <CompassIcon className="size-6" aria-hidden="true" />
               </span>
               <h2 className="text-2xl font-bold tracking-tight">Our mission</h2>
-              <p className="text-muted-foreground leading-relaxed">{site.mission}</p>
+              <p className="text-muted-foreground leading-relaxed">{publicSite.mission}</p>
             </CardContent>
           </Card>
         </div>
