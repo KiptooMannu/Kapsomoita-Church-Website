@@ -1,3 +1,4 @@
+import { motion, MotionConfig } from 'framer-motion'
 import { lazy, Suspense, type ReactNode } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import { FullPageSpinner } from '@/components/feedback/FullPageSpinner'
@@ -57,6 +58,7 @@ const AdminDonationsPage = lazy(() => import('./pages/admin/AdminDonationsPage')
 const AdminServiceTimesPage = lazy(() => import('./pages/admin/AdminServiceTimesPage'))
 const AdminLivestreamPage = lazy(() => import('./pages/admin/AdminLivestreamPage'))
 const AdminSettingsPage = lazy(() => import('./pages/admin/AdminSettingsPage'))
+const AdminSiteImagesPage = lazy(() => import('./pages/admin/AdminSiteImagesPage'))
 const AdminGenericModulePage = lazy(() =>
   import('./pages/admin/AdminGenericModulePage').then((m) => ({
     default: m.AdminGenericModulePage,
@@ -68,10 +70,26 @@ const AdminGenericModulePage = lazy(() =>
  * therefore supply their own top spacing. Everything else needs the layout to
  * reserve the header's height, or its first element would be hidden underneath it.
  */
-const SELF_SPACED_ROUTES = new Set(['/', '/about', '/privacy', '/terms'])
+/** Pages whose first block already clears the fixed header. */
+function isSelfSpaced(pathname: string) {
+  return (
+    pathname === '/' ||
+    pathname === '/about' ||
+    pathname === '/contact' ||
+    pathname === '/give' ||
+    pathname === '/sermons' ||
+    pathname === '/serve' ||
+    pathname === '/gallery' ||
+    pathname === '/privacy' ||
+    pathname === '/terms' ||
+    pathname.startsWith('/ministries')
+  )
+}
 
 /** Public site chrome: header, footer and the back-to-top control. */
 function PublicLayout({ children, padTop }: { children: ReactNode; padTop: boolean }) {
+  const location = useLocation()
+
   return (
     <div className="relative flex min-h-dvh flex-col">
       <a href="#main-content" className="sr-only-focusable">
@@ -89,7 +107,16 @@ function PublicLayout({ children, padTop }: { children: ReactNode; padTop: boole
         id="main-content"
         className={padTop ? 'flex-1 pt-[var(--header-height)]' : 'flex-1'}
       >
-        <Suspense fallback={<FullPageSpinner />}>{children}</Suspense>
+        <Suspense fallback={<FullPageSpinner />}>
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {children}
+          </motion.div>
+        </Suspense>
       </main>
 
       <SiteFooter />
@@ -107,7 +134,7 @@ export default function App() {
 
   if (isAdminRoute) {
     return (
-      <>
+      <MotionConfig reducedMotion="user">
         <ScrollToTop />
         <Suspense fallback={<FullPageSpinner />}>
           <Routes>
@@ -144,6 +171,14 @@ export default function App() {
                       category="Content"
                       entityName="Hero Banner"
                     />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/photos"
+                element={
+                  <ProtectedRoute permissions={['homepage:read']}>
+                    <AdminSiteImagesPage />
                   </ProtectedRoute>
                 }
               />
@@ -303,15 +338,15 @@ export default function App() {
             </Route>
           </Routes>
         </Suspense>
-      </>
+      </MotionConfig>
     )
   }
 
   return (
-    <>
+    <MotionConfig reducedMotion="user">
       <ScrollToTop />
-      <PublicLayout padTop={!SELF_SPACED_ROUTES.has(location.pathname)}>
-        <Routes location={location} key={location.pathname}>
+      <PublicLayout padTop={!isSelfSpaced(location.pathname)}>
+        <Routes location={location}>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
 
@@ -342,6 +377,6 @@ export default function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </PublicLayout>
-    </>
+    </MotionConfig>
   )
 }

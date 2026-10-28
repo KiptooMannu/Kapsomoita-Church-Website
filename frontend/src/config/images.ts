@@ -170,7 +170,133 @@ export const images = {
     remote: unsplash('photo-1511632765486-a01980e01a18', 2400, 1000),
     alt: '',
   },
+  sermonsHeader: {
+    remote: unsplash('photo-1507692049790-de58290a4334', 2400, 1000),
+    alt: '',
+  },
+  contactHeader: {
+    remote: unsplash('photo-1438232992991-995b7058bbb3', 2400, 1000),
+    alt: '',
+  },
+  serveHeader: {
+    remote: unsplash('photo-1469571486292-0ba58a3f068b', 2400, 1000),
+    alt: '',
+  },
+  ministriesHeader: {
+    remote: unsplash('photo-1529156069898-49953e39b3ac', 2400, 1000),
+    alt: '',
+  },
+
+  // --- Weekly services ---------------------------------------------------
+  serviceSunday: {
+    remote: unsplash('photo-1438032005730-c779502df39b', 1200, 800),
+    alt: 'Sunday worship in the sanctuary',
+  },
+  servicePrayer: {
+    remote: unsplash('photo-1504052434569-70ad5836ab65', 1200, 800),
+    alt: 'A midweek prayer gathering',
+  },
+  serviceYouth: {
+    remote: unsplash('photo-1511632765486-a01980e01a18', 1200, 800),
+    alt: 'Young people at a youth service',
+  },
+  serviceWomen: {
+    remote: unsplash('photo-1529070538774-1843cb3265df', 1200, 800),
+    alt: "Women's fellowship",
+  },
+  serviceMen: {
+    remote: unsplash('photo-1517486808906-6ca8b3f04846', 1200, 800),
+    alt: "Men's fellowship",
+  },
+  serviceKids: {
+    remote: unsplash('photo-1503454537195-1dcabb73ffb9', 1200, 800),
+    alt: "Children's ministry",
+  },
+
+  // --- Sermon artwork when no thumbnail has been uploaded ----------------
+  sermonScene: {
+    remote: unsplash('photo-1507692049790-de58290a4334', 1280, 720),
+    alt: '',
+  },
+
+  // --- About -------------------------------------------------------------
+  aboutGathering: {
+    remote: unsplash('photo-1511632765486-a01980e01a18', 1400, 1000),
+    alt: 'The congregation gathered together',
+  },
+  aboutScripture: {
+    remote: unsplash('photo-1504052434569-70ad5836ab65', 1400, 1000),
+    alt: 'An open Bible during a service',
+  },
+
+  // --- Strategy pages ----------------------------------------------------
+  strategyEvangelizing: {
+    remote: unsplash('photo-1469571486292-0ba58a3f068b', 1600, 1000),
+    alt: 'Sharing the Gospel in the community',
+  },
+  strategyEstablishing: {
+    remote: unsplash('photo-1438232992991-995b7058bbb3', 1600, 1000),
+    alt: 'A congregation learning together',
+  },
+  strategyEdifying: {
+    remote: unsplash('photo-1516450360452-9312f5e86fc7', 1600, 1000),
+    alt: 'Worship that builds up the church',
+  },
+  strategyEquipping: {
+    remote: unsplash('photo-1493225457124-a3eb161ffa5f', 1600, 1000),
+    alt: 'Musicians and teachers serving the church',
+  },
+  strategyCompassion: {
+    remote: unsplash('photo-1488521787991-ed7bbaae773c', 1600, 1000),
+    alt: 'Practical care for people in need',
+  },
+
+  // --- Gallery stand-ins until real photos are uploaded ------------------
+  gallery1: {
+    remote: unsplash('photo-1438032005730-c779502df39b', 900, 900),
+    alt: 'Worship in the sanctuary',
+  },
+  gallery2: {
+    remote: unsplash('photo-1529156069898-49953e39b3ac', 900, 900),
+    alt: 'People gathered after a service',
+  },
+  gallery3: {
+    remote: unsplash('photo-1516450360452-9312f5e86fc7', 900, 900),
+    alt: 'Sung worship',
+  },
+  gallery4: {
+    remote: unsplash('photo-1503454537195-1dcabb73ffb9', 900, 900),
+    alt: 'Children at church',
+  },
+  gallery5: {
+    remote: unsplash('photo-1478144592103-25e218a04891', 900, 900),
+    alt: 'A church celebration',
+  },
+  gallery6: {
+    remote: unsplash('photo-1504052434569-70ad5836ab65', 900, 900),
+    alt: 'Prayer together',
+  },
 } as const satisfies Record<string, ImageSlot>
+
+/** Stand-in gallery photos. Replace each `remote` in `images` when real photos are ready. */
+export const galleryFeed = [
+  'gallery1',
+  'gallery2',
+  'gallery3',
+  'gallery4',
+  'gallery5',
+  'gallery6',
+] as const satisfies readonly ImageKey[]
+
+/** One photograph per kind of weekly gathering. */
+export const serviceFeed = [
+  'serviceSunday',
+  'servicePrayer',
+  'serviceYouth',
+  'serviceWomen',
+  'serviceMen',
+  'serviceKids',
+] as const satisfies readonly ImageKey[]
 
 export type ImageKey = keyof typeof images
 

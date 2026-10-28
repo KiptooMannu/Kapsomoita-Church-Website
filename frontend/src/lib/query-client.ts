@@ -96,6 +96,7 @@ export const queryKeys = {
     livestream: ['public', 'livestream'] as const,
     serviceTimes: ['public', 'service-times'] as const,
     leaders: ['public', 'leaders'] as const,
+    siteImages: ['public', 'site-images'] as const,
     testimonials: ['public', 'testimonials'] as const,
     prayerRequests: ['public', 'prayer-requests'] as const,
     settings: ['public', 'settings'] as const,

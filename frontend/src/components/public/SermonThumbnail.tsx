@@ -1,5 +1,6 @@
 import { PlayCircleIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { useSiteImages } from '@/features/content/site-images'
 import { sermonThumbnailUrl, type SermonResponse } from '@/features/content/sermons-api'
 
 /**
@@ -20,10 +21,23 @@ export function SermonThumbnail({
     setFailed(false)
   }, [src])
 
+  const photos = useSiteImages()
+  const scene = photos.url('sermonScene')
+
   if (!src || failed) {
     return (
-      <div className="bg-secondary text-primary flex aspect-video w-full items-center justify-center">
-        <PlayCircleIcon className="size-10" aria-hidden="true" />
+      <div className="relative aspect-video w-full overflow-hidden bg-secondary">
+        {scene && (
+          <img
+            src={scene}
+            alt=""
+            referrerPolicy="no-referrer"
+            className="size-full object-cover"
+          />
+        )}
+        <span className="absolute inset-0 flex items-center justify-center bg-brand-950/35 text-white">
+          <PlayCircleIcon className="size-10" aria-hidden="true" />
+        </span>
       </div>
     )
   }

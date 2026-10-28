@@ -100,12 +100,14 @@ export function SectionHeading({
       )}
     >
       {eyebrow && (
-        <span className="text-primary text-sm font-semibold tracking-wider uppercase">
+        <span className="text-primary inline-flex items-center gap-3 text-xs font-semibold tracking-[0.2em] uppercase">
+          <span aria-hidden="true" className="bg-gold-500 h-px w-8" />
           {eyebrow}
+          <span aria-hidden="true" className="bg-gold-500 h-px w-8" />
         </span>
       )}
 
-      <Heading className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-[2.75rem]">
+      <Heading className="text-3xl font-semibold tracking-tight sm:text-4xl lg:text-[2.75rem]">
         {title}
       </Heading>
 

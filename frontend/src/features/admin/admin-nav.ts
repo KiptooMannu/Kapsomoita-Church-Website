@@ -72,6 +72,12 @@ export const ADMIN_NAV: AdminNavSection[] = [
         permissions: ['homepage:read', 'homepage:update'],
       },
       {
+        label: 'Website photos',
+        to: '/admin/photos',
+        icon: ImagesIcon,
+        permissions: ['homepage:read', 'homepage:update'],
+      },
+      {
         label: 'Announcements',
         to: '/admin/announcements',
         icon: MegaphoneIcon,

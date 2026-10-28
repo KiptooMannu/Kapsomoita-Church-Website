@@ -1,5 +1,5 @@
-import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { PageBanner } from '@/components/public/PageBanner'
 import { InfoIcon } from 'lucide-react'
 import { Section } from '@/components/public/Section'
 import { SeoHead } from '@/components/seo/SeoHead'
@@ -43,21 +43,16 @@ export default function LegalPage({ variant }: LegalPageProps) {
         noIndex
       />
 
-      <header className="bg-muted/40 pt-[calc(var(--header-height)+3rem)] pb-12">
-        <div className="container-page flex max-w-3xl flex-col gap-3">
-          <Badge variant="secondary" className="w-fit">
-            Legal
-          </Badge>
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{title}</h1>
-          <p className="text-muted-foreground text-sm">
-            Last updated {new Date().toLocaleDateString(undefined, {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-            })}
-          </p>
-        </div>
-      </header>
+      <PageBanner
+        eyebrow="Legal"
+        title={title}
+        align="left"
+        description={`Last updated ${new Date().toLocaleDateString(undefined, {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        })}`}
+      />
 
       <Section>
         <div className="mx-auto flex max-w-3xl flex-col gap-8">

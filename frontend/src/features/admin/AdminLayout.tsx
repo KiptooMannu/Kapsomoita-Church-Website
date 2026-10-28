@@ -1,5 +1,6 @@
+import { motion } from 'framer-motion'
 import { Suspense } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import { FullPageSpinner } from '@/components/feedback/FullPageSpinner'
 import { AdminSidebar } from './AdminSidebar'
 import { AdminTopbar } from './AdminTopbar'
@@ -14,6 +15,8 @@ import { AdminTopbar } from './AdminTopbar'
  * breakpoint change.
  */
 export function AdminLayout() {
+  const location = useLocation()
+
   return (
     <div className="bg-background flex min-h-dvh">
       {/* Skip link: the first tab stop, so keyboard users can bypass the nav. */}
@@ -35,9 +38,16 @@ export function AdminLayout() {
         <AdminTopbar />
 
         <main id="admin-content" className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
-          <Suspense fallback={<FullPageSpinner label="Loading section…" />}>
-            <Outlet />
-          </Suspense>
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <Suspense fallback={<FullPageSpinner label="Loading section…" />}>
+              <Outlet />
+            </Suspense>
+          </motion.div>
         </main>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Heart, Users, Globe, ArrowLeft } from "lucide-react";
 import { Button } from "../../components/ui/button";
+import { ScrollPhoto } from "../../components/public/ScrollPhoto";
 import { Link } from "react-router-dom";
 
 const Evangelizing = () => {
@@ -27,7 +28,7 @@ const Evangelizing = () => {
   };
 
   return (
-    <div className="bg-background">
+    <div className="bg-background border-t-4 border-gold-500">
       <div className="max-w-4xl mx-auto px-4 py-20">
         <motion.div
           variants={containerVariants}
@@ -51,6 +52,9 @@ const Evangelizing = () => {
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
               E1: Evangelizing the Lost
             </h1>
+            <div className="my-8">
+              <ScrollPhoto imageKey="strategyEvangelizing" index={1} aspectRatio="16 / 8" />
+            </div>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Reaching out with God's love to bring hope and salvation to those who need it most
             </p>

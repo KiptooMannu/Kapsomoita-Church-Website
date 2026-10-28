@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
 import { Section } from '@/components/public/Section'
 import { pastorsMessage } from '@/config/content'
+import { ScrollFrame } from '@/components/public/ScrollPhoto'
 import { contentApi } from '@/features/content/content-api'
 import { queryKeys } from '@/lib/query-client'
 
@@ -32,12 +33,6 @@ export function PastorMessageSection() {
     : [...pastorsMessage.body]
   const photoUrl = pastor?.photoUrl
   const [photoFailed, setPhotoFailed] = useState(false)
-  const initials = name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join('')
 
   useEffect(() => {
     setPhotoFailed(false)
@@ -48,21 +43,21 @@ export function PastorMessageSection() {
       <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,24rem)_1fr] lg:gap-16">
         <div className="relative mx-auto w-full max-w-sm lg:mx-0">
           {photoUrl && !photoFailed ? (
-            <img
-              src={photoUrl}
-              alt={`${name}, ${role}`}
-              referrerPolicy="no-referrer"
-              className="bg-muted aspect-[4/5] w-full rounded-2xl object-cover shadow-lifted"
-              onError={() => setPhotoFailed(true)}
-            />
+            <ScrollFrame index={2} className="rounded-2xl shadow-lifted">
+              <img
+                src={photoUrl}
+                alt={`${name}, ${role}`}
+                referrerPolicy="no-referrer"
+                className="bg-muted aspect-[4/5] w-full object-cover"
+                onError={() => setPhotoFailed(true)}
+              />
+            </ScrollFrame>
           ) : (
-            <div className="bg-secondary text-primary flex aspect-[4/5] w-full flex-col items-center justify-center gap-3 rounded-2xl shadow-lifted">
-              {initials ? (
-                <span className="text-5xl font-semibold tracking-tight">{initials}</span>
-              ) : (
-                <UserRoundIcon className="size-16" aria-hidden="true" />
-              )}
-              <span className="text-muted-foreground px-6 text-center text-sm">{role}</span>
+            <div
+              className="bg-secondary text-muted-foreground flex aspect-[4/5] w-full items-center justify-center rounded-2xl shadow-lifted"
+              aria-hidden="true"
+            >
+              <UserRoundIcon className="size-16" />
             </div>
           )}
 

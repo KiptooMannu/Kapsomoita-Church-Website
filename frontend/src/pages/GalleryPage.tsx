@@ -8,7 +8,10 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { CloudinaryImage } from '@/components/media/CloudinaryImage'
-import { Section, SectionHeading } from '@/components/public/Section'
+import { ScrollFrame, ScrollPhoto } from '@/components/public/ScrollPhoto'
+import { galleryFeed } from '@/config/images'
+import { PageBanner } from '@/components/public/PageBanner'
+import { Section } from '@/components/public/Section'
 import { SeoHead } from '@/components/seo/SeoHead'
 import { publicGalleryApi } from '@/features/media/public-gallery-api'
 import type { MediaAsset } from '@/features/media/media-api'
@@ -118,15 +121,17 @@ export default function GalleryPage() {
         description="Photographs from services, youth events, outreach, baptisms and celebrations at Kapsomoita AGC."
       />
 
-      <Section id="gallery">
-        <SectionHeading
-          eyebrow="Life together"
-          title="Our gallery"
-          description="Moments from across the life of the church — services, outreach, baptisms and celebrations."
-        />
+      <PageBanner
+        eyebrow="Life together"
+        title="Our gallery"
+        description="Moments from across the life of the church — services, outreach, baptisms and celebrations."
+        imageKey="galleryHeader"
+      />
+
+      <Section id="gallery" animate={false} className="pt-10 sm:pt-12">
 
         {/* --- Filters -------------------------------------------------- */}
-        <div className="mt-10 flex flex-col gap-5">
+        <div className="flex flex-col gap-5">
           <div className="mx-auto w-full max-w-md">
             <div className="relative">
               <SearchIcon
@@ -207,7 +212,17 @@ export default function GalleryPage() {
             </Card>
           )}
 
-          {imagesQuery.isSuccess && visibleImages.length === 0 && (
+          {imagesQuery.isSuccess && visibleImages.length === 0 && !search && (
+            <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+              {galleryFeed.map((key, index) => (
+                <li key={key}>
+                  <ScrollPhoto imageKey={key} index={index} aspectRatio="1 / 1" />
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {imagesQuery.isSuccess && visibleImages.length === 0 && search && (
             <Card className="py-12">
               <CardContent className="flex flex-col items-center gap-3 text-center">
                 <ImagesIcon className="text-muted-foreground size-8" aria-hidden="true" />
@@ -230,13 +245,12 @@ export default function GalleryPage() {
 
           {imagesQuery.isSuccess && visibleImages.length > 0 && (
             <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-              {visibleImages.map((image) => (
+              {visibleImages.map((image, index) => (
                 <li key={image.id}>
+                  <ScrollFrame index={index}>
                   <button
                     type="button"
                     onClick={() => setLightboxAsset(image)}
-                    // The button's accessible name describes the photo, so a screen
-                    // reader user knows what they are opening.
                     aria-label={`View ${image.title}`}
                     className={cn(
                       'group focus-visible:ring-ring block w-full overflow-hidden rounded-xl',
@@ -254,6 +268,7 @@ export default function GalleryPage() {
                       className="transition-transform duration-500 group-hover:scale-110"
                     />
                   </button>
+                  </ScrollFrame>
                 </li>
               ))}
             </ul>

@@ -108,6 +108,7 @@ public class SecurityConfig {
                                 "/api/settings",
                                 "/api/homepage-items",
                                 "/api/homepage-items/**",
+                                "/api/site-images",
                                 "/api/church-settings",
                                 "/api/social-links",
                                 "/api/search").permitAll()

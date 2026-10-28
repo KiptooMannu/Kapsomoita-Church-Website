@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { BookOpen, Users, Heart, ArrowLeft } from "lucide-react";
 import { Button } from "../../components/ui/button";
+import { ScrollPhoto } from "../../components/public/ScrollPhoto";
 import { Link } from "react-router-dom";
 
 const Edifying = () => {
@@ -27,7 +28,7 @@ const Edifying = () => {
   };
 
   return (
-    <div className="bg-background">
+    <div className="bg-background border-t-4 border-gold-500">
       <div className="max-w-4xl mx-auto px-4 py-20">
         <motion.div
           variants={containerVariants}
@@ -51,6 +52,9 @@ const Edifying = () => {
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
               E3: Edifying Believers
             </h1>
+            <div className="my-8">
+              <ScrollPhoto imageKey="strategyEdifying" index={3} aspectRatio="16 / 8" />
+            </div>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Building up the body of Christ through discipleship, teaching, and spiritual growth
             </p>

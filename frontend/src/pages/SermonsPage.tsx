@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { format } from 'date-fns'
 import { BookOpenIcon, ClockIcon, DownloadIcon, PlayCircleIcon, SearchIcon, UserIcon } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { PageBanner } from '@/components/public/PageBanner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -10,6 +11,7 @@ import { LivestreamBanner } from '@/components/public/sections/LivestreamBanner'
 import { Section, SectionHeading } from '@/components/public/Section'
 import { SeoHead } from '@/components/seo/SeoHead'
 import { downloadsApi } from '@/features/content/downloads-api'
+import { ScrollFrame } from '@/components/public/ScrollPhoto'
 import { SermonThumbnail } from '@/components/public/SermonThumbnail'
 import { sermonsApi } from '@/features/content/sermons-api'
 import { normaliseApiError } from '@/lib/api/client'
@@ -53,17 +55,12 @@ export default function SermonsPage() {
         description="Watch and listen to recent sermons, join the livestream, and download notes from Kapsomoita AGC."
       />
 
-      <header className="bg-brand-950 relative overflow-hidden py-16 text-white sm:py-20">
-        <div className="container-page relative">
-          <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
-            <Badge variant="gold">Teaching</Badge>
-            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">Sermons</h1>
-            <p className="text-base leading-relaxed text-white/80 sm:text-lg">
-              Missed a Sunday, or want to hear it again? Every published sermon from the church office appears here.
-            </p>
-          </div>
-        </div>
-      </header>
+      <PageBanner
+        eyebrow="Teaching"
+        title="Sermons"
+        description="Missed a Sunday, or want to hear it again? Every published sermon from the church office appears here."
+        imageKey="sermonsHeader"
+      />
 
       <LivestreamBanner />
 
@@ -117,11 +114,13 @@ export default function SermonsPage() {
         )}
 
         <ul className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {visible.map((sermon) => {
+          {visible.map((sermon, index) => {
             return (
               <li key={sermon.id}>
-                <Card className="h-full overflow-hidden py-0">
-                  <SermonThumbnail sermon={sermon} />
+                <Card className="interactive-card h-full overflow-hidden py-0">
+                  <ScrollFrame index={index}>
+                    <SermonThumbnail sermon={sermon} />
+                  </ScrollFrame>
                   <CardContent className="flex h-full flex-col gap-4 py-6">
                     <div className="flex items-start justify-between gap-3">
                       {sermon.series && <Badge variant="secondary">{sermon.series}</Badge>}

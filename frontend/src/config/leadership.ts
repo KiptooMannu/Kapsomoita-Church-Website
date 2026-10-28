@@ -6,8 +6,8 @@
  * carries only its role until you fill in the person. The UI falls back to showing
  * the role as the heading, which reads correctly either way.
  *
- * Fill in `name`, `bio` and `imageLocalPath` for each, or delete the entries you do
- * not want shown. This becomes the fallback once the Leadership admin module lands.
+ * Public pages read leaders from the database. Change names and portraits in
+ * Admin → Leadership. These entries are not shown on the site.
  */
 
 export interface LeadershipMember {
@@ -63,7 +63,6 @@ export const ministryLeaders: LeadershipMember[] = [
     name: '',
     bio: 'Leads worship, teaching and discipleship for teenagers and young adults.',
     ministry: 'Youth Ministry',
-    imageLocalPath: 'src/assets/leaders/youth-leader1.jpg',
   },
   {
     id: 'youth-coordinator',
@@ -71,7 +70,6 @@ export const ministryLeaders: LeadershipMember[] = [
     name: '',
     bio: 'Coordinates youth events, camps and small groups.',
     ministry: 'Youth Ministry',
-    imageLocalPath: 'src/assets/leaders/youth-leader2.jpg',
   },
   {
     id: 'women-leader',
@@ -79,7 +77,6 @@ export const ministryLeaders: LeadershipMember[] = [
     name: '',
     bio: 'Leads Bible study, prayer and fellowship among the women of the church.',
     ministry: "Women's Ministry",
-    imageLocalPath: 'src/assets/leaders/women-leader1.jpg',
   },
   {
     id: 'women-coordinator',
@@ -87,7 +84,6 @@ export const ministryLeaders: LeadershipMember[] = [
     name: '',
     bio: 'Coordinates retreats, outreach and mentoring for women.',
     ministry: "Women's Ministry",
-    imageLocalPath: 'src/assets/leaders/women-leader2.jpg',
   },
   {
     id: 'men-leader',

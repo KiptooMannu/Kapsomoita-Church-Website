@@ -25,7 +25,8 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground shadow-soft hover:bg-primary-hover',
+        default:
+          'bg-primary text-primary-foreground shadow-soft hover:bg-primary-hover hover:-translate-y-px active:translate-y-0',
         destructive:
           'bg-destructive text-destructive-foreground shadow-soft hover:bg-destructive/90',
         outline:
@@ -38,7 +39,7 @@ const buttonVariants = cva(
         /** Warm accent call-to-action, e.g. "Give Online". */
         gold: cn(
           'bg-gradient-to-r from-gold-400 to-gold-500 text-accent-foreground',
-          'font-semibold shadow-soft hover:from-gold-500 hover:to-gold-600 hover:shadow-card',
+          'font-semibold shadow-soft hover:-translate-y-px hover:from-gold-500 hover:to-gold-600 hover:shadow-card active:translate-y-0',
         ),
 
         /**

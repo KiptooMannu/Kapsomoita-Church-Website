@@ -10,8 +10,9 @@ import {
   UsersIcon,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { PageBanner } from '@/components/public/PageBanner'
+import { ScrollPhoto } from '@/components/public/ScrollPhoto'
 import { Card, CardContent } from '@/components/ui/card'
 import { LeadershipSection } from '@/components/public/sections/LeadershipSection'
 import { Section, SectionHeading } from '@/components/public/Section'
@@ -134,41 +135,19 @@ export default function AboutPage() {
         description={`Learn about ${publicSite.fullName} — our history, vision, mission, core values and statement of faith.`}
       />
 
-      {/* --- Page header ------------------------------------------------- */}
-      <header className="bg-brand-950 relative overflow-hidden py-16 text-white sm:py-20">
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-          <div className="bg-gold-500/12 absolute -top-20 right-1/4 size-72 rounded-full blur-3xl" />
-          <div className="bg-brand-400/12 absolute -bottom-20 left-1/4 size-72 rounded-full blur-3xl" />
-        </div>
-
-        <div className="container-page relative">
-          {/*
-            mx-auto centres the block itself, items-center centres its children
-            within it, and text-center centres the wrapped lines. All three are
-            needed — max-w alone leaves the block hard against the left gutter,
-            which is what looked off before.
-          */}
-          <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
-            <span className="bg-gold-500/15 text-gold-300 flex size-14 items-center justify-center rounded-2xl">
-              <ChurchIcon className="size-7" aria-hidden="true" />
-            </span>
-            <Badge variant="gold">About us</Badge>
-            {/* The only h1 on this page. */}
-            <h1 className="text-3xl font-bold tracking-tight text-balance sm:text-4xl lg:text-5xl">
-              {publicSite.fullName}
-            </h1>
-            <p className="max-w-2xl text-base leading-relaxed text-white/80 sm:text-lg">
-              An ordinary family of believers in Kapsomoita, learning together what it means
-              to follow Jesus faithfully — in our homes, our church and our community.
-            </p>
-          </div>
-        </div>
-      </header>
+      <PageBanner
+        eyebrow="About us"
+        title={publicSite.fullName}
+        description="An ordinary family of believers in Kapsomoita, learning together what it means to follow Jesus faithfully — in our homes, our church and our community."
+        icon={<ChurchIcon className="size-7" aria-hidden="true" />}
+        imageKey="aboutHeader"
+      />
 
       {/* --- Vision & mission -------------------------------------------- */}
       <Section id="vision-mission">
         {/* Centred cards, capped so two columns do not stretch on a 4K display. */}
         <div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-2">
+          <ScrollPhoto imageKey="aboutGathering" index={0} aspectRatio="16 / 9" className="lg:col-span-2" />
           <Card className="py-8">
             <CardContent className="flex flex-col items-center gap-4 text-center">
               <span className="bg-primary/10 text-primary flex size-12 items-center justify-center rounded-xl">

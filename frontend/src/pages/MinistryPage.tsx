@@ -20,7 +20,7 @@ import { JoinMinistryForm } from '@/features/ministries/JoinMinistryForm'
 import { publicGalleryApi } from '@/features/media/public-gallery-api'
 import { contentApi } from '@/features/content/content-api'
 import { findMinistry, ministryDetails } from '@/config/ministries'
-import { resolveImagePath } from '@/config/images'
+import { MINISTRY_IMAGE_SLOT, useSiteImages } from '@/features/content/site-images'
 import { cn } from '@/lib/utils'
 import { queryKeys } from '@/lib/query-client'
 
@@ -51,6 +51,8 @@ export default function MinistryPage() {
     staleTime: 5 * 60_000,
   })
 
+  const siteImages = useSiteImages()
+
   const galleryQuery = useQuery({
     queryKey: queryKeys.public.galleryImages(`ministry:${galleryCategory ?? 'none'}`),
     queryFn: () => publicGalleryApi.byCategory(galleryCategory!, 0, GALLERY_LIMIT),
@@ -66,7 +68,7 @@ export default function MinistryPage() {
   }
 
   const photos = galleryQuery.data?.content ?? []
-  const heroImage = resolveImagePath(ministry.imageLocalPath)
+  const heroImage = siteImages.url(MINISTRY_IMAGE_SLOT[ministry.slug] ?? '')
   const ministryLeaders = (leadersQuery.data ?? []).filter((leader) => {
     const assigned = (leader.ministry ?? '').trim().toLowerCase()
     const role = leader.roleTitle.trim().toLowerCase()
@@ -84,14 +86,11 @@ export default function MinistryPage() {
       <header className="relative isolate overflow-hidden">
         {heroImage ? (
           <>
-            <CloudinaryImage
-              publicId={heroImage.publicId}
-              fallbackSrc={heroImage.fallbackSrc}
+            <img
+              src={heroImage}
               alt=""
-              width={2560}
-              sizes="100vw"
-              priority
-              containerClassName="absolute inset-0 -z-10 size-full"
+              referrerPolicy="no-referrer"
+              className="absolute inset-0 -z-10 size-full object-cover"
             />
             <div
               aria-hidden="true"
@@ -107,7 +106,7 @@ export default function MinistryPage() {
           />
         )}
 
-        <div className="container-page py-20 sm:py-24 lg:py-28">
+        <div className="container-page pt-[calc(var(--header-height)+3.5rem)] pb-16 sm:pb-20 lg:pb-24">
           <div className="flex max-w-3xl flex-col gap-4">
             <Badge variant="gold" className="w-fit">
               Ministry

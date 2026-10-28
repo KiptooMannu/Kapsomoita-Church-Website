@@ -13,6 +13,8 @@ import { ServicesSection } from '@/components/public/sections/ServicesSection'
 import { TestimonialsSection } from '@/components/public/sections/TestimonialsSection'
 import { VerseOfTheDaySection } from '@/components/public/sections/VerseOfTheDaySection'
 import { LivestreamBanner } from '@/components/public/sections/LivestreamBanner'
+import { VisitPaths } from '@/components/public/sections/VisitPaths'
+import { Reveal } from '@/components/public/Reveal'
 import { usePublicSite } from '@/features/content/use-public-site'
 import { getPublicHomepageItems, type HomepageItem } from '@/lib/api/homepage'
 
@@ -81,14 +83,16 @@ export default function HomePage() {
       />
 
       <HeroSection slides={heroItems} />
+      <VisitPaths />
       <LivestreamBanner />
       {featureItems.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {featureItems.map((item) => (
-              <article key={item.id} className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+            {featureItems.map((item, index) => (
+              <Reveal key={item.id} delay={index * 80}>
+              <article className="interactive-card group overflow-hidden rounded-2xl border border-border bg-card shadow-card">
                 {item.imageUrl && (
-                  <img src={item.imageUrl} alt="" className="h-44 w-full object-cover" />
+                  <img src={item.imageUrl} alt="" className="h-44 w-full object-cover transition-transform duration-700 group-hover:scale-105" />
                 )}
                 <div className="space-y-2 p-5">
                   <h2 className="text-lg font-semibold text-foreground">{item.title}</h2>
@@ -102,6 +106,7 @@ export default function HomePage() {
                   )}
                 </div>
               </article>
+              </Reveal>
             ))}
           </div>
         </section>

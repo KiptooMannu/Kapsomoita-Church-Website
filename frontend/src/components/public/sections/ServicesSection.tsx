@@ -2,11 +2,26 @@ import { ClockIcon, MapPinIcon, UserIcon } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { ScrollPhoto } from '@/components/public/ScrollPhoto'
 import { Section, SectionHeading } from '@/components/public/Section'
+import { serviceFeed, type ImageKey } from '@/config/images'
 import { serviceTimes as fallbackServiceTimes } from '@/config/site'
 import { contentApi } from '@/features/content/content-api'
 import { cn } from '@/lib/utils'
 import { queryKeys } from '@/lib/query-client'
+
+function serviceImage(name: string, index: number): ImageKey {
+  const label = name.toLowerCase()
+  if (label.includes('youth')) return 'serviceYouth'
+  if (label.includes('women')) return 'serviceWomen'
+  if (label.includes('men')) return 'serviceMen'
+  if (label.includes('kid') || label.includes('child') || label.includes('sunday school')) {
+    return 'serviceKids'
+  }
+  if (label.includes('prayer')) return 'servicePrayer'
+  if (label.includes('sunday') || label.includes('worship')) return 'serviceSunday'
+  return serviceFeed[index % serviceFeed.length]!
+}
 
 /**
  * Weekly gatherings.
@@ -51,11 +66,17 @@ export function ServicesSection() {
             <li key={service.name}>
               <Card
                 className={cn(
-                  'h-full py-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lifted',
+                  'interactive-card h-full overflow-hidden py-0',
                   isPrimary && 'ring-primary/25 bg-card ring-2',
                 )}
               >
-                <CardContent className="flex h-full flex-col gap-4">
+                <ScrollPhoto
+                  imageKey={serviceImage(service.name, index)}
+                  index={index}
+                  aspectRatio="16 / 9"
+                  className="rounded-none"
+                />
+                <CardContent className="flex h-full flex-col gap-4 py-6">
                   <div className="flex items-start justify-between gap-3">
                     <h3 className="text-lg font-semibold tracking-tight">{service.name}</h3>
                     {isPrimary && <Badge variant="gold">Main service</Badge>}

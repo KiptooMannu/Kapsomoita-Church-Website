@@ -3,10 +3,10 @@ import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
-import { CloudinaryImage } from '@/components/media/CloudinaryImage'
+import { ScrollFrame } from '@/components/public/ScrollPhoto'
 import { Section, SectionHeading } from '@/components/public/Section'
 import { ministries } from '@/config/content'
-import { resolveImagePath } from '@/config/images'
+import { MINISTRY_IMAGE_SLOT, useSiteImages } from '@/features/content/site-images'
 import { getPublicHomepageItems } from '@/lib/api/homepage'
 import { cn } from '@/lib/utils'
 
@@ -27,6 +27,7 @@ export function MinistriesSection() {
   const highlighted = (homepageQuery.data ?? []).filter(
     (item) => item.category === 'MINISTRY' && item.status === 'PUBLISHED',
   )
+  const photos = useSiteImages()
   const featured = ministries.filter((ministry) => ministry.to !== undefined)
   const others = ministries.filter((ministry) => ministry.to === undefined)
 
@@ -42,9 +43,11 @@ export function MinistriesSection() {
         <ul className="mt-12 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
           {highlighted.map((item) => (
             <li key={item.id}>
-              <Card className="h-full overflow-hidden py-0">
+              <Card className="interactive-card group h-full overflow-hidden py-0">
                 {item.imageUrl && (
-                  <img src={item.imageUrl} alt="" className="aspect-[4/3] w-full object-cover" />
+                  <ScrollFrame index={0}>
+                    <img src={item.imageUrl} alt="" className="aspect-[4/3] w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  </ScrollFrame>
                 )}
                 <CardContent className="flex flex-col gap-3 py-6">
                   <h3 className="text-lg font-semibold">{item.title}</h3>
@@ -73,7 +76,9 @@ export function MinistriesSection() {
 
       {/* --- Ministries with their own page ------------------------------- */}
       <ul className={cn('grid gap-6 sm:grid-cols-2 xl:grid-cols-4', highlighted.length > 0 ? 'mt-10' : 'mt-12')}>
-        {featured.map((ministry) => (
+        {featured.map((ministry, index) => {
+          const photo = photos.url(MINISTRY_IMAGE_SLOT[ministry.slug] ?? '')
+          return (
           <li key={ministry.slug}>
             <Link
               to={ministry.to!}
@@ -84,17 +89,16 @@ export function MinistriesSection() {
               )}
             >
               <Card className="h-full overflow-hidden py-0 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-lifted">
-                <div className="relative">
-                  <CloudinaryImage
-                    publicId={resolveImagePath(ministry.imageLocalPath)?.publicId ?? ''}
-                    fallbackSrc={resolveImagePath(ministry.imageLocalPath)?.fallbackSrc}
+                <ScrollFrame index={index} className="rounded-none">
+                <div className="bg-brand-900 relative aspect-[4/3]">
+                  {photo && (
+                  <img
+                    src={photo}
                     alt={ministry.name}
-                    width={640}
-                    sizes="(min-width: 1280px) 20rem, (min-width: 640px) 50vw, 100vw"
-                    aspectRatio="4 / 3"
-                    containerClassName="w-full"
-                    className="transition-transform duration-500 group-hover:scale-105"
+                    referrerPolicy="no-referrer"
+                    className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
+                  )}
                   <div
                     aria-hidden="true"
                     className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"
@@ -103,6 +107,7 @@ export function MinistriesSection() {
                     {ministry.name}
                   </h3>
                 </div>
+                </ScrollFrame>
 
                 <CardContent className="flex flex-col gap-3 pb-6">
                   <p className="text-muted-foreground text-sm leading-relaxed">
@@ -119,7 +124,8 @@ export function MinistriesSection() {
               </Card>
             </Link>
           </li>
-        ))}
+          )
+        })}
       </ul>
 
       {/* --- Ministries without a page yet ------------------------------- */}

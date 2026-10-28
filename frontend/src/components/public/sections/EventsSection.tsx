@@ -5,6 +5,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { CloudinaryImage } from '@/components/media/CloudinaryImage'
+import { ScrollFrame } from '@/components/public/ScrollPhoto'
+import { useSiteImages } from '@/features/content/site-images'
 import { Section, SectionHeading } from '@/components/public/Section'
 import { eventsApi, type EventResponse } from '@/features/content/events-api'
 import { normaliseApiError } from '@/lib/api/client'
@@ -51,9 +53,9 @@ export function EventsSection() {
         </p>
       ) : (
         <ul className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {futureEvents.map((event) => (
+          {futureEvents.map((event, index) => (
             <li key={event.id}>
-              <EventCard event={event} />
+              <EventCard event={event} index={index} />
             </li>
           ))}
         </ul>
@@ -62,21 +64,27 @@ export function EventsSection() {
   )
 }
 
-function EventCard({ event }: { event: EventResponse }) {
+const EVENT_FALLBACKS = ['eventYouthCamp', 'eventWomensRetreat', 'eventConference'] as const
+
+function EventCard({ event, index }: { event: EventResponse; index: number }) {
   const countdown = useCountdown(event.startsAt)
   const startDate = new Date(event.startsAt)
+  const photos = useSiteImages()
+  const fallback = photos.url(EVENT_FALLBACKS[index % EVENT_FALLBACKS.length]!)
 
   return (
-    <Card className="h-full overflow-hidden py-0 transition-all duration-300 hover:-translate-y-1 hover:shadow-lifted">
-      <CloudinaryImage
-        publicId=""
-        fallbackSrc={event.bannerUrl ?? undefined}
-        alt={event.title}
-        width={768}
-        sizes="(min-width: 1280px) 24rem, (min-width: 768px) 50vw, 100vw"
-        aspectRatio="16 / 10"
-        containerClassName="w-full"
-      />
+    <Card className="interactive-card h-full overflow-hidden py-0">
+      <ScrollFrame index={index}>
+        <CloudinaryImage
+          publicId=""
+          fallbackSrc={event.bannerUrl || fallback || undefined}
+          alt={event.title}
+          width={768}
+          sizes="(min-width: 1280px) 24rem, (min-width: 768px) 50vw, 100vw"
+          aspectRatio="16 / 10"
+          containerClassName="w-full"
+        />
+      </ScrollFrame>
 
       <CardContent className="flex flex-1 flex-col gap-4 pb-6">
         <div className="flex flex-col gap-2">

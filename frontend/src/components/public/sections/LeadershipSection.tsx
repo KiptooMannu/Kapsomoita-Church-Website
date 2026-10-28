@@ -1,23 +1,25 @@
-import { InfoIcon, MailIcon, UserRoundIcon } from 'lucide-react'
+import { MailIcon, UserRoundIcon } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { CloudinaryImage } from '@/components/media/CloudinaryImage'
+import { ScrollFrame } from '@/components/public/ScrollPhoto'
 import { Section, SectionHeading } from '@/components/public/Section'
-import { resolveImagePath } from '@/config/images'
-import {
-  hasNamedLeaders,
-  ministryLeaders,
-  pastoralTeam,
-  type LeadershipMember,
-} from '@/config/leadership'
-import { env } from '@/lib/env'
 import { cn } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { contentApi } from '@/features/content/content-api'
 import { queryKeys } from '@/lib/query-client'
+
+interface LeadershipMember {
+  id: string
+  role: string
+  name: string
+  bio: string
+  photoUrl?: string
+  ministry?: string
+  email?: string
+  phone?: string
+}
 
 export interface LeadershipSectionProps {
   /** Show every leader (About page) rather than a trimmed set (landing page). */
@@ -31,36 +33,24 @@ export function LeadershipSection({ full = false }: LeadershipSectionProps) {
     staleTime: 5 * 60_000,
   })
 
-  // Live leaders split into pastoral team vs ministry leaders
-  const livePastoral = liveLeaders?.filter((l) => l.team === 'PASTORAL') ?? []
-  const liveMinistry = liveLeaders?.filter((l) => l.team !== 'PASTORAL') ?? []
+  const toMember = (leader: NonNullable<typeof liveLeaders>[number]): LeadershipMember => ({
+    id: leader.id,
+    name: leader.fullName || '',
+    role: leader.roleTitle,
+    bio: leader.bio || '',
+    email: leader.email || undefined,
+    phone: leader.phone || undefined,
+    ministry: leader.ministry || undefined,
+    photoUrl: leader.photoUrl || undefined,
+  })
 
-  const activePastoralTeam: LeadershipMember[] = livePastoral.length > 0
-    ? livePastoral.map((l) => ({
-        id: l.id,
-        name: l.fullName || '',
-        role: l.roleTitle,
-        bio: l.bio || '',
-        email: l.email || undefined,
-        phone: l.phone || undefined,
-        photoUrl: l.photoUrl || undefined,
-      }))
-    : pastoralTeam
-
-  const leaders: LeadershipMember[] = (liveMinistry.length > 0)
-    ? liveMinistry.map((l) => ({
-        id: l.id,
-        name: l.fullName || '',
-        role: l.roleTitle,
-        bio: l.bio || '',
-        email: l.email || undefined,
-        phone: l.phone || undefined,
-        ministry: l.ministry || undefined,
-        photoUrl: l.photoUrl || undefined,
-      }))
-    : (full
-      ? ministryLeaders
-      : ministryLeaders.filter((member) => member.imageLocalPath !== undefined))
+  const activePastoralTeam = (liveLeaders ?? [])
+    .filter((leader) => leader.team === 'PASTORAL')
+    .map(toMember)
+  const ministryLeaders = (liveLeaders ?? [])
+    .filter((leader) => leader.team !== 'PASTORAL')
+    .map(toMember)
+  const leaders = full ? ministryLeaders : ministryLeaders.slice(0, 4)
 
   return (
     <Section id="leadership" tone="muted">
@@ -70,22 +60,8 @@ export function LeadershipSection({ full = false }: LeadershipSectionProps) {
         description="The pastors and ministry leaders who shepherd and serve this church family."
       />
 
-      {/*
-        Shown only in development. It reminds whoever is building the site to fill in
-        the real names, and never appears to a visitor in production.
-      */}
-      {env.isDevelopment && !hasNamedLeaders && liveLeaders?.length === 0 && (
-        <Alert variant="info" className="mx-auto mt-8 max-w-2xl">
-          <InfoIcon aria-hidden="true" />
-          <AlertTitle>Leadership names are not filled in</AlertTitle>
-          <AlertDescription>
-            Add real names in the Admin panel under Leaders, or in{' '}
-            <code className="font-mono text-xs">src/config/leadership.ts</code>.
-          </AlertDescription>
-        </Alert>
-      )}
-
       {/* --- Pastoral team ---------------------------------------------- */}
+      {activePastoralTeam.length > 0 && (
       <div className="mt-12 flex flex-col gap-6">
         <h3 className="text-center text-sm font-semibold tracking-wider uppercase">
           Pastoral team
@@ -99,6 +75,7 @@ export function LeadershipSection({ full = false }: LeadershipSectionProps) {
           ))}
         </ul>
       </div>
+      )}
 
       {/* --- Ministry leaders -------------------------------------------- */}
       {leaders.length > 0 && (
@@ -139,31 +116,18 @@ function LeaderCard({
   const heading = member.name.trim() || member.role
   const showRoleAsSubtitle = member.name.trim().length > 0
 
-  const portrait = resolveImagePath(member.imageLocalPath)
-
   return (
-    <Card className="h-full overflow-hidden py-0 transition-all duration-300 hover:-translate-y-1 hover:shadow-lifted">
+    <Card className="interactive-card h-full overflow-hidden py-0">
       {member.photoUrl ? (
-        <img
-          src={member.photoUrl}
-          alt={heading}
-          referrerPolicy="no-referrer"
-          className={cn('bg-muted w-full object-cover', compact ? 'aspect-square' : 'aspect-[4/5]')}
-        />
-      ) : portrait ? (
-        <CloudinaryImage
-          publicId={portrait.publicId}
-          fallbackSrc={portrait.fallbackSrc}
-          alt={heading}
-          width={512}
-          sizes="(min-width: 1024px) 16rem, (min-width: 640px) 50vw, 100vw"
-          aspectRatio={compact ? '1 / 1' : '4 / 5'}
-          gravity="face"
-          containerClassName="w-full"
-        />
+        <ScrollFrame index={compact ? 1 : 0}>
+          <img
+            src={member.photoUrl}
+            alt={heading}
+            referrerPolicy="no-referrer"
+            className={cn('bg-muted w-full object-cover', compact ? 'aspect-square' : 'aspect-[4/5]')}
+          />
+        </ScrollFrame>
       ) : (
-        // A neutral placeholder rather than a stock photograph of someone who is
-        // not actually a leader here.
         <div
           className={cn(
             'bg-secondary text-muted-foreground flex items-center justify-center',

@@ -1,34 +1,13 @@
 import { ArrowRightIcon, ClockIcon, UsersIcon } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
-import { CloudinaryImage } from '@/components/media/CloudinaryImage'
+import { PageBanner } from '@/components/public/PageBanner'
 import { Section, SectionHeading } from '@/components/public/Section'
 import { SeoHead } from '@/components/seo/SeoHead'
 import { JoinMinistryForm } from '@/features/ministries/JoinMinistryForm'
 import { ministryDetails } from '@/config/ministries'
-import { resolveImage, type ImageKey } from '@/config/images'
+import { MINISTRY_IMAGE_SLOT, useSiteImages } from '@/features/content/site-images'
 import { cn } from '@/lib/utils'
-
-/**
- * Maps a ministry slug to its image slot.
- *
- * Kept here rather than on the ministry record so `config/ministries.ts` stays
- * about content and `config/images.ts` remains the single place images are changed.
- */
-const MINISTRY_IMAGE: Record<string, ImageKey> = {
-  youth: 'ministryYouth',
-  women: 'ministryWomen',
-  men: 'ministryMen',
-  kids: 'ministryKids',
-  'sunday-school': 'ministrySundaySchool',
-  choir: 'ministryChoir',
-  'praise-team': 'ministryPraise',
-  prayer: 'ministryPrayer',
-  evangelism: 'ministryEvangelism',
-  missions: 'ministryMissions',
-  media: 'ministryMedia',
-}
 
 /**
  * Index of every ministry.
@@ -38,6 +17,8 @@ const MINISTRY_IMAGE: Record<string, ImageKey> = {
  * four links and nothing else.
  */
 export default function MinistriesIndexPage() {
+  const photos = useSiteImages()
+
   return (
     <>
       <SeoHead
@@ -45,35 +26,18 @@ export default function MinistriesIndexPage() {
         description="Explore the ministries of Kapsomoita AGC — youth, women, men, children, Sunday School, choir, praise, prayer, evangelism, missions and media."
       />
 
-      {/* --- Page header ------------------------------------------------- */}
-      <header className="bg-brand-950 relative overflow-hidden py-16 text-white sm:py-20">
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-          <div className="bg-gold-500/12 absolute -top-24 right-1/4 size-80 rounded-full blur-3xl" />
-          <div className="bg-brand-400/12 absolute -bottom-24 left-1/4 size-80 rounded-full blur-3xl" />
-        </div>
-
-        <div className="container-page relative">
-          {/* Centred, with the text block itself constrained so the measure stays
-              readable on a wide screen. */}
-          <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
-            <Badge variant="gold">Get involved</Badge>
-            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
-              Our ministries
-            </h1>
-            <p className="text-base leading-relaxed text-white/80 sm:text-lg">
-              Every member has a place to serve and to be served. Find where you fit — and
-              if you are not sure, tell us and we will help you work it out.
-            </p>
-          </div>
-        </div>
-      </header>
+      <PageBanner
+        eyebrow="Get involved"
+        title="Our ministries"
+        description="Every member has a place to serve and to be served. Find where you fit — and if you are not sure, tell us and we will help you work it out."
+        imageKey="ministriesHeader"
+      />
 
       {/* --- All ministries ---------------------------------------------- */}
       <Section id="all-ministries">
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {ministryDetails.map((ministry) => {
-            const imageKey = MINISTRY_IMAGE[ministry.slug]
-            const image = imageKey ? resolveImage(imageKey) : null
+            const image = photos.url(MINISTRY_IMAGE_SLOT[ministry.slug] ?? '')
 
             return (
               <li key={ministry.slug}>
@@ -86,17 +50,15 @@ export default function MinistriesIndexPage() {
                   )}
                 >
                   <Card className="h-full overflow-hidden py-0 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-lifted">
-                    <div className="relative">
-                      <CloudinaryImage
-                        publicId={image?.publicId ?? ''}
-                        fallbackSrc={image?.fallbackSrc}
+                    <div className="bg-brand-900 relative aspect-[4/3]">
+                      {image && (
+                      <img
+                        src={image}
                         alt={ministry.name}
-                        width={768}
-                        sizes="(min-width: 1024px) 22rem, (min-width: 640px) 50vw, 100vw"
-                        aspectRatio="4 / 3"
-                        containerClassName="w-full"
-                        className="transition-transform duration-500 group-hover:scale-105"
+                        referrerPolicy="no-referrer"
+                        className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
+                      )}
                       <div
                         aria-hidden="true"
                         className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent"

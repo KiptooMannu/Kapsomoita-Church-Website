@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { GraduationCap, Users, Target, ArrowLeft } from "lucide-react";
 import { Button } from "../../components/ui/button";
+import { ScrollPhoto } from "../../components/public/ScrollPhoto";
 import { Link } from "react-router-dom";
 
 const Equipping = () => {
@@ -27,7 +28,7 @@ const Equipping = () => {
   };
 
   return (
-    <div className="bg-background">
+    <div className="bg-background border-t-4 border-gold-500">
       <div className="max-w-4xl mx-auto px-4 py-20">
         <motion.div
           variants={containerVariants}
@@ -51,6 +52,9 @@ const Equipping = () => {
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
               E4: Equipping Leaders
             </h1>
+            <div className="my-8">
+              <ScrollPhoto imageKey="strategyEquipping" index={4} aspectRatio="16 / 8" />
+            </div>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Preparing and empowering servant leaders to advance God's kingdom effectively
             </p>

@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Heart, HandHeart, Users, ArrowLeft } from "lucide-react";
 import { Button } from "../../components/ui/button";
+import { ScrollPhoto } from "../../components/public/ScrollPhoto";
 import { Link } from "react-router-dom";
 
 const Compassion = () => {
@@ -27,7 +28,7 @@ const Compassion = () => {
   };
 
   return (
-    <div className="bg-background">
+    <div className="bg-background border-t-4 border-gold-500">
       <div className="max-w-4xl mx-auto px-4 py-20">
         <motion.div
           variants={containerVariants}
@@ -51,6 +52,9 @@ const Compassion = () => {
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
               E5: Exercising Compassion
             </h1>
+            <div className="my-8">
+              <ScrollPhoto imageKey="strategyCompassion" index={5} aspectRatio="16 / 8" />
+            </div>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Demonstrating Christ's love through practical care and service to those in need
             </p>

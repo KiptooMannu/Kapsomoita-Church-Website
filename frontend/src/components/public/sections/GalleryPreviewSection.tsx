@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { CloudinaryImage } from '@/components/media/CloudinaryImage'
+import { ScrollFrame, ScrollPhoto } from '@/components/public/ScrollPhoto'
+import { galleryFeed } from '@/config/images'
 import { Section, SectionHeading } from '@/components/public/Section'
 import { publicGalleryApi } from '@/features/media/public-gallery-api'
 import { queryKeys } from '@/lib/query-client'
@@ -34,9 +36,7 @@ export function GalleryPreviewSection() {
 
   const images = galleryQuery.data ?? []
 
-  if (galleryQuery.isError || (galleryQuery.isSuccess && images.length === 0)) {
-    return null
-  }
+  const showFeed = galleryQuery.isError || (galleryQuery.isSuccess && images.length === 0)
 
   return (
     <Section id="gallery">
@@ -55,6 +55,14 @@ export function GalleryPreviewSection() {
             Loading gallery images…
           </span>
         </div>
+      ) : showFeed ? (
+        <ul className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          {galleryFeed.map((key, index) => (
+            <li key={key} className={cn(index === 0 && 'sm:col-span-2 sm:row-span-2')}>
+              <ScrollPhoto imageKey={key} index={index} aspectRatio="1 / 1" />
+            </li>
+          ))}
+        </ul>
       ) : (
         <ul className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {images.map((image, index) => (
@@ -62,8 +70,6 @@ export function GalleryPreviewSection() {
               key={image.id}
               className={cn(
                 'group overflow-hidden rounded-xl',
-                // Give the first image a larger footprint on wide screens, so the
-                // grid reads as a composition rather than a uniform contact sheet.
                 index === 0 && 'sm:col-span-2 sm:row-span-2',
               )}
             >
@@ -71,6 +77,7 @@ export function GalleryPreviewSection() {
                 to="/gallery"
                 className="focus-visible:ring-ring block size-full focus-visible:ring-2 focus-visible:outline-none"
               >
+                <ScrollFrame index={index} className="rounded-none">
                 <CloudinaryImage
                   // The API returns the public ID directly, so no URL parsing is
                   // needed to build a transformed variant.
@@ -87,6 +94,7 @@ export function GalleryPreviewSection() {
                   containerClassName="size-full"
                   className="transition-transform duration-500 group-hover:scale-110"
                 />
+                </ScrollFrame>
               </Link>
             </li>
           ))}

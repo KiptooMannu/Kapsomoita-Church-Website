@@ -19,6 +19,7 @@ import { usePublicSite } from '@/features/content/use-public-site'
 import { normaliseApiError } from '@/lib/api/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
+import { PageBanner } from '@/components/public/PageBanner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Section, SectionHeading } from '@/components/public/Section'
@@ -71,29 +72,13 @@ export default function GivePage() {
         description={`Support the work of ${publicSite.fullName} through M-Pesa, bank transfer or in person. Every gift goes toward ministry, mission and compassion.`}
       />
 
-      {/* --- Page header ------------------------------------------------- */}
-      <header className="bg-brand-950 relative overflow-hidden py-16 text-white sm:py-20">
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-          <div className="bg-gold-500/15 absolute -top-24 left-1/3 size-80 rounded-full blur-3xl" />
-          <div className="bg-brand-400/12 absolute -bottom-24 right-1/3 size-80 rounded-full blur-3xl" />
-        </div>
-
-        <div className="container-page relative">
-          <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
-            <span className="bg-gold-500/15 text-gold-300 flex size-14 items-center justify-center rounded-2xl">
-              <HeartIcon className="size-7" aria-hidden="true" />
-            </span>
-            <Badge variant="gold">Giving</Badge>
-            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
-              Give to the work of God
-            </h1>
-            <p className="text-base leading-relaxed text-white/80 sm:text-lg">
-              Everything we do is made possible by the generosity of this church family.
-              Thank you for giving cheerfully and faithfully.
-            </p>
-          </div>
-        </div>
-      </header>
+      <PageBanner
+        eyebrow="Giving"
+        title="Give to the work of God"
+        icon={<HeartIcon className="size-7" aria-hidden="true" />}
+        imageKey="giveHeader"
+        description="Everything we do is made possible by the generosity of this church family. Thank you for giving cheerfully and faithfully."
+      />
 
       {/* --- Scripture --------------------------------------------------- */}
       <Section id="giving-verse" className="py-12 sm:py-14">

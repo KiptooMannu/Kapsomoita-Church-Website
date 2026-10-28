@@ -71,7 +71,7 @@ export default function AdminLeadersPage() {
               Leadership Directory Manager
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
-              Manage profiles, titles, contact information, and biographies for pastors and leaders.
+              Add a portrait, name and role. The public site shows the photo you upload here.
             </p>
           </div>
 
@@ -165,7 +165,7 @@ export default function AdminLeadersPage() {
 
                     <div className="flex items-center justify-end gap-2 mt-4 pt-3 border-t border-border/50">
                       <Button variant="outline" size="sm" onClick={() => openDialog(item)}>
-                        Edit Profile
+                        Photo & profile
                       </Button>
                       <Button
                         variant="ghost"

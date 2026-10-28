@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Section, SectionHeading } from '@/components/public/Section'
+import { ScrollFrame } from '@/components/public/ScrollPhoto'
 import { SermonThumbnail } from '@/components/public/SermonThumbnail'
 import { sermonsApi } from '@/features/content/sermons-api'
 import { normaliseApiError } from '@/lib/api/client'
@@ -45,10 +46,12 @@ export function SermonsSection() {
       />
 
       <ul className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {sermonsQuery.data.map((sermon) => (
+        {sermonsQuery.data.map((sermon, index) => (
           <li key={sermon.id}>
-            <Card className="h-full overflow-hidden py-0 transition-all duration-300 hover:-translate-y-1 hover:shadow-lifted">
-              <SermonThumbnail sermon={sermon} />
+            <Card className="interactive-card h-full overflow-hidden py-0">
+              <ScrollFrame index={index}>
+                <SermonThumbnail sermon={sermon} />
+              </ScrollFrame>
               <CardContent className="flex h-full flex-col gap-4 py-6">
                 <div className="flex items-start justify-between gap-3">
                   {sermon.series && <Badge variant="secondary">{sermon.series}</Badge>}

@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { ClockIcon, MailIcon, MapPinIcon, PhoneIcon } from 'lucide-react'
 import { toast } from 'sonner'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { PageBanner } from '@/components/public/PageBanner'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -55,22 +55,17 @@ export default function ContactPage() {
         description={`Visit, call or write to ${publicSite.fullName}. Send a message or a prayer request and the church office will receive it.`}
       />
 
-      <header className="bg-brand-950 relative overflow-hidden py-16 text-white sm:py-20">
-        <div className="container-page relative">
-          <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
-            <Badge variant="gold">Contact</Badge>
-            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">Get in touch</h1>
-            <p className="text-base leading-relaxed text-white/80 sm:text-lg">
-              We would love to hear from you. Reach the office directly, or send a message and a prayer request below.
-            </p>
-          </div>
-        </div>
-      </header>
+      <PageBanner
+        eyebrow="Contact"
+        title="Get in touch"
+        description="We would love to hear from you. Reach the office directly, or send a message and a prayer request below."
+        imageKey="contactHeader"
+      />
 
       <Section id="contact-details">
         <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           <li>
-            <Card className="h-full py-6">
+            <Card className="interactive-card h-full py-6">
               <CardContent className="flex flex-col gap-2">
                 <MailIcon className="text-primary size-5" aria-hidden="true" />
                 <h2 className="font-semibold">Email</h2>
@@ -81,7 +76,7 @@ export default function ContactPage() {
             </Card>
           </li>
           <li>
-            <Card className="h-full py-6">
+            <Card className="interactive-card h-full py-6">
               <CardContent className="flex flex-col gap-2">
                 <PhoneIcon className="text-primary size-5" aria-hidden="true" />
                 <h2 className="font-semibold">Phone</h2>
@@ -92,7 +87,7 @@ export default function ContactPage() {
             </Card>
           </li>
           <li>
-            <Card className="h-full py-6">
+            <Card className="interactive-card h-full py-6">
               <CardContent className="flex flex-col gap-2">
                 <MapPinIcon className="text-primary size-5" aria-hidden="true" />
                 <h2 className="font-semibold">Visit</h2>
@@ -114,7 +109,7 @@ export default function ContactPage() {
         <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {services.map((service) => (
             <li key={service.id}>
-              <Card className="h-full py-6">
+              <Card className="interactive-card h-full py-6">
                 <CardContent className="flex flex-col gap-2">
                   <h3 className="font-semibold">{service.name}</h3>
                   <p className="text-muted-foreground flex items-center gap-2 text-sm">
@@ -132,7 +127,9 @@ export default function ContactPage() {
       <Section id="write-to-us">
         <div className="grid gap-10 lg:grid-cols-2">
           <MessageForm />
-          <PrayerForm />
+          <div id="prayer" className="scroll-mt-[var(--header-height)]">
+            <PrayerForm />
+          </div>
         </div>
       </Section>
 

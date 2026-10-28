@@ -3,18 +3,15 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
-import { CloudinaryImage } from '@/components/media/CloudinaryImage'
-import { resolveImage, type ImageKey } from '@/config/images'
 import { contentApi } from '@/features/content/content-api'
+import { useSiteImages } from '@/features/content/site-images'
 import { usePublicSite } from '@/features/content/use-public-site'
 import { queryKeys } from '@/lib/query-client'
 import { cn } from '@/lib/utils'
 import { AnnouncementsSideWidget } from '@/components/public/sections/AnnouncementsSideWidget'
 
-/**
- * Fallback hero photographs, used until an admin publishes hero banners.
- */
-const SLIDE_KEYS: readonly ImageKey[] = ['hero1', 'hero2', 'hero3', 'hero4', 'hero5']
+/** Hero slots edited in Admin → Website photos, used until a published banner exists. */
+const HERO_SLOTS = ['hero1', 'hero2', 'hero3', 'hero4', 'hero5'] as const
 
 const SLIDE_INTERVAL_MS = 6500
 
@@ -37,6 +34,10 @@ export interface HeroSlide {
  */
 export function HeroSection({ slides = [] }: { slides?: HeroSlide[] }) {
   const publicSite = usePublicSite()
+  const photos = useSiteImages()
+  const fallbackSlides = HERO_SLOTS.map((key) => photos.url(key)).filter(
+    (src): src is string => Boolean(src),
+  )
   const serviceTimesQuery = useQuery({
     queryKey: queryKeys.public.serviceTimes,
     queryFn: contentApi.publicServiceTimes,
@@ -44,7 +45,7 @@ export function HeroSection({ slides = [] }: { slides?: HeroSlide[] }) {
   })
 
   const publishedSlides = slides.filter((slide) => slide.imageUrl)
-  const slideCount = publishedSlides.length > 0 ? publishedSlides.length : SLIDE_KEYS.length
+  const slideCount = publishedSlides.length > 0 ? publishedSlides.length : Math.max(fallbackSlides.length, 1)
   const [slideIndex, setSlideIndex] = useState(0)
   const [wordIndex, setWordIndex] = useState(0)
 
@@ -78,7 +79,7 @@ export function HeroSection({ slides = [] }: { slides?: HeroSlide[] }) {
     <section
       id="home"
       aria-label="Welcome"
-      className="relative flex min-h-[100dvh] items-center overflow-hidden"
+      className="relative flex min-h-[100dvh] flex-col justify-end overflow-hidden"
     >
       <div aria-hidden="true" className="absolute inset-0">
         {publishedSlides.length > 0
@@ -90,43 +91,42 @@ export function HeroSection({ slides = [] }: { slides?: HeroSlide[] }) {
                   index === slideIndex ? 'opacity-100' : 'opacity-0',
                 )}
               >
-                <img
+                  <img
                   src={slide.imageUrl ?? undefined}
                   alt=""
-                  className="size-full scale-105 object-cover"
+                  className={cn(
+                    'size-full object-cover',
+                    index === slideIndex && 'ken-burns',
+                  )}
                 />
               </div>
             ))
-          : SLIDE_KEYS.map((key, index) => {
-              const image = resolveImage(key)
-              return (
-                <div
-                  key={key}
+          : fallbackSlides.map((src, index) => (
+              <div
+                key={src}
+                className={cn(
+                  'absolute inset-0 transition-opacity duration-1000 ease-in-out',
+                  index === slideIndex ? 'opacity-100' : 'opacity-0',
+                )}
+              >
+                <img
+                  src={src}
+                  alt=""
+                  referrerPolicy="no-referrer"
                   className={cn(
-                    'absolute inset-0 transition-opacity duration-1000 ease-in-out',
-                    index === slideIndex ? 'opacity-100' : 'opacity-0',
+                    'size-full object-cover',
+                    index === slideIndex && 'ken-burns',
                   )}
-                >
-                  <CloudinaryImage
-                    publicId={image.publicId}
-                    fallbackSrc={image.fallbackSrc}
-                    alt=""
-                    width={2560}
-                    sizes="100vw"
-                    priority={index === 0}
-                    containerClassName="size-full"
-                    className="scale-105"
-                  />
-                </div>
-              )
-            })}
+                />
+              </div>
+            ))}
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/55 to-black/25" />
         <div className="absolute inset-0 bg-gradient-to-r from-brand-950/50 to-transparent" />
       </div>
 
-      <div className="container-page relative z-10 w-full pt-[var(--header-height)] pb-16">
-        <div className="flex flex-col items-center justify-center">
+      <div className="container-page relative z-10 w-full pt-[calc(var(--header-height)+2rem)] pb-20">
+        <div className="flex flex-col items-center">
           <div className="flex max-w-3xl flex-col items-center gap-6 text-center">
             <span
               className={cn(
@@ -240,7 +240,7 @@ export function HeroSection({ slides = [] }: { slides?: HeroSlide[] }) {
       <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 gap-2">
         {Array.from({ length: slideCount }, (_, index) => (
           <button
-            key={publishedSlides[index]?.id ?? SLIDE_KEYS[index] ?? index}
+            key={publishedSlides[index]?.id ?? HERO_SLOTS[index] ?? index}
             type="button"
             onClick={() => setSlideIndex(index)}
             aria-label={`Show background image ${index + 1} of ${slideCount}`}
