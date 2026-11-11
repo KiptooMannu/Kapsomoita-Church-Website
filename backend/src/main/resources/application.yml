@@ -122,7 +122,7 @@ app:
   api-prefix: /api
 
   cors:
-    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:5173}
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:https://kapsomoita-church-website.vercel.app,http://localhost:5173}
 
   jwt:
     issuer: ${JWT_ISSUER:kapsomoita-church}

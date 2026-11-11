@@ -80,7 +80,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         // --- Operational ----------------------------------------------
-                        .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
+                        .requestMatchers("/", "/actuator/health", "/actuator/health/**").permitAll()
 
                         // --- Authentication -------------------------------------------
                         .requestMatchers(
