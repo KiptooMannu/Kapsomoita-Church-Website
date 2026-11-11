@@ -108,18 +108,18 @@ export default function MinistryPage() {
         )}
 
         <div className="container-page pt-[calc(var(--header-height)+3.5rem)] pb-16 sm:pb-20 lg:pb-24">
-          <div className="flex max-w-3xl flex-col gap-4">
+          <div className="mx-auto flex max-w-3xl flex-col items-center text-center gap-4">
             <Badge variant="gold" className="w-fit">
               Ministry
             </Badge>
             <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
               {ministry.name}
             </h1>
-            <p className="text-base leading-relaxed text-white/85 sm:text-lg">
+            <p className="max-w-2xl text-base leading-relaxed text-white/85 sm:text-lg">
               {ministry.tagline}
             </p>
 
-            <div className="flex flex-col gap-3 pt-2 xs:flex-row">
+            <div className="flex flex-col gap-3 pt-2 xs:flex-row justify-center items-center">
               <Button asChild size="lg" variant="gold">
                 <a href="#join">
                   Join this ministry
