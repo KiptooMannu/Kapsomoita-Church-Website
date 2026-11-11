@@ -4,6 +4,7 @@ import com.kapsomoita.church.auth.domain.RoleName;
 import com.kapsomoita.church.auth.security.JwtAuthenticationFilter;
 import com.kapsomoita.church.auth.security.RestAccessDeniedHandler;
 import com.kapsomoita.church.auth.security.RestAuthenticationEntryPoint;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -182,11 +183,29 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(appProperties.cors().allowedOrigins());
+        List<String> origins = new ArrayList<>();
+        if (appProperties.cors() != null && appProperties.cors().allowedOrigins() != null) {
+            for (String origin : appProperties.cors().allowedOrigins()) {
+                if (origin != null && !origin.isBlank()) {
+                    for (String part : origin.split(",")) {
+                        String trimmed = part.trim();
+                        if (!trimmed.isEmpty()) {
+                            origins.add(trimmed);
+                        }
+                    }
+                }
+            }
+        }
+        origins.add("https://kapsomoita-church-website.vercel.app");
+        origins.add("https://*.vercel.app");
+        origins.add("http://localhost:[*]");
+        origins.add("http://127.0.0.1:[*]");
+
+        configuration.setAllowedOriginPatterns(origins.stream().distinct().toList());
         configuration.setAllowedMethods(
                 List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(
-                List.of("Authorization", "Content-Type", "Accept", "X-Requested-With"));
+                List.of("Authorization", "Content-Type", "Accept", "X-Requested-With", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"));
         // Lets the frontend read pagination metadata from list endpoints.
         configuration.setExposedHeaders(List.of("X-Total-Count", "Content-Disposition"));
         configuration.setAllowCredentials(true);
