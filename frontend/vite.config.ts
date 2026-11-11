@@ -29,11 +29,11 @@ export default defineConfig({
       // Lets the dev frontend call /api/* same-origin, avoiding CORS entirely
       // while developing. Production uses VITE_API_URL against the deployed API.
       '/api': {
-        target: process.env.VITE_DEV_API_PROXY ?? 'http://localhost:8080',
+        target: process.env.VITE_DEV_API_PROXY ?? 'https://kapsomoita-church-website.onrender.com',
         changeOrigin: true,
       },
       '/uploads': {
-        target: process.env.VITE_DEV_API_PROXY ?? 'http://localhost:8080',
+        target: process.env.VITE_DEV_API_PROXY ?? 'https://kapsomoita-church-website.onrender.com',
         changeOrigin: true,
       },
     },
