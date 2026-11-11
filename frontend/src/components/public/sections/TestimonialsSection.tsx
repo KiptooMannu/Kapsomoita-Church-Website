@@ -20,7 +20,7 @@ export function TestimonialsSection() {
     staleTime: 5 * 60_000,
   })
 
-  const items = (liveTestimonials !== undefined)
+  const items = (Array.isArray(liveTestimonials) && liveTestimonials.length > 0)
     ? liveTestimonials.map((t) => ({
         id: t.id,
         quote: t.quote,

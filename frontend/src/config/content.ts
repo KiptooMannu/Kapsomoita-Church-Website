@@ -258,13 +258,13 @@ export const ministries: Ministry[] = [
     to: '/ministries/kids',
     imageLocalPath: 'src/assets/kids-ministry.jpg',
   },
-  { name: 'Choir', slug: 'choir', description: 'Leading the congregation in sung worship.' },
-  { name: 'Praise Team', slug: 'praise', description: 'Musicians and singers serving each Sunday.' },
-  { name: 'Sunday School', slug: 'sunday-school', description: 'Teaching the Bible to every age group.' },
-  { name: 'Media', slug: 'media', description: 'Sound, streaming and photography for the church.' },
-  { name: 'Prayer', slug: 'prayer', description: 'Intercession for the church and community.' },
-  { name: 'Evangelism', slug: 'evangelism', description: 'Sharing the Gospel beyond our walls.' },
-  { name: 'Missions', slug: 'missions', description: 'Supporting the work of the Gospel further afield.' },
+  { name: 'Choir', slug: 'choir', description: 'Leading the congregation in sung worship.', to: '/ministries/choir' },
+  { name: 'Praise Team', slug: 'praise', description: 'Musicians and singers serving each Sunday.', to: '/ministries/praise-team' },
+  { name: 'Sunday School', slug: 'sunday-school', description: 'Teaching the Bible to every age group.', to: '/ministries/sunday-school' },
+  { name: 'Media', slug: 'media', description: 'Sound, streaming and photography for the church.', to: '/ministries/media' },
+  { name: 'Prayer', slug: 'prayer', description: 'Intercession for the church and community.', to: '/ministries/prayer' },
+  { name: 'Evangelism', slug: 'evangelism', description: 'Sharing the Gospel beyond our walls.', to: '/ministries/evangelism' },
+  { name: 'Missions', slug: 'missions', description: 'Supporting the work of the Gospel further afield.', to: '/ministries/missions' },
 ]
 
 // ---------------------------------------------------------------------------

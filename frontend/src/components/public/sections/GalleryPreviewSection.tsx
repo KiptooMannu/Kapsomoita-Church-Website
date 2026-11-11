@@ -34,9 +34,9 @@ export function GalleryPreviewSection() {
     retry: 1,
   })
 
-  const images = galleryQuery.data ?? []
+  const images = Array.isArray(galleryQuery.data) ? galleryQuery.data : []
 
-  const showFeed = galleryQuery.isError || (galleryQuery.isSuccess && images.length === 0)
+  const showFeed = galleryQuery.isError || images.length === 0
 
   return (
     <Section id="gallery">

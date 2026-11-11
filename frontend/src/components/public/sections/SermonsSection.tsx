@@ -30,10 +30,11 @@ export function SermonsSection() {
   }
 
   if (sermonsQuery.isError) {
-    return <Section id="sermons"><p className="py-12 text-center text-destructive">{normaliseApiError(sermonsQuery.error).message}</p></Section>
+    return null
   }
 
-  if (sermonsQuery.data.length === 0) {
+  const sermonsList = Array.isArray(sermonsQuery.data) ? sermonsQuery.data : []
+  if (sermonsList.length === 0) {
     return null
   }
 
@@ -46,7 +47,7 @@ export function SermonsSection() {
       />
 
       <ul className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {sermonsQuery.data.map((sermon, index) => (
+        {sermonsList.map((sermon, index) => (
           <li key={sermon.id}>
             <Card className="interactive-card h-full overflow-hidden py-0">
               <ScrollFrame index={index}>

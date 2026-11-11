@@ -22,7 +22,8 @@ export function PastorMessageSection() {
     staleTime: 5 * 60_000,
   })
 
-  const pastor = leadersQuery.data?.find((leader) => leader.team === 'PASTORAL')
+  const rawLeaders = Array.isArray(leadersQuery.data) ? leadersQuery.data : []
+  const pastor = rawLeaders.find((leader) => leader.team === 'PASTORAL')
   const name = pastor?.fullName || pastor?.roleTitle || pastorsMessage.name
   const role = pastor
     ? [pastor.roleTitle, pastor.ministry].filter(Boolean).join(', ')

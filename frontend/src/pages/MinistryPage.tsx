@@ -67,9 +67,10 @@ export default function MinistryPage() {
     return <Navigate to="/" replace />
   }
 
-  const photos = galleryQuery.data?.content ?? []
+  const photos = Array.isArray(galleryQuery.data?.content) ? galleryQuery.data.content : []
   const heroImage = siteImages.url(MINISTRY_IMAGE_SLOT[ministry.slug] ?? '')
-  const ministryLeaders = (leadersQuery.data ?? []).filter((leader) => {
+  const rawLeaders = Array.isArray(leadersQuery.data) ? leadersQuery.data : []
+  const ministryLeaders = rawLeaders.filter((leader) => {
     const assigned = (leader.ministry ?? '').trim().toLowerCase()
     const role = leader.roleTitle.trim().toLowerCase()
     return assigned === ministry.name.toLowerCase() || role === ministry.leaderRole.toLowerCase()

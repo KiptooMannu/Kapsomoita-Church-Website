@@ -34,7 +34,7 @@ export default function ContactPage() {
     staleTime: 5 * 60_000,
   })
 
-  const services = (serviceTimesQuery.data && serviceTimesQuery.data.length > 0)
+  const services = (Array.isArray(serviceTimesQuery.data) && serviceTimesQuery.data.length > 0)
     ? serviceTimesQuery.data.map((service) => ({
         id: service.id,
         name: service.name,

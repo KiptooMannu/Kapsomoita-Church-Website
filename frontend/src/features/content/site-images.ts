@@ -43,7 +43,8 @@ export function useSiteImages() {
 
   const byKey = useMemo(() => {
     const map = new Map<string, SiteImage>()
-    for (const image of query.data ?? []) map.set(image.slotKey, image)
+    const list = Array.isArray(query.data) ? query.data : []
+    for (const image of list) map.set(image.slotKey, image)
     return map
   }, [query.data])
 

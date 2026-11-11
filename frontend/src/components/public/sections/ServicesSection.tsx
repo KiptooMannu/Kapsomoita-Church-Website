@@ -35,7 +35,7 @@ export function ServicesSection() {
     staleTime: 5 * 60_000,
   })
 
-  const services = (liveServiceTimes && liveServiceTimes.length > 0)
+  const services = (Array.isArray(liveServiceTimes) && liveServiceTimes.length > 0)
     ? liveServiceTimes.map((st) => ({
         name: st.name,
         day: st.dayLabel,

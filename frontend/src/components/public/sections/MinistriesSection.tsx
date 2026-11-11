@@ -1,7 +1,6 @@
 import { ArrowRightIcon } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
-import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { ScrollFrame } from '@/components/public/ScrollPhoto'
 import { Section, SectionHeading } from '@/components/public/Section'
@@ -13,9 +12,9 @@ import { cn } from '@/lib/utils'
 /**
  * Ministries overview.
  *
- * Split into two groups deliberately: the four with their own page get a large
- * image card, while the rest are listed compactly. Giving a linkless ministry the
- * same prominent card would imply a page that does not exist.
+ * All eleven ministries now have detail pages, so every card is clickable.
+ * Admin-highlighted items (MINISTRY category in Homepage Manager) appear as a
+ * top-tier grid; the rest follow as standard linked cards.
  */
 export function MinistriesSection() {
   const homepageQuery = useQuery({
@@ -24,12 +23,13 @@ export function MinistriesSection() {
     staleTime: 5 * 60_000,
   })
 
-  const highlighted = (homepageQuery.data ?? []).filter(
+  const rawHomepageItems = Array.isArray(homepageQuery.data) ? homepageQuery.data : []
+  const highlighted = rawHomepageItems.filter(
     (item) => item.category === 'MINISTRY' && item.status === 'PUBLISHED',
   )
   const photos = useSiteImages()
+  // All ministries now carry a `to` link — every card is navigable.
   const featured = ministries.filter((ministry) => ministry.to !== undefined)
-  const others = ministries.filter((ministry) => ministry.to === undefined)
 
   return (
     <Section id="ministries" tone="muted">
@@ -46,7 +46,11 @@ export function MinistriesSection() {
               <Card className="interactive-card group h-full overflow-hidden py-0">
                 {item.imageUrl && (
                   <ScrollFrame index={0}>
-                    <img src={item.imageUrl} alt="" className="aspect-[4/3] w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <img
+                      src={item.imageUrl}
+                      alt=""
+                      className="aspect-[4/3] w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
                   </ScrollFrame>
                 )}
                 <CardContent className="flex flex-col gap-3 py-6">
@@ -74,82 +78,59 @@ export function MinistriesSection() {
         </ul>
       )}
 
-      {/* --- Ministries with their own page ------------------------------- */}
+      {/* --- All ministries as linked image cards ------------------------- */}
       <ul className={cn('grid gap-6 sm:grid-cols-2 xl:grid-cols-4', highlighted.length > 0 ? 'mt-10' : 'mt-12')}>
         {featured.map((ministry, index) => {
           const photo = photos.url(MINISTRY_IMAGE_SLOT[ministry.slug] ?? '')
           return (
-          <li key={ministry.slug}>
-            <Link
-              to={ministry.to!}
-              className={cn(
-                'group block h-full rounded-xl',
-                'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2',
-                'focus-visible:outline-none',
-              )}
-            >
-              <Card className="h-full overflow-hidden py-0 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-lifted">
-                <ScrollFrame index={index} className="rounded-none">
-                <div className="bg-brand-900 relative aspect-[4/3]">
-                  {photo && (
-                  <img
-                    src={photo}
-                    alt={ministry.name}
-                    referrerPolicy="no-referrer"
-                    className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  )}
-                  <div
-                    aria-hidden="true"
-                    className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"
-                  />
-                  <h3 className="absolute bottom-3 left-4 text-lg font-semibold text-white">
-                    {ministry.name}
-                  </h3>
-                </div>
-                </ScrollFrame>
+            <li key={ministry.slug}>
+              <Link
+                to={ministry.to!}
+                className={cn(
+                  'group block h-full rounded-xl',
+                  'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2',
+                  'focus-visible:outline-none',
+                )}
+              >
+                <Card className="h-full overflow-hidden py-0 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-lifted">
+                  <ScrollFrame index={index} className="rounded-none">
+                    <div className="bg-brand-900 relative aspect-[4/3]">
+                      {photo && (
+                        <img
+                          src={photo}
+                          alt={ministry.name}
+                          referrerPolicy="no-referrer"
+                          className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      )}
+                      <div
+                        aria-hidden="true"
+                        className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"
+                      />
+                      <h3 className="absolute bottom-3 left-4 text-lg font-semibold text-white">
+                        {ministry.name}
+                      </h3>
+                    </div>
+                  </ScrollFrame>
 
-                <CardContent className="flex flex-col gap-3 pb-6">
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    {ministry.description}
-                  </p>
-                  <span className="text-primary inline-flex items-center gap-1 text-sm font-medium">
-                    Learn more
-                    <ArrowRightIcon
-                      className="size-3.5 transition-transform duration-200 group-hover:translate-x-1"
-                      aria-hidden="true"
-                    />
-                  </span>
-                </CardContent>
-              </Card>
-            </Link>
-          </li>
+                  <CardContent className="flex flex-col gap-3 pb-6">
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      {ministry.description}
+                    </p>
+                    <span className="text-primary inline-flex items-center gap-1 text-sm font-medium">
+                      Learn more
+                      <ArrowRightIcon
+                        className="size-3.5 transition-transform duration-200 group-hover:translate-x-1"
+                        aria-hidden="true"
+                      />
+                    </span>
+                  </CardContent>
+                </Card>
+              </Link>
+            </li>
           )
         })}
       </ul>
-
-      {/* --- Ministries without a page yet ------------------------------- */}
-      {others.length > 0 && (
-        <div className="mt-10 flex flex-col gap-4">
-          <h3 className="text-center text-sm font-semibold tracking-wider uppercase">
-            More ways to serve
-          </h3>
-          <ul className="flex flex-wrap justify-center gap-3">
-            {others.map((ministry) => (
-              <li key={ministry.slug}>
-                <Card className="py-3">
-                  <CardContent className="flex items-center gap-3 px-4">
-                    <span className="text-sm font-medium">{ministry.name}</span>
-                    <Badge variant="outline" className="text-[10px]">
-                      {ministry.description}
-                    </Badge>
-                  </CardContent>
-                </Card>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
     </Section>
   )
 }

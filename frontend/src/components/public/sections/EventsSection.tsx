@@ -32,10 +32,11 @@ export function EventsSection() {
   }
 
   if (eventsQuery.isError) {
-    return <Section id="events"><p className="py-12 text-center text-destructive">{normaliseApiError(eventsQuery.error).message}</p></Section>
+    return null
   }
 
-  const futureEvents = eventsQuery.data.filter(
+  const rawEvents = Array.isArray(eventsQuery.data) ? eventsQuery.data : []
+  const futureEvents = rawEvents.filter(
     (event) => new Date(event.startsAt).getTime() > Date.now(),
   )
 

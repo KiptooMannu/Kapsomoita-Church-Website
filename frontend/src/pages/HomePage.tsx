@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { SeoHead } from '@/components/seo/SeoHead'
 import { AnnouncementsSection } from '@/components/public/sections/AnnouncementsSection'
 import { EventsSection } from '@/components/public/sections/EventsSection'
@@ -36,7 +37,11 @@ export default function HomePage() {
   useEffect(() => {
     void getPublicHomepageItems()
       .then((items) => {
-        setHomepageItems(items.filter((item) => item.status === 'PUBLISHED'))
+        if (Array.isArray(items)) {
+          setHomepageItems(items.filter((item) => item.status === 'PUBLISHED'))
+        } else {
+          setHomepageItems([])
+        }
       })
       .catch(() => setHomepageItems([]))
   }, [])
@@ -100,9 +105,15 @@ export default function HomePage() {
                     <p className="text-sm text-muted-foreground">{item.description}</p>
                   )}
                   {item.linkUrl && (
-                    <a href={item.linkUrl} className="inline-block text-sm font-medium text-primary hover:underline">
-                      Read more
-                    </a>
+                    item.linkUrl.startsWith('/') ? (
+                      <Link to={item.linkUrl} className="inline-block text-sm font-medium text-primary hover:underline">
+                        Read more
+                      </Link>
+                    ) : (
+                      <a href={item.linkUrl} className="inline-block text-sm font-medium text-primary hover:underline">
+                        Read more
+                      </a>
+                    )
                   )}
                 </div>
               </article>

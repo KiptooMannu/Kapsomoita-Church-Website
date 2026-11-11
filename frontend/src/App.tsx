@@ -22,8 +22,6 @@ const MinistriesIndexPage = lazy(() => import('./pages/MinistriesIndexPage'))
 const MinistryPage = lazy(() => import('./pages/MinistryPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
 
-// Original pages, still JavaScript. Being migrated section by section; they work
-// unchanged in the meantime.
 const SermonsPage = lazy(() => import('./pages/SermonsPage'))
 const ContactPage = lazy(() => import('./pages/ContactPage'))
 const ServePage = lazy(() => import('./pages/ServePage'))
@@ -82,7 +80,8 @@ function isSelfSpaced(pathname: string) {
     pathname === '/gallery' ||
     pathname === '/privacy' ||
     pathname === '/terms' ||
-    pathname.startsWith('/ministries')
+    pathname.startsWith('/ministries') ||
+    pathname.startsWith('/strategies')
   )
 }
 

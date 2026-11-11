@@ -50,7 +50,7 @@ export default function GalleryPage() {
   // Only categories holding at least one public image are offered as tabs — an
   // empty tab is a dead end for a visitor.
   const populatedCategories = useMemo(
-    () => (categoriesQuery.data ?? []).filter((category) => category.imageCount > 0),
+    () => (Array.isArray(categoriesQuery.data) ? categoriesQuery.data : []).filter((category) => category.imageCount > 0),
     [categoriesQuery.data],
   )
 
@@ -77,7 +77,7 @@ export default function GalleryPage() {
     staleTime: 5 * 60_000,
   })
 
-  const images = imagesQuery.data ?? []
+  const images = Array.isArray(imagesQuery.data) ? imagesQuery.data : []
 
   const visibleImages = useMemo(() => {
     const term = search.trim().toLowerCase()

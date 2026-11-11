@@ -12,7 +12,7 @@ export function AnnouncementsSideWidget() {
     staleTime: 2 * 60_000,
   })
 
-  if (!liveAnnouncements || liveAnnouncements.length === 0) {
+  if (!Array.isArray(liveAnnouncements) || liveAnnouncements.length === 0) {
     return null
   }
 

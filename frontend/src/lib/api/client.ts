@@ -96,7 +96,32 @@ async function refreshAccessToken(): Promise<string> {
 }
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // If the server returns HTML (e.g. SPA fallback index.html or reverse-proxy error page)
+    // for a JSON API call, treat it as an error so TanStack Query isError / catch triggers.
+    const contentType = response.headers?.['content-type']
+    const isHtmlResponse =
+      typeof contentType === 'string' && contentType.toLowerCase().includes('text/html')
+    const isHtmlContent =
+      typeof response.data === 'string' &&
+      (response.data.trim().startsWith('<!DOCTYPE') ||
+        response.data.trim().startsWith('<!doctype') ||
+        response.data.trim().startsWith('<html'))
+
+    if (isHtmlResponse || isHtmlContent) {
+      return Promise.reject(
+        new AxiosError(
+          'API endpoint returned HTML instead of JSON. Ensure the backend server is reachable.',
+          'ERR_BAD_RESPONSE',
+          response.config,
+          response.request,
+          response,
+        ),
+      )
+    }
+
+    return response
+  },
   async (error: AxiosError<ApiErrorResponse>) => {
     const config = error.config as RetryableConfig | undefined
     const status = error.response?.status
@@ -167,11 +192,21 @@ export function normaliseApiError(error: unknown): NormalisedApiError {
     }
 
     const body = error.response.data
+    const isBodyObject = typeof body === 'object' && body !== null
+    const code = isBodyObject && 'code' in body ? (body as any).code : error.code ?? 'UNKNOWN_ERROR'
+    const message =
+      isBodyObject && 'message' in body
+        ? (body as any).message
+        : typeof body === 'string' && !body.trim().startsWith('<')
+          ? body
+          : error.message || 'Something went wrong. Please try again.'
+    const fieldErrors = isBodyObject && 'fieldErrors' in body ? (body as any).fieldErrors ?? {} : {}
+
     return {
       status: error.response.status,
-      code: body?.code ?? 'UNKNOWN_ERROR',
-      message: body?.message ?? 'Something went wrong. Please try again.',
-      fieldErrors: body?.fieldErrors ?? {},
+      code,
+      message,
+      fieldErrors,
       isNetworkError: false,
     }
   }

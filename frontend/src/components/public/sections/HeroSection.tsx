@@ -44,7 +44,8 @@ export function HeroSection({ slides = [] }: { slides?: HeroSlide[] }) {
     staleTime: 5 * 60_000,
   })
 
-  const publishedSlides = slides.filter((slide) => slide.imageUrl)
+  const validSlides = Array.isArray(slides) ? slides : []
+  const publishedSlides = validSlides.filter((slide) => slide.imageUrl)
   const slideCount = publishedSlides.length > 0 ? publishedSlides.length : Math.max(fallbackSlides.length, 1)
   const [slideIndex, setSlideIndex] = useState(0)
   const [wordIndex, setWordIndex] = useState(0)
@@ -71,8 +72,9 @@ export function HeroSection({ slides = [] }: { slides?: HeroSlide[] }) {
   const activeSlide = publishedSlides[slideIndex]
   const headline = activeSlide?.title || ROTATING_WORDS[wordIndex]
   const supporting = activeSlide?.description || publicSite.vision
+  const validServiceTimes = Array.isArray(serviceTimesQuery.data) ? serviceTimesQuery.data : []
   const primaryService =
-    serviceTimesQuery.data?.find((service) => service.primary) ?? serviceTimesQuery.data?.[0]
+    validServiceTimes.find((service) => service.primary) ?? validServiceTimes[0]
   const primaryLink = activeSlide?.linkUrl
 
   return (

@@ -35,7 +35,7 @@ export default function SermonsPage() {
     queryFn: downloadsApi.publicList,
   })
 
-  const sermons = sermonsQuery.data ?? []
+  const sermons = Array.isArray(sermonsQuery.data) ? sermonsQuery.data : []
   const seriesOptions = useMemo(() => {
     const names = new Set(sermons.map((sermon) => sermon.series).filter((name): name is string => Boolean(name)))
     return ['All', ...names]
@@ -202,7 +202,7 @@ export default function SermonsPage() {
         )}
 
         <ul className="mt-8 grid gap-4 md:grid-cols-2">
-          {(downloadsQuery.data ?? []).map((file) => (
+          {(Array.isArray(downloadsQuery.data) ? downloadsQuery.data : []).map((file) => (
             <li key={file.id}>
               <Card className="py-5">
                 <CardContent className="flex items-start justify-between gap-4">

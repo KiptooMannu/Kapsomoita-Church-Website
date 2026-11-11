@@ -24,7 +24,7 @@ export function AnnouncementsSection() {
   })
 
   const items =
-    liveAnnouncements !== undefined
+    Array.isArray(liveAnnouncements) && liveAnnouncements.length > 0
       ? liveAnnouncements.map((a) => ({
           id: a.id,
           title: a.title,

@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { contentApi } from '@/features/content/content-api'
 import { queryKeys } from '@/lib/query-client'
+import { pastoralTeam as fallbackPastoralTeam, ministryLeaders as fallbackMinistryLeaders } from '@/config/leadership'
 
 interface LeadershipMember {
   id: string
@@ -44,12 +45,16 @@ export function LeadershipSection({ full = false }: LeadershipSectionProps) {
     photoUrl: leader.photoUrl || undefined,
   })
 
-  const activePastoralTeam = (liveLeaders ?? [])
+  const rawLeaders = Array.isArray(liveLeaders) ? liveLeaders : []
+  const livePastoralTeam = rawLeaders
     .filter((leader) => leader.team === 'PASTORAL')
     .map(toMember)
-  const ministryLeaders = (liveLeaders ?? [])
+  const liveMinistryLeaders = rawLeaders
     .filter((leader) => leader.team !== 'PASTORAL')
     .map(toMember)
+
+  const activePastoralTeam = livePastoralTeam.length > 0 ? livePastoralTeam : fallbackPastoralTeam
+  const ministryLeaders = liveMinistryLeaders.length > 0 ? liveMinistryLeaders : fallbackMinistryLeaders
   const leaders = full ? ministryLeaders : ministryLeaders.slice(0, 4)
 
   return (
